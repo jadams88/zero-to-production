@@ -12,7 +12,7 @@ const router = new Router();
 koa.proxy = config.production;
 
 /**
- * A instance of the API ApplicationA
+ * A instance of the API Application
  *
  * @param {Koa} app an instance of a koa server
  * @param {Router} router an instance of a koa-router

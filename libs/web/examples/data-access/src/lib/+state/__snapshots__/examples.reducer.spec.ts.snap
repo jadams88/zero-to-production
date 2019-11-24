@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExampleReducer AddExamples should add the examples to the example state 1`] = `
+Object {
+  "entities": Object {
+    "1": Object {
+      "description": "some description",
+      "gitHubLink": "",
+      "id": "1",
+      "title": "some title",
+      "url": "example-1",
+    },
+    "2": Object {
+      "description": "another description",
+      "gitHubLink": "",
+      "id": "2",
+      "title": "another title",
+      "url": "example-2",
+    },
+  },
+  "ids": Array [
+    "1",
+    "2",
+  ],
+  "searchFilter": null,
+  "selectedExampleId": null,
+}
+`;
+
+exports[`ExampleReducer undefined action should return the default state 1`] = `
+Object {
+  "entities": Object {},
+  "ids": Array [],
+  "searchFilter": null,
+  "selectedExampleId": null,
+}
+`;

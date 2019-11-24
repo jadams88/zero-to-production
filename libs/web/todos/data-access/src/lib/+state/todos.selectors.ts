@@ -1,7 +1,18 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import compose from 'ramda/es/compose';
+import isEmpty from 'ramda/es/isEmpty';
+import and from 'ramda/es/and';
+import allPass from 'ramda/es/allPass';
+import filter from 'ramda/es/filter';
 import { TodosEntityState, adapter } from './todos.reducer';
 import { ITodo } from '@ngw/types';
 import { TodoFilterStatus } from '@ngw/enums';
+import {
+  equalsC,
+  checkTodoCompleteStatusC,
+  todoFilterStatusCheck,
+  isTodoInSearchStringC
+} from './todos-filter-functions';
 
 // Select the top level 'todos' state.
 export const selectTodoState = createFeatureSelector<TodosEntityState>(
@@ -35,72 +46,24 @@ export const selectCurrentTodo = createSelector(
   (todoEntities, todoId) => todoEntities[String(todoId)]
 );
 
-// TODO -> Refactor the filtering
-
 export const selectFilteredTodos = createSelector(
   selectAllTodos,
   selectTodoFilterStatus,
   selectTodoSearchFilter,
   (todos: ITodo[], status: TodoFilterStatus, searchString: string | null) => {
-    if (statusCheck(TodoFilterStatus.All)(status)) {
-      if (isEmptySearchString(searchString)) {
-        return todos;
-      } else {
-        return todos.filter(todo =>
-          isTodoInSearchString(todo, searchString as string)
-        );
-      }
-    } else if (statusCheck(TodoFilterStatus.Completed)(status)) {
-      if (isEmptySearchString(searchString)) {
-        return todos.filter(isTodoComplete);
-      } else {
-        return todos.filter(
-          todo =>
-            isTodoComplete(todo) &&
-            isTodoInSearchString(todo, searchString as string)
-        );
-      }
-    } else if (statusCheck(TodoFilterStatus.InCompleted)(status)) {
-      if (isEmptySearchString(searchString)) {
-        return todos.filter(isTodoIncomplete);
-      } else {
-        return todos.filter(
-          todo =>
-            isTodoIncomplete(todo) &&
-            isTodoInSearchString(todo, searchString as string)
-        );
-      }
-    } else {
+    const filterStatusCheck = equalsC(status);
+
+    if (and(filterStatusCheck(TodoFilterStatus.All), isEmpty(searchString))) {
       return todos;
+    } else {
+      const statusCheck = compose(
+        checkTodoCompleteStatusC,
+        todoFilterStatusCheck
+      );
+      return filter(
+        allPass([isTodoInSearchStringC(searchString), statusCheck(status)]),
+        todos
+      );
     }
   }
 );
-
-function isTodoComplete(todo: ITodo) {
-  return todo.completed === true;
-}
-
-function isTodoIncomplete(todo: ITodo) {
-  return !isTodoComplete(todo);
-}
-
-function statusCheck(status: TodoFilterStatus) {
-  return function(currentStatus: TodoFilterStatus) {
-    return status === currentStatus;
-  };
-}
-
-function isEmptySearchString(text: string | null): boolean {
-  return text === null || text === '';
-}
-
-function isTodoInSearchString(todo: ITodo, searchString: string): boolean {
-  if (
-    todo.title.toLowerCase().includes(searchString) ||
-    todo.description.toLowerCase().includes(searchString)
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}

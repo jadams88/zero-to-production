@@ -82,7 +82,7 @@ Make sure to map the port so that it is available outside of the docker environm
 docker create \
   --name mongo \
   -p 27017:27017 \
-  -e MONGO_INITDB_ROOT_USERNAME=mongo \
+  -e MONGO_INITDB_ROOT_USERNAME=mongo_user \
   -e MONGO_INITDB_ROOT_PASSWORD=mongo_password \
 mongo
 ```
@@ -112,33 +112,6 @@ docker stop local-mongo
 ```
 
 Read more about Mongo and Docker and how to configure it [here](https://hub.docker.com/_/mongo)
-
-## Development Local Postgres Container (Archived)
-
-Create the container
-
-```bash
-docker create \
-  --name local-postgres \
-  -p 5432:5432 \
-postgres
-```
-
-exec into the running container
-
-```
-docker exec -ti local-postgres bash
-```
-
-Log into postgres
-
-```
-psql -U postgres
-```
-
-The username is **postgres** because we did not specify a **POSTGRES_USER** environment variable when the container was created.
-
-Read more about Postgres and Docker and how to configure it [here](https://hub.docker.com/_/postgres/).
 
 ## Local Redis Server
 

@@ -1,0 +1,13 @@
+.form-config {
+  .config {
+    margin: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.output {
+  min-height: 50px;
+}

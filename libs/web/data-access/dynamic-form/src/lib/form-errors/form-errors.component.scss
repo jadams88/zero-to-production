@@ -1,19 +1,19 @@
-:host,
-.overlay {
-  z-index: 1000;
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
+:host {
+  display: block;
 }
 
-.errors {
-  position: absolute;
-  top: 70%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  margin-left: -150px;
-  margin-top: -150px;
+.error-container {
+  background: white;
+  border-radius: 4px;
+}
+
+.error-messages {
+  padding: 20px 30px;
+  text-align: center;
+  list-style-type: none;
+}
+
+.error-text {
+  line-height: 1.4em;
+  font-size: 1.2rem;
 }

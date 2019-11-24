@@ -109,7 +109,7 @@ export class TodoDetailComponent implements OnInit, OnDestroy {
 
   updateTodoUrl(id?: string) {
     const url = id ? `/todos/${id}` : '/todos';
-    this.routerFacade.updateUrl(url);
+    // this.routerFacade.updateUrl(url);
   }
 
   ngOnDestroy() {

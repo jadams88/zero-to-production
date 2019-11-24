@@ -39,11 +39,11 @@ export class RouterFacade {
     this.store.dispatch(RouterActions.navigateBack());
   }
 
-  selectParam(param: string) {
+  selectParam(param: string): Observable<string | undefined> {
     return this.store.pipe(select(selectRouteParam(param)));
   }
 
-  selectQueryParam(param: string) {
+  selectQueryParam(param: string): Observable<string | undefined> {
     return this.store.pipe(select(selectQueryParam(param)));
   }
 

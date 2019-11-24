@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TodoFeatureShellComponent } from './todos-feature-shell.component';
 import { TodoLayoutComponent } from './ui/todos-layout.component';
+import { AuthGuard } from '@ngw/data-access/auth';
+import { AuthUsersResolver } from '@ngw/data-access/users';
+import { AUTH_ROUTES } from '@ngw/shared/auth-routes';
 
 export const TODOS_ROUTES: Routes = [
   {
@@ -19,7 +22,8 @@ export const TODOS_ROUTES: Routes = [
         children: [
           {
             path: '',
-            component: TodoLayoutComponent
+            component: TodoLayoutComponent,
+            pathMatch: 'full'
           },
           {
             path: ':todoId',
@@ -28,12 +32,6 @@ export const TODOS_ROUTES: Routes = [
         ],
 
         data: { animation: 'TodosPage' }
-      },
-      {
-        path: 'examples',
-        loadChildren: () =>
-          import('@ngw/examples').then(m => m.ExamplesFeatureShellModule),
-        data: { animation: 'ExamplesPage' }
       },
       {
         path: 'profile',
@@ -46,7 +44,24 @@ export const TODOS_ROUTES: Routes = [
         pathMatch: 'full',
         redirectTo: 'home'
       }
-    ]
+    ],
+    canActivate: [AuthGuard],
+    resolve: {
+      user: AuthUsersResolver
+    },
+    data: {
+      animation: 'AppPages'
+    }
+  },
+  ...AUTH_ROUTES,
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'home'
+  },
+  {
+    path: '**',
+    redirectTo: 'home'
   }
 ];
 

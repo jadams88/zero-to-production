@@ -87,16 +87,13 @@ describe('AuthService', () => {
       graphQLStub.setExpectedResponse<{ login: ILoginResponse }>({
         login: expectedResponse
       });
-      authService.login(loginCredentials).subscribe(
-        response => {
-          expect(response.errors).toBeUndefined();
-          expect((response.data as any).login).toBeDefined();
-          expect((response.data as any).login).toEqual(expectedResponse);
-          expect(graphQLStub.mutation).toHaveBeenCalled();
-          expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
-        },
-        error => console.log(error)
-      );
+      authService.login(loginCredentials).subscribe(response => {
+        expect(response.errors).toBeUndefined();
+        expect((response.data as any).login).toBeDefined();
+        expect((response.data as any).login).toEqual(expectedResponse);
+        expect(graphQLStub.mutation).toHaveBeenCalled();
+        expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
+      }, console.error);
     });
     it('should return an error if credentials are incorrect', () => {
       const spy = jest.spyOn(graphQLStub, 'mutation');
@@ -109,16 +106,13 @@ describe('AuthService', () => {
       ] as GraphQLError[];
       // Set the response from the the stub
       graphQLStub.setErrorResponse(graphErrors);
-      authService.login(loginCredentials).subscribe(
-        response => {
-          expect(response.data).toEqual(null);
-          expect(response.errors).toBeDefined();
-          expect((response.errors as any[][0]).message).toEqual('Unauthorized');
-          expect(graphQLStub.mutation).toHaveBeenCalled();
-          expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
-        },
-        error => console.log(error)
-      );
+      authService.login(loginCredentials).subscribe(response => {
+        expect(response.data).toEqual(null);
+        expect(response.errors).toBeDefined();
+        expect((response.errors as any[][0]).message).toEqual('Unauthorized');
+        expect(graphQLStub.mutation).toHaveBeenCalled();
+        expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
+      }, console.error);
     });
   });
 
@@ -157,16 +151,13 @@ describe('AuthService', () => {
         user: expectedResponse
       });
 
-      authService.register(newUser).subscribe(
-        response => {
-          expect(response.errors).toBeUndefined();
-          expect((response.data as any).login).toBeDefined();
-          expect((response.data as any).login).toEqual(expectedResponse);
-          expect(graphQLStub.mutation).toHaveBeenCalled();
-          expect(spy.mock.calls[0][1]).toEqual(newUser);
-        },
-        error => console.log(error)
-      );
+      authService.register(newUser).subscribe(response => {
+        expect(response.errors).toBeUndefined();
+        expect((response.data as any).login).toBeDefined();
+        expect((response.data as any).login).toEqual(expectedResponse);
+        expect(graphQLStub.mutation).toHaveBeenCalled();
+        expect(spy.mock.calls[0][1]).toEqual(newUser);
+      }, console.error);
     });
     it('should return an error if registration is invalid', () => {
       const spy = jest.spyOn(graphQLStub, 'mutation');
@@ -194,18 +185,15 @@ describe('AuthService', () => {
 
       // Set the response from the the stub
       graphQLStub.setErrorResponse(graphErrors);
-      authService.register(newUser).subscribe(
-        response => {
-          expect(response.data).toEqual(null);
-          expect(response.errors).toBeDefined();
-          expect((response.errors as any[][0]).message).toEqual(
-            'No password provided'
-          );
-          expect(graphQLStub.mutation).toHaveBeenCalled();
-          expect(spy.mock.calls[0][1]).toEqual(newUser);
-        },
-        error => console.log(error)
-      );
+      authService.register(newUser).subscribe(response => {
+        expect(response.data).toEqual(null);
+        expect(response.errors).toBeDefined();
+        expect((response.errors as any[][0]).message).toEqual(
+          'No password provided'
+        );
+        expect(graphQLStub.mutation).toHaveBeenCalled();
+        expect(spy.mock.calls[0][1]).toEqual(newUser);
+      }, console.error);
     });
 
     // REST spec

@@ -2,6 +2,7 @@ import { ParameterizedContext } from 'koa';
 import Boom from '@hapi/boom';
 import { swapId } from '@ngw/api/utils';
 import { User } from './user.model';
+import { IUser } from '@ngw/types';
 
 export async function params(
   id: string,
@@ -15,9 +16,9 @@ export async function params(
 // Get All
 export async function getAll(ctx: ParameterizedContext): Promise<void> {
   ctx.status = 200;
-  const resources = await User.find({})
+  const resources = (await User.find({})
     .lean()
-    .exec();
+    .exec()) as IUser[];
 
   ctx.body = resources.map(swapId);
 }

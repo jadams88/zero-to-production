@@ -1,0 +1,9 @@
+<section class="examples">
+  <uqt-card class="example" *ngFor="let example of examples$ | async">
+    <h3 class="card-header">{{ example.title }}</h3>
+    <p class="card-content">{{ example.descriptionShort }}</p>
+    <aside class="card-actions">
+      <button mat-button (click)="selectExample(example)">Show</button>
+    </aside>
+  </uqt-card>
+</section>

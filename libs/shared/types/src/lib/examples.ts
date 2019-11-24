@@ -1,7 +1,8 @@
 export interface IExample {
   id: string;
   title: string;
-  description: string;
+  descriptionShort: string;
+  descriptionFull: string;
   url: string;
-  gitHubLink: string;
+  link: string;
 }

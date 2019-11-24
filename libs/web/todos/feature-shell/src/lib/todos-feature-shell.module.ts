@@ -10,10 +10,12 @@ import { DataAccessDynamicFormModule } from '@ngw/data-access/dynamic-form';
 import { TodosFeatureShellRoutingModule } from './todos-feature-shell-routing.module';
 import { TodoFeatureShellComponent } from './todos-feature-shell.component';
 import { TodoLayoutComponent } from './ui/todos-layout.component';
+import { SharedAuthRoutesModule } from '@ngw/shared/auth-routes';
 
 @NgModule({
   declarations: [TodoFeatureShellComponent, TodoLayoutComponent],
   imports: [
+    SharedAuthRoutesModule,
     TodosDataAccessModule,
     AllTodosModule,
     TodosDetailModule,

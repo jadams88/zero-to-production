@@ -12,6 +12,6 @@ export class ErrorEffects {
   httpError$ = this.actions$.pipe(
     ofType(ErrorActions.httpErrorAction),
     tap(() => this.ns.emit('An error has occurred.')),
-    map(error => console.log(error))
+    map(console.error)
   );
 }

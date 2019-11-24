@@ -19,10 +19,10 @@ export function createControllers<T extends mongoose.Document>(
   return {
     // Get All
     getAll: async () => {
-      const resources: any[] = await model
+      const resources = (await model
         .find({})
         .lean()
-        .exec();
+        .exec()) as any[];
 
       return resources.map(swapId);
     },

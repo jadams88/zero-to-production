@@ -1,7 +1,7 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import * as FormActions from './dynamic-form.actions';
-import { ValidatorFn } from '@angular/forms';
-import { TFormGroups, IFormErrors } from '@ngw/types';
+import { ValidatorFn, ValidationErrors } from '@angular/forms';
+import { TFormGroups } from '@ngw/types';
 
 export interface DynamicFormState {
   config: IDynamicFormConfig;
@@ -9,7 +9,7 @@ export interface DynamicFormState {
   data: any;
   structure: TFormGroups;
   formValidators: ValidatorFn[];
-  errors: IFormErrors | null;
+  errors: ValidationErrors | null;
 }
 
 export interface IDynamicFormConfig {
@@ -60,12 +60,15 @@ export const formReducer = createReducer(
   on(FormActions.gotToIndex, (state, { index }) => {
     return { ...state, index };
   }),
-  // TODO -> Make sure the index's can not go out of range
   on(FormActions.nextIndex, state => {
-    return { ...state, index: state.index + 1 };
+    return {
+      ...state,
+      index:
+        state.index < state.structure.length - 1 ? state.index + 1 : state.index
+    };
   }),
   on(FormActions.backIndex, state => {
-    return { ...state, index: state.index - 1 };
+    return { ...state, index: state.index <= 1 ? 0 : state.index - 1 };
   }),
   on(FormActions.setFormConfig, (state, { config }) => {
     return { ...state, config: { ...state.config, ...config } };

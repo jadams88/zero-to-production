@@ -9,7 +9,7 @@ import {
   Validators,
   FormBuilder
 } from '@angular/forms';
-import { IFormErrors, TField, TFormGroups } from '@ngw/types';
+import { TField, TFormGroups } from '@ngw/types';
 import { FormGroupTypes, FormArrayTypes } from '@ngw/enums';
 
 @Injectable({ providedIn: 'root' })
@@ -83,45 +83,42 @@ export class DynamicFormService {
     return this.fb.control(field.initialValue, validators, asyncValidators);
   }
 
-  getAllFormErrors(form: FormGroup) {
-    const errors: IFormErrors = {};
+  getAllFormErrors(form: FormGroup): ValidationErrors {
+    const errors: ValidationErrors = {};
     if (form.errors) {
       errors['form'] = form.errors;
     }
     return { ...errors, ...this.getControlErrors(form) };
   }
 
-  getControlErrors(form: FormGroup): IFormErrors {
+  getControlErrors(form: FormGroup): ValidationErrors {
     // Get a list of all the control names
     const formControls = Object.keys(form.controls);
     /*
      * Iterate over them, each time checking if it is a form control or group
      * if it is a group, then recursively collect the errors
      */
-    return formControls.reduce(
-      (errors, controlName) => {
-        const control = form.controls[controlName];
+    return formControls.reduce((errors, controlName) => {
+      const control = form.controls[controlName];
 
-        if (this.isControlAFormGroup(control)) {
-          // A form group may have a top level for error
-          if (this.controlHasErrors(control)) {
-            errors[controlName] = control.errors as ValidationErrors;
-          }
-
-          return {
-            ...errors,
-            ...this.getControlErrors(control as FormGroup)
-          };
-        } else {
-          // it is a control
-          if (this.controlHasErrors(control)) {
-            errors[controlName] = control.errors as ValidationErrors;
-          }
-          return errors;
+      if (this.isControlAFormGroup(control)) {
+        // A form group may have a top level for error
+        if (this.controlHasErrors(control)) {
+          errors[controlName] = control.errors as ValidationErrors;
         }
-      },
-      {} as IFormErrors
-    );
+
+        return {
+          ...errors,
+          ...this.getControlErrors(control as FormGroup)
+        };
+      } else {
+        // it is a control
+        if (this.controlHasErrors(control)) {
+          errors[controlName] = control.errors as ValidationErrors;
+        }
+        return errors;
+      }
+    }, {} as ValidationErrors);
   }
 
   isControlAFormGroup(control: AbstractControl | FormGroup): boolean {

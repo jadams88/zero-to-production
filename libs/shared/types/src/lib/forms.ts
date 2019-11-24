@@ -1,4 +1,4 @@
-import { ValidatorFn, ValidationErrors, AsyncValidator } from '@angular/forms';
+import { ValidatorFn, AsyncValidator } from '@angular/forms';
 import { Type } from '@angular/core';
 import { FormGroupTypes, FormArrayTypes, FormFieldTypes } from '@ngw/enums';
 
@@ -110,10 +110,6 @@ export type TInputType =
   | 'week';
 
 export type TFormFieldAppearance = 'standard' | 'fill' | 'outline';
-
-export interface IFormErrors {
-  [key: string]: ValidationErrors;
-}
 
 /**
  * The below is for the form builder

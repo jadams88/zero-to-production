@@ -13,15 +13,12 @@ import { EffectsModule } from '@ngrx/effects';
 import { DataAccessApiModule } from '@ngw/data-access/api';
 import { DataAccessAuthModule } from '@ngw/data-access/auth';
 import { DataAccessUsersModule } from '@ngw/data-access/users';
-import {
-  AppState,
-  appReducerMap,
-  AppEffects
-} from '@ngw/data-access/app-state';
 import { DataAccessRouterModule } from '@ngw/data-access/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { StoreRouterConnectingModule, RouterState } from '@ngrx/router-store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AppEffects } from './+state/app.effects';
+import { AppState, appReducerMap } from './+state/app.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -44,7 +41,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     DataAccessApiModule.forRoot(environment),
     DataAccessAuthModule.forRoot(),
     DataAccessUsersModule.forRoot(),
-    DataAccessRouterModule,
+    DataAccessRouterModule.forRoot(),
     AppRoutingModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production

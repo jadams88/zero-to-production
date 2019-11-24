@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { IDynamicFormConfig } from './dynamic-form.reducer';
-import { ValidatorFn } from '@angular/forms';
-import { TFormGroups, IFormErrors } from '@ngw/types';
+import { ValidatorFn, ValidationErrors } from '@angular/forms';
+import { TFormGroups } from '@ngw/types';
 
 export const updateFormData = createAction(
   '[Dynamic Form] Update Data',
@@ -15,7 +15,7 @@ export const setFormStructure = createAction(
 
 export const setFormErrors = createAction(
   '[Dynamic Form] Set Errors',
-  props<{ errors: IFormErrors }>()
+  props<{ errors: ValidationErrors }>()
 );
 
 export const gotToIndex = createAction(

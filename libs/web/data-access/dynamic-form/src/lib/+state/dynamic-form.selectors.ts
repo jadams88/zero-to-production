@@ -3,7 +3,7 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { DynamicFormState } from './dynamic-form.reducer';
 
 const selectDynamicFormState = createFeatureSelector<DynamicFormState>(
-  'dynoForm'
+  'dynamicForm'
 );
 
 export const selectStructure = createSelector(

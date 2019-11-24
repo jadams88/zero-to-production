@@ -1,0 +1,11 @@
+<section class="example">
+  <header class="example-description">
+    <h2>{{ selectedExample?.title }}</h2>
+    <p>{{ selectedExample?.descriptionFull }}</p>
+    <a [href]="selectedExample.link">See here for full details</a>
+  </header>
+  <mat-divider indeterminate="true"></mat-divider>
+  <article class="example-demonstration">
+    <router-outlet></router-outlet>
+  </article>
+</section>

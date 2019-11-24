@@ -10,7 +10,7 @@ export const errorHandler: Middleware = async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    if ((err as Boom).isBoom) {
+    if (err.isBoom) {
       // Is A Boom
       ctx.status = err.output.statusCode;
       ctx.body = err.output.payload;

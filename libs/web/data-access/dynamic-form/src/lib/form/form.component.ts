@@ -5,19 +5,23 @@ import {
   OnDestroy
 } from '@angular/core';
 import { FormGroup, FormArray } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   map,
   tap,
   debounceTime,
   switchMap,
-  withLatestFrom
+  withLatestFrom,
+  takeUntil
 } from 'rxjs/operators';
-import { DynamicFormFacade } from '../+state/dynamic-form.facade';
+import { TFormGroups } from '@ngw/types';
+import { FormGroupTypes } from '@ngw/enums';
 import { expandFromCenter } from '@ngw/common/animations';
+import { DynamicFormFacade } from '../+state/dynamic-form.facade';
 import { IDynamicFormConfig } from '../+state/dynamic-form.reducer';
 import { DynamicFormService } from '../form.service';
-import { TFormGroups } from '@ngw/types';
+import { FormErrorsService } from '../form-errors/form-errors.service';
+import { FormErrorsComponent } from '../form-errors/form-errors.component';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -27,8 +31,8 @@ import { TFormGroups } from '@ngw/types';
   animations: [expandFromCenter]
 })
 export class DynamicFormComponent implements OnInit, OnDestroy {
-  private subscription: Subscription | undefined;
   public form: FormGroup | undefined;
+  private unsubscribe = new Subject<void>();
 
   config$: Observable<IDynamicFormConfig>;
   formIdx$: Observable<number>;
@@ -36,6 +40,7 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private service: DynamicFormService,
+    private formErrors: FormErrorsService,
     private facade: DynamicFormFacade
   ) {
     this.config$ = this.facade.config$;
@@ -46,7 +51,7 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.facade.resetIndex();
 
-    this.subscription = this.structure$
+    this.structure$
       .pipe(
         // Build the form
         map(str => this.service.formBuilder(str)),
@@ -67,7 +72,8 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
             // updated in time
             debounceTime(100)
           )
-        )
+        ),
+        takeUntil(this.unsubscribe)
       )
       .subscribe(data => {
         // Update the store
@@ -80,31 +86,30 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
      * When the form resets, it will emit a value changed event and subsequently will update the store
      * @param data
      */
-    this.subscription.add(
-      this.facade.setData$.subscribe(data => {
-        (this.form as FormGroup).reset(data);
-      })
-    );
+    this.facade.setData$.pipe(takeUntil(this.unsubscribe)).subscribe(data => {
+      (this.form as FormGroup).reset(data);
+    });
   }
 
   onSubmit(form: FormGroup) {
     const { valid } = form;
     if (valid) {
+      this.facade.clearErrors();
       this.facade.submitForm();
-      // this.facade.clearErrors();
     } else {
       // collect all form errors
       const errors = this.service.getAllFormErrors(form);
       this.facade.setErrors({ errors });
+      this.createFormErrors();
     }
   }
 
-  getFormGroup(name: string): FormGroup {
-    return (this.form as FormGroup).get(name) as FormGroup;
+  getFormGroup(formGroup: FormGroup, name: string): FormGroup | FormArray {
+    return formGroup.get(name) as FormGroup | FormArray;
   }
 
-  getArrayGroup(name: string): FormArray {
-    return (this.form as FormGroup).get(name) as FormArray;
+  isGroupFields(type: FormGroupTypes): boolean {
+    return Boolean(type === FormGroupTypes.Group);
   }
 
   nextSection() {
@@ -115,7 +120,18 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
     this.facade.backASection();
   }
 
+  createFormErrors() {
+    const { overlayRef, componentRef } = this.formErrors.createOverlay(
+      FormErrorsComponent
+    );
+
+    componentRef.instance.dismiss.subscribe(() => {
+      overlayRef.dispose();
+    });
+  }
+
   ngOnDestroy() {
-    if (this.subscription) this.subscription.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }

@@ -1,0 +1,43 @@
+<p>
+  To use the dynamic form, all you need to do is to set the structure of the
+  form (via NgRx Store) in the component and include the form selector in your
+  markup.
+</p>
+<pre>
+  <code class="language-ts">{{ component }}</code>
+</pre>
+<pre>
+  <code class="language-html">{{ markup }}</code>
+</pre>
+<p>
+  The output of submitting the form is provided via an observable from the
+  <span><code class="language-ts">DynamicFormsFacade</code></span>
+</p>
+<pre>
+  <code class="language-ts">{{ submitSyntax }}</code>
+</pre>
+<h3>Try it below</h3>
+<section class="form-config">
+  <h4>Form Config</h4>
+  <aside class="config">
+    <button mat-raised-button (click)="setStructure(!simpleStructure)">
+      {{ simpleStructure ? 'Form with Sections' : 'Simple Form' }}
+    </button>
+    <mat-slide-toggle checked="true" (change)="toggleAnimations($event)"
+      >Animations</mat-slide-toggle
+    >
+    <mat-slide-toggle checked="true" (change)="togglePagination($event)"
+      >Section Pagination</mat-slide-toggle
+    >
+  </aside>
+  <h4>Rendered Form</h4>
+  <uqt-card>
+    <app-dynamic-form>
+      <button mat-stroked-button type="submit">Submit</button>
+    </app-dynamic-form>
+  </uqt-card>
+</section>
+<h4>Submit Output</h4>
+<uqt-card class="output">
+  <pre><code>{{ submit$ | async | json }}</code></pre>
+</uqt-card>

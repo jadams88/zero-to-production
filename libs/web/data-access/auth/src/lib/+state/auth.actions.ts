@@ -10,6 +10,8 @@ export const loginRedirect = createAction('[Auth] Login Redirect');
 
 export const logoutRedirect = createAction('[Auth] Logout Redirect');
 
+export const registerRedirect = createAction('[Auth] Register Redirect');
+
 export const login = createAction(
   '[Auth/API] Login',
   props<ILoginCredentials>()

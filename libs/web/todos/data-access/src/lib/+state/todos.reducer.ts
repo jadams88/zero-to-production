@@ -9,7 +9,7 @@ export interface TodosEntityState extends EntityState<ITodo> {
   // Add custom property state
   selectedTodoId: string | null;
   statusFilter: TodoFilterStatus;
-  searchFilter: string | null;
+  searchFilter: string;
 }
 
 // 2. Create entity adapter
@@ -19,7 +19,7 @@ export const adapter: EntityAdapter<ITodo> = createEntityAdapter<ITodo>();
 export const initialTodoState: TodosEntityState = adapter.getInitialState({
   selectedTodoId: null,
   statusFilter: TodoFilterStatus.InCompleted,
-  searchFilter: null
+  searchFilter: ''
 });
 
 export const todosReducer = createReducer(

@@ -3,8 +3,8 @@ import { Store, select } from '@ngrx/store';
 import * as AuthActions from './auth.actions';
 import { ILoginCredentials, IRegistrationDetails } from '@ngw/types';
 import { Observable } from 'rxjs';
-import { AvailableStatus } from './auth.reducer';
 import { selectLoggedInStatus, selectAvailability } from './auth.selectors';
+import { AvailableStatus } from '@ngw/enums';
 
 @Injectable()
 export class AuthFacade {
@@ -26,6 +26,10 @@ export class AuthFacade {
 
   loginRedirect(): void {
     this.store.dispatch(AuthActions.loginRedirect());
+  }
+
+  registerRedirect(): void {
+    this.store.dispatch(AuthActions.registerRedirect());
   }
 
   logout(): void {

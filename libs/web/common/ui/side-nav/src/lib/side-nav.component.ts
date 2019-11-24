@@ -18,7 +18,7 @@ export class CommonUiSideNavComponent {
     this.route$ = this.facade.route$;
   }
 
-  setValue(opened: boolean) {
+  setValue(opened: boolean): void {
     this.facade.setValue(opened);
   }
 }

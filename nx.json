@@ -83,9 +83,6 @@
     "web-shared-profile": {
       "tags": []
     },
-    "web-data-access-app-state": {
-      "tags": []
-    },
     "web-data-access-router": {
       "tags": []
     },
@@ -107,16 +104,34 @@
     "web-utils-storage": {
       "tags": []
     },
-    "web-shared-examples-feature-shell": {
-      "tags": []
-    },
-    "web-shared-examples-data-access": {
-      "tags": []
-    },
-    "web-shared-examples-form-builder": {
-      "tags": []
-    },
     "web-data-access-form-builder": {
+      "tags": []
+    },
+    "web-examples-feature-shell": {
+      "tags": []
+    },
+    "web-examples-e2e": {
+      "tags": []
+    },
+    "web-examples": {
+      "tags": []
+    },
+    "web-examples-data-access": {
+      "tags": []
+    },
+    "web-shared-auth-routes": {
+      "tags": []
+    },
+    "web-examples-form-builder": {
+      "tags": []
+    },
+    "web-examples-dynamic-form": {
+      "tags": []
+    },
+    "web-examples-themeing": {
+      "tags": []
+    },
+    "web-common-ui-card": {
       "tags": []
     }
   }

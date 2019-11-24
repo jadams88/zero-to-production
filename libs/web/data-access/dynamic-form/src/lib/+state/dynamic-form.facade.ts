@@ -4,8 +4,8 @@ import { Observable, Subject } from 'rxjs';
 import * as fromActions from './dynamic-form.actions';
 import * as fromSelectors from './dynamic-form.selectors';
 import { IDynamicFormConfig } from './dynamic-form.reducer';
-import { ValidatorFn } from '@angular/forms';
-import { TFormGroups, IFormErrors } from '@ngw/types';
+import { ValidatorFn, ValidationErrors } from '@angular/forms';
+import { TFormGroups } from '@ngw/types';
 
 @Injectable({ providedIn: 'root' })
 export class DynamicFormFacade {
@@ -13,7 +13,7 @@ export class DynamicFormFacade {
   idx$: Observable<number>;
   data$: Observable<any>;
   structure$: Observable<TFormGroups>;
-  errors$: Observable<IFormErrors | null>;
+  errors$: Observable<ValidationErrors | null>;
   validators$: Observable<ValidatorFn[]>;
   submit$: Subject<any> = new Subject();
   setData$ = new Subject<any>();
@@ -51,7 +51,7 @@ export class DynamicFormFacade {
     this.store.dispatch(fromActions.updateFormData(data));
   }
 
-  setErrors({ errors }: { errors: IFormErrors }) {
+  setErrors({ errors }: { errors: ValidationErrors }) {
     this.store.dispatch(fromActions.setFormErrors({ errors }));
   }
 

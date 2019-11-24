@@ -1,22 +1,6 @@
 {
-  "compileOnSave": false,
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "strict": true,
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "dom", "esnext.asynciterable"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "paths": {
       "@app-testing/*": ["testing/src/*"],
       "@ngw/common/ui/side-nav": ["libs/web/common/ui/side-nav/src/index.ts"],
@@ -45,9 +29,6 @@
       ],
       "@ngw/api/auth": ["libs/api/auth/src/index.ts"],
       "@ngw/shared/profile": ["libs/web/shared/profile/src/index.ts"],
-      "@ngw/data-access/app-state": [
-        "libs/web/data-access/app-state/src/index.ts"
-      ],
       "@ngw/data-access/router": ["libs/web/data-access/router/src/index.ts"],
       "@ngw/data-access/dynamic-form": [
         "libs/web/data-access/dynamic-form/src/index.ts"
@@ -59,17 +40,22 @@
       "@ngw/api/utils": ["libs/api/utils/src/index.ts"],
       "@ngw/common/animations": ["libs/web/common/animations/src/index.ts"],
       "@ngw/utils/storage": ["libs/web/utils/storage/src/index.ts"],
-      "@ngw/examples": ["libs/web/shared/examples/feature-shell/src/index.ts"],
-      "@ngw/examples/data-access": [
-        "libs/web/shared/examples/data-access/src/index.ts"
-      ],
-      "@ngw/examples/form-builder": [
-        "libs/web/shared/examples/form-builder/src/index.ts"
-      ],
       "@ngw/data-access/form-builder": [
         "libs/web/data-access/form-builder/src/index.ts"
-      ]
+      ],
+      "@ngw/examples": ["libs/web/examples/feature-shell/src/index.ts"],
+      "@ngw/examples/data-access": [
+        "libs/web/examples/data-access/src/index.ts"
+      ],
+      "@ngw/shared/auth-routes": ["libs/web/shared/auth-routes/src/index.ts"],
+      "@ngw/examples/form-builder": [
+        "libs/web/examples/form-builder/src/index.ts"
+      ],
+      "@ngw/examples/dynamic-form": [
+        "libs/web/examples/dynamic-form/src/index.ts"
+      ],
+      "@ngw/examples/themeing": ["libs/web/examples/themeing/src/index.ts"],
+      "@ngw/common/ui/card": ["libs/web/common/ui/card/src/index.ts"]
     }
-  },
-  "exclude": ["node_modules", "tmp"]
+  }
 }

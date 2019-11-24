@@ -2,7 +2,8 @@ import {
   Component,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Input
 } from '@angular/core';
 
 @Component({
@@ -12,5 +13,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommonUiToolbarComponent {
+  @Input() navButton: boolean = false;
   @Output() navToggle = new EventEmitter<void>();
 }

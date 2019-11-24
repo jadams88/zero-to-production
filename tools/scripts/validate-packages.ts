@@ -1,28 +1,22 @@
-var readJson = require('read-package-json');
-var glob = require('glob');
+// @ts-ignore
+import readJson from 'read-package-json';
+import glob from 'glob';
+import { promisify } from 'util';
+const asyncGlob = promisify(glob);
+const asyncReadJson = promisify(readJson);
 
 (async function validatePackageJson() {
   console.log('Validating package.json files.');
 
   const workSpaceDir = process.cwd();
   const collectedErrors: string[] = [];
+  const rootPackage = `${workSpaceDir}/package.json`;
 
-  const { dependencies, devDependencies } = (await readPackageJson(
-    `${workSpaceDir}/package.json`
-  )) as any;
+  const { dependencies, devDependencies } = readPackageJson(rootPackage);
 
-  const packagePaths: string[] = await new Promise((resolve, reject) => {
-    glob(
-      `${workSpaceDir}/apps/**/package.json`,
-      (err: Error, matches: string[]) => {
-        resolve(matches);
-      }
-    );
-  });
+  const packagePaths = await asyncGlob(`${workSpaceDir}/apps/**/package.json`);
 
-  const childPackages = (await Promise.all(
-    packagePaths.map(readPackageJson)
-  )) as any[];
+  const childPackages = await Promise.all(packagePaths.map(readPackageJson));
 
   childPackages.forEach(packageJson => {
     // Iterate over each dependency and check the main one
@@ -34,7 +28,12 @@ var glob = require('glob');
         ) {
           // The packages do not match up
           collectedErrors.push(
-            `${packageJson.name} has mismatching version for ${packageName}. Receive ${packageJson.dependencies[packageName]} but should be ${dependencies[packageName]}`
+            createErrorMessage(
+              packageJson.name,
+              packageName,
+              packageJson.dependencies[packageName],
+              dependencies[packageName]
+            )
           );
         }
       });
@@ -47,7 +46,12 @@ var glob = require('glob');
         ) {
           // The packages do not match up
           collectedErrors.push(
-            `${packageJson.name} has mismatching version for ${packageName}. Receive ${packageJson.devDependencies[packageName]} but should be ${devDependencies[packageName]}`
+            createErrorMessage(
+              packageJson.name,
+              packageName,
+              packageJson.dependencies[packageName],
+              dependencies[packageName]
+            )
           );
         }
       });
@@ -56,7 +60,7 @@ var glob = require('glob');
 
   if (collectedErrors.length > 0) {
     collectedErrors.forEach(error => {
-      console.log(error);
+      console.error(error);
     });
     process.exit(1);
   } else {
@@ -64,14 +68,19 @@ var glob = require('glob');
   }
 })();
 
-async function readPackageJson(path: string) {
-  return new Promise((resolve, reject) => {
-    readJson(path, false, function(er: Error, data: any) {
-      if (er) {
-        console.error('There was an error reading the file');
-        reject();
-      }
-      resolve(data);
-    });
-  });
+function readPackageJson(path: string) {
+  return asyncReadJson(path, false);
+}
+
+// function isPropertyDefined(property: any): boolean {
+//   return !!property;
+// }
+
+function createErrorMessage(
+  projectName: string,
+  packageName: string,
+  currentVersionNumber: string,
+  requiredVersionNumber: string
+): string {
+  return `${projectName} has mismatching version for ${packageName}. Receive ${currentVersionNumber} but should be ${requiredVersionNumber}`;
 }
