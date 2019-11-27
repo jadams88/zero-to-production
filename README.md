@@ -105,6 +105,6 @@ https://github.com/NativeScript/NativeScript/issues/7537
 
 ## TestCafe E2E Builder
 
-TODO -> Create an TestCafe Builder
+TODO -> Create a TestCafe Builder
 
 ## ngw
