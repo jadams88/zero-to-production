@@ -8,7 +8,7 @@ import { TField, FormGroupTypes } from '../../dynamic-form.models';
   styleUrls: ['./textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormTextareaComponent {
+export class FormTextAreaComponent {
   @Input() idx: number | undefined;
   @Input() type!: FormGroupTypes;
   @Input() field!: TField;

@@ -11,9 +11,10 @@ import { HttpClientModule } from '@angular/common/http';
   exports: [HttpClientModule, ApolloModule, HttpLinkModule]
 })
 export class DataAccessApiModule {
-  static forRoot(
-    { graphQLUrl = 'graphql', apiBaseUrl = 'api' } = {} as any
-  ): ModuleWithProviders {
+  static forRoot({
+    graphQLUrl = 'graphql',
+    apiBaseUrl = 'api'
+  } = {}): ModuleWithProviders {
     return {
       ngModule: DataAccessApiModule,
       providers: [

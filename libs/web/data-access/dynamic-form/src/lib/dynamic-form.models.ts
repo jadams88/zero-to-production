@@ -128,3 +128,7 @@ export enum FormFieldTypes {
   Toggle = 'TOGGLE',
   DatePicker = 'DATE_PICKER'
 }
+
+export type DynamicFormComponentMap = {
+  [key in FormFieldTypes]: Type<any>;
+};

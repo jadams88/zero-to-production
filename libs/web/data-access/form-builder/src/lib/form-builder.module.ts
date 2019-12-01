@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataAccessDynamicFormModule } from '@uqt/data-access/dynamic-form';
+import { DynamicFormModule } from '@uqt/data-access/dynamic-form';
 import { FormBuilderComponent } from './form-builder/form-builder.component';
 import { CustomMaterialModule } from '@uqt/common/ui/custom-material';
 import { StoreModule } from '@ngrx/store';
@@ -22,7 +22,7 @@ const COMPONENTS = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DataAccessDynamicFormModule,
+    DynamicFormModule,
     CustomMaterialModule,
     StoreModule.forFeature<FormsEntityState>('formsState', reducer),
     EffectsModule.forFeature([FormEffects])

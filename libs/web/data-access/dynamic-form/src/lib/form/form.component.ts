@@ -50,6 +50,8 @@ export class DynamicFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.facade.resetIndex();
 
+    // TODO -> do we want default values, or reset the form with what is in the store?
+
     this.structure$
       .pipe(
         // Build the form
