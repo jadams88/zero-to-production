@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "commit": "npx git-cz",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -35,7 +36,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run validate-packages && npm run lint-staged"
+      "pre-commit": "npm run validate-packages && npm run lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
@@ -104,6 +106,8 @@
     "@angular/cli": "^8.3.18",
     "@angular/compiler-cli": "^8.2.13",
     "@angular/language-service": "^8.2.13",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
     "@nrwl/angular": "^8.4.8",
     "@nrwl/jest": "8.7.0",
     "@nrwl/web": "^8.5.0",
@@ -124,9 +128,11 @@
     "@types/ramda": "^0.26.21",
     "@uqt/ng-node": "^0.0.5",
     "codelyzer": "~5.0.1",
+    "commitizen": "^4.0.3",
     "cp-file": "^7.0.0",
     "cross-env": "^6.0.3",
     "cypress": "3.4.1",
+    "cz-conventional-changelog": "^3.0.2",
     "del": "^5.0.0",
     "dotenv": "^8.0.0",
     "husky": "^3.0.3",
@@ -148,5 +154,15 @@
     "tslint": "~5.11.0",
     "tspath": "^1.3.7",
     "typescript": "~3.5.3"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
