@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CustomMaterialModule } from '@uqt/common/ui/custom-material';
 import { TodoDetailComponent } from './todo-detail.component';
 import { UiTodoDetailComponent } from './ui/ui-todo-detail.component';
-import { DataAccessDynamicFormModule } from '@uqt/data-access/dynamic-form';
+import { DynamicFormModule } from '@uqt/data-access/dynamic-form';
 
 @NgModule({
   declarations: [TodoDetailComponent, UiTodoDetailComponent],
@@ -12,7 +12,7 @@ import { DataAccessDynamicFormModule } from '@uqt/data-access/dynamic-form';
     CommonModule,
     ReactiveFormsModule,
     CustomMaterialModule,
-    DataAccessDynamicFormModule
+    DynamicFormModule.forChild()
   ],
   exports: [TodoDetailComponent]
 })

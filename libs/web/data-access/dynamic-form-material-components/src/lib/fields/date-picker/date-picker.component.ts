@@ -5,15 +5,18 @@ import {
   OnDestroy
 } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { DynamicFormService } from '../../dynamic-form.service';
 import {
   MAT_DATE_FORMATS,
   NativeDateAdapter,
   DateAdapter
 } from '@angular/material/core';
+import { Subscription } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
-import { TField, FormGroupTypes } from '../../dynamic-form.models';
+import {
+  FormGroupTypes,
+  TField,
+  DynamicFormService
+} from '@uqt/data-access/dynamic-form';
 
 const APP_DATE_FORMATS = {
   parse: {

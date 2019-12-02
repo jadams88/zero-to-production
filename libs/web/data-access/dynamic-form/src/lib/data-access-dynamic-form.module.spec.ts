@@ -1,14 +1,14 @@
 import { async, TestBed } from '@angular/core/testing';
-import { DataAccessDynamicFormModule } from './data-access-dynamic-form.module';
+import { DynamicFormModule } from './data-access-dynamic-form.module';
 
-describe('DataAccessDynamicFormModule', () => {
+describe('DynamicFormModule', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [DataAccessDynamicFormModule]
+      imports: [DynamicFormModule]
     }).compileComponents();
   }));
 
   it('should create', () => {
-    expect(DataAccessDynamicFormModule).toBeDefined();
+    expect(DynamicFormModule).toBeDefined();
   });
 });

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FormGroupTypes, TField } from '../../dynamic-form.models';
+import { FormGroupTypes, TField } from '@uqt/data-access/dynamic-form';
 
 @Component({
   selector: 'app-form-input',

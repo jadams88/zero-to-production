@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 import { CustomMaterialModule } from '@uqt/common/ui/custom-material';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsernameAvailableValidator } from './validators/username-available.validator';
-import { DataAccessDynamicFormModule } from '@uqt/data-access/dynamic-form';
+import { DynamicFormModule } from '@uqt/data-access/dynamic-form';
 
 const COMPONENTS = [
   AuthComponent,
@@ -29,7 +29,7 @@ const COMPONENTS = [
     ReactiveFormsModule,
     RouterModule,
     CustomMaterialModule,
-    DataAccessDynamicFormModule
+    DynamicFormModule.forChild()
   ],
   declarations: COMPONENTS,
   providers: [UsernameAvailableValidator],

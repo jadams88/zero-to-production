@@ -55,7 +55,10 @@
         "libs/web/examples/dynamic-form/src/index.ts"
       ],
       "@uqt/examples/theming": ["libs/web/examples/theming/src/index.ts"],
-      "@uqt/common/ui/card": ["libs/web/common/ui/card/src/index.ts"]
+      "@uqt/common/ui/card": ["libs/web/common/ui/card/src/index.ts"],
+      "@uqt/data-access/dynamic-form-material-components": [
+        "libs/web/data-access/dynamic-form-material-components/src/index.ts"
+      ]
     }
   }
 }

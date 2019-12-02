@@ -6,7 +6,7 @@ import { SharedFloatingMenuModule } from '@uqt/shared/floating-menu';
 import { CommonUiToolbarModule } from '@uqt/common/ui/toolbar';
 import { CommonUiSideNavModule } from '@uqt/common/ui/side-nav';
 import { CommonUiLayoutsModule } from '@uqt/common/ui/layouts';
-import { DataAccessDynamicFormModule } from '@uqt/data-access/dynamic-form';
+import { DynamicFormModule } from '@uqt/data-access/dynamic-form';
 import { TodosFeatureShellRoutingModule } from './todos-feature-shell-routing.module';
 import { TodoFeatureShellComponent } from './todos-feature-shell.component';
 import { TodoLayoutComponent } from './ui/todos-layout.component';
@@ -19,7 +19,7 @@ import { SharedAuthRoutesModule } from '@uqt/shared/auth-routes';
     TodosDataAccessModule,
     AllTodosModule,
     TodosDetailModule,
-    DataAccessDynamicFormModule,
+    DynamicFormModule.forChild(),
     CommonUiSideNavModule,
     CommonUiToolbarModule,
     TodosFeatureShellRoutingModule,

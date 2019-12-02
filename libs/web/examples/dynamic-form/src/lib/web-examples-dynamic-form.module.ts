@@ -13,7 +13,7 @@ const COMPONENTS = [ExampleDynamicFormComponent];
     CommonModule,
     CustomMaterialModule,
     CommonUiCardModule,
-    DynamicFormModule,
+    DynamicFormModule.forChild(),
     ExamplesDynamicFormRouterModule
   ],
   declarations: COMPONENTS

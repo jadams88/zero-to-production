@@ -18,10 +18,11 @@ import { TodosFeatureShellModule } from '@uqt/todos/feature-shell';
 import { StoreRouterConnectingModule, RouterState } from '@ngrx/router-store';
 import { AppEffects } from './+state/app.effects';
 import { AppState, appReducerMap } from './+state/app.state';
+import { DynamicFormModule } from '@uqt/data-access/dynamic-form';
 import {
-  DataAccessDynamicFormModule,
+  DynamicFormMaterialComponentsModule,
   MATERIAL_COMPONENT_MAP
-} from '@uqt/data-access/dynamic-form';
+} from '@uqt/data-access/dynamic-form-material-components';
 
 @NgModule({
   declarations: [AppComponent],
@@ -44,7 +45,8 @@ import {
     DataAccessAuthModule.forRoot(),
     DataAccessUsersModule.forRoot(),
     DataAccessRouterModule.forRoot(),
-    DataAccessDynamicFormModule.forRoot(MATERIAL_COMPONENT_MAP),
+    DynamicFormModule.forRoot(MATERIAL_COMPONENT_MAP),
+    DynamicFormMaterialComponentsModule,
     AppRoutingModule.forRoot(),
     TodosFeatureShellModule,
     ServiceWorkerModule.register('ngsw-worker.js', {

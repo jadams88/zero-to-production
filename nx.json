@@ -133,6 +133,9 @@
     },
     "web-common-ui-card": {
       "tags": []
+    },
+    "web-data-access-dynamic-form-material-components": {
+      "tags": []
     }
   }
 }
