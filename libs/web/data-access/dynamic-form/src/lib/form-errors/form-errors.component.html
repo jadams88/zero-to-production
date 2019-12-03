@@ -1,7 +1,7 @@
 <div class="error-container mat-elevation-z6" @formErrorsAnimations>
   <ul class="error-messages">
     <li class="error-text" *ngFor="let error of errors$ | async">
-      {{ error | formError }}
+      {{ error }}
     </li>
   </ul>
 </div>

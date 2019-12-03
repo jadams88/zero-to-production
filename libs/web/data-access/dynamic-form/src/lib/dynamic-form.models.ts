@@ -1,5 +1,6 @@
 import { ValidatorFn, AsyncValidator } from '@angular/forms';
 import { Type } from '@angular/core';
+import { DynamicFormErrorsMap } from './form-errors/form-errors';
 
 export type TField =
   | IInputField
@@ -127,6 +128,11 @@ export enum FormFieldTypes {
   Select = 'SELECT',
   Toggle = 'TOGGLE',
   DatePicker = 'DATE_PICKER'
+}
+
+export interface DynamicFormConfig {
+  componentMap: DynamicFormComponentMap;
+  errors?: DynamicFormErrorsMap;
 }
 
 export type DynamicFormComponentMap = {

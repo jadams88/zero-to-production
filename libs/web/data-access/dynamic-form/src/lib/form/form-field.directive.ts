@@ -27,7 +27,8 @@ export class DynamicFormFieldDirective implements OnInit, OnChanges {
   component!: ComponentRef<any>;
 
   constructor(
-    @Inject('COMPONENT_MAP') private componentMap: DynamicFormComponentMap,
+    @Inject('DYNAMIC_FORM_COMPONENT_MAP')
+    private componentMap: DynamicFormComponentMap,
     private resolver: ComponentFactoryResolver,
     private viewContainerRef: ViewContainerRef
   ) {}

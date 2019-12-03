@@ -46,7 +46,7 @@ import {
     DataAccessUsersModule.forRoot(),
     DataAccessRouterModule.forRoot(),
     DynamicFormMaterialComponentsModule,
-    DynamicFormModule.forRoot(MATERIAL_COMPONENT_MAP),
+    DynamicFormModule.forRoot({ componentMap: MATERIAL_COMPONENT_MAP }),
     AppRoutingModule.forRoot(),
     ExamplesFeatureShellModule
   ],

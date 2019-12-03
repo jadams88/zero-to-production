@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   Output,
-  EventEmitter
+  EventEmitter,
+  Inject
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import mapR from 'ramda/es/map';
@@ -11,20 +12,9 @@ import { timer, Observable, Subject } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { formErrorsAnimations } from './form-errors.animations';
 import { DynamicFormFacade } from '../+state/dynamic-form.facade';
+import { DynamicFormErrorsMap, FormErrorTypes } from './form-errors';
 
 // TODO a11y Announcer
-
-// TODO All form errors
-
-export enum ErrorMessages {
-  required = 'is required',
-  email = 'is not a valid email'
-}
-
-export interface FieldErrors {
-  field: string;
-  errorMessage: ErrorMessages;
-}
 
 @Component({
   selector: 'app-form-errors',
@@ -39,9 +29,13 @@ export class FormErrorsComponent implements OnDestroy {
 
   @Output() dismiss = new EventEmitter<void>();
 
-  errors$: Observable<FieldErrors[]>;
+  errors$: Observable<string[]>;
 
-  constructor(private facade: DynamicFormFacade) {
+  constructor(
+    @Inject('DYNAMIC_FORM_ERRORS')
+    private formErrors: DynamicFormErrorsMap,
+    private facade: DynamicFormFacade
+  ) {
     timer(this.autoClose)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(() => {
@@ -55,12 +49,16 @@ export class FormErrorsComponent implements OnDestroy {
   }
 
   createFieldErrors(errors: ValidationErrors) {
-    const keys = Object.keys(errors);
-    const fieldErrors: FieldErrors[] = [];
+    const topLevelKeys = Object.keys(errors);
+    const fieldErrors: string[] = [];
 
-    for (let i = 0; i < keys.length; i++) {
-      const errorsKeys = Object.keys(errors[keys[i]]);
-      const nestedErrors = reduceErrorKeysToMessages(keys[i], errorsKeys);
+    for (let i = 0; i < topLevelKeys.length; i++) {
+      const errorsKeys = Object.keys(errors[topLevelKeys[i]]);
+      const nestedErrors = reduceErrorKeysToMessages(
+        this.formErrors,
+        topLevelKeys[i],
+        errorsKeys
+      );
       fieldErrors.push(...nestedErrors);
     }
 
@@ -74,14 +72,22 @@ export class FormErrorsComponent implements OnDestroy {
 }
 
 function reduceErrorKeysToMessages(
+  formErrors: DynamicFormErrorsMap,
   field: string,
   keys: string[]
-): FieldErrors[] {
+): string[] {
   return mapR(
-    key => ({
-      field,
-      errorMessage: ErrorMessages[key as keyof typeof ErrorMessages]
-    }),
+    key =>
+      `${splitCamelCaseAndUppercaseFirst(field)} ${
+        formErrors[key as keyof typeof FormErrorTypes]
+      }`,
     keys
+  );
+}
+
+function splitCamelCaseAndUppercaseFirst(string: string): string {
+  return (
+    string.substr(0, 1).toUpperCase() +
+    string.substr(1, string.length - 1).replace(/[A-Z]/g, c => ' ' + c)
   );
 }

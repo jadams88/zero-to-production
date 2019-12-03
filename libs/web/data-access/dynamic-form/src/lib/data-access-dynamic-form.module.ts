@@ -10,8 +10,7 @@ import { DynamicFormFieldDirective } from './form/form-field.directive';
 import { DynamicFormsEffects } from './+state/dynamic-form.effects';
 import { reducer, initialFormState } from './+state/dynamic-form.reducer';
 import { FormErrorsComponent } from './form-errors/form-errors.component';
-import { FormErrorPipe } from './form-errors/form-error.pipe';
-import { DynamicFormComponentMap } from './dynamic-form.models';
+import { DynamicFormConfig, DefaultErrorMessages } from './dynamic-form.models';
 
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule],
@@ -19,15 +18,21 @@ import { DynamicFormComponentMap } from './dynamic-form.models';
   exports: [DynamicFormComponent]
 })
 export class DynamicFormModule {
-  static forRoot(
-    componentMap: DynamicFormComponentMap
-  ): ModuleWithProviders<RootDataAccessDynamicFormModule> {
+  static forRoot({
+    componentMap,
+    errors
+  }: DynamicFormConfig): ModuleWithProviders<RootDataAccessDynamicFormModule> {
     return {
       ngModule: RootDataAccessDynamicFormModule,
       providers: [
         {
-          provide: 'COMPONENT_MAP',
+          provide: 'DYNAMIC_FORM_COMPONENT_MAP',
           useValue: componentMap
+        },
+        // If no errors are provided, supply the default error messages
+        {
+          provide: 'DYNAMIC_FORM_ERRORS',
+          useValue: errors ? errors : DefaultErrorMessages
         }
       ]
     };
@@ -48,7 +53,7 @@ export class DynamicFormModule {
     }),
     EffectsModule.forFeature([DynamicFormsEffects])
   ],
-  declarations: [FormErrorsComponent, FormErrorPipe],
+  declarations: [FormErrorsComponent],
   entryComponents: [FormErrorsComponent],
   exports: [DynamicFormModule]
 })
