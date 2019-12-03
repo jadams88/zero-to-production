@@ -18,6 +18,11 @@ export const setFormErrors = createAction(
   props<{ errors: ValidationErrors }>()
 );
 
+export const setFormErrorsComplete = createAction(
+  '[Dynamic Form] Set Errors Complete',
+  props<{ errors: string[] }>()
+);
+
 export const gotToIndex = createAction(
   '[Dynamic Form] Go To',
   props<{ index: number }>()

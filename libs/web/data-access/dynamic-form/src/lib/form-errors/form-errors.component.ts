@@ -3,16 +3,11 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   Output,
-  EventEmitter,
-  Inject
+  EventEmitter
 } from '@angular/core';
-import { ValidationErrors } from '@angular/forms';
-import mapR from 'ramda/es/map';
-import { timer, Observable, Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { timer, Observable, Subscription } from 'rxjs';
 import { formErrorsAnimations } from './form-errors.animations';
 import { DynamicFormFacade } from '../+state/dynamic-form.facade';
-import { DynamicFormErrorsMap, FormErrorTypes } from './form-errors';
 
 // TODO a11y Announcer
 
@@ -25,69 +20,20 @@ import { DynamicFormErrorsMap, FormErrorTypes } from './form-errors';
 })
 export class FormErrorsComponent implements OnDestroy {
   private autoClose = 5000; // ms until close
-  private unsubscribe = new Subject();
-
   @Output() dismiss = new EventEmitter<void>();
 
   errors$: Observable<string[]>;
+  private sub: Subscription;
 
-  constructor(
-    @Inject('DYNAMIC_FORM_ERRORS')
-    private formErrors: DynamicFormErrorsMap,
-    private facade: DynamicFormFacade
-  ) {
-    timer(this.autoClose)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(() => {
-        this.dismiss.emit();
-      });
+  constructor(private facade: DynamicFormFacade) {
+    this.errors$ = this.facade.errors$;
 
-    this.errors$ = (this.facade.errors$ as Observable<ValidationErrors>).pipe(
-      map(errors => this.createFieldErrors(errors)),
-      takeUntil(this.unsubscribe)
-    );
-  }
-
-  createFieldErrors(errors: ValidationErrors) {
-    const topLevelKeys = Object.keys(errors);
-    const fieldErrors: string[] = [];
-
-    for (let i = 0; i < topLevelKeys.length; i++) {
-      const errorsKeys = Object.keys(errors[topLevelKeys[i]]);
-      const nestedErrors = reduceErrorKeysToMessages(
-        this.formErrors,
-        topLevelKeys[i],
-        errorsKeys
-      );
-      fieldErrors.push(...nestedErrors);
-    }
-
-    return fieldErrors;
+    this.sub = timer(this.autoClose).subscribe(() => {
+      this.dismiss.emit();
+    });
   }
 
   ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    this.sub.unsubscribe();
   }
-}
-
-function reduceErrorKeysToMessages(
-  formErrors: DynamicFormErrorsMap,
-  field: string,
-  keys: string[]
-): string[] {
-  return mapR(
-    key =>
-      `${splitCamelCaseAndUppercaseFirst(field)} ${
-        formErrors[key as keyof typeof FormErrorTypes]
-      }`,
-    keys
-  );
-}
-
-function splitCamelCaseAndUppercaseFirst(string: string): string {
-  return (
-    string.substr(0, 1).toUpperCase() +
-    string.substr(1, string.length - 1).replace(/[A-Z]/g, c => ' ' + c)
-  );
 }

@@ -6,6 +6,6 @@ export const formErrorsAnimations = trigger('formErrorsAnimations', [
       transform: 'translateY(+550px)',
       opacity: 0
     }),
-    animate('.25s ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+    animate('.2s ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
   ])
 ]);

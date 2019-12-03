@@ -10,7 +10,8 @@ import { DynamicFormFieldDirective } from './form/form-field.directive';
 import { DynamicFormsEffects } from './+state/dynamic-form.effects';
 import { reducer, initialFormState } from './+state/dynamic-form.reducer';
 import { FormErrorsComponent } from './form-errors/form-errors.component';
-import { DynamicFormConfig, DefaultErrorMessages } from './dynamic-form.models';
+import { DynamicFormConfig } from './dynamic-form.models';
+import { DefaultErrorMessages } from './form-errors/form-errors';
 
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule],
