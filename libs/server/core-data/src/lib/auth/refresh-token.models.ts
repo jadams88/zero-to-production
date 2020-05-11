@@ -1,7 +1,8 @@
 import { Model, Document, Schema, Connection } from 'mongoose';
 import { IUser } from '@ztp/data';
 import { defaultSchemaOptions } from '@ztp/server/utils';
-import { IUserDocument } from '../users/index.js';
+import { IUserDocument } from '../users';
+import { TSchemaDefinition } from '../interface';
 
 // -------------------------------------
 // Interfaces for each Model
@@ -27,22 +28,21 @@ export interface IRefreshTokenModel extends Model<IRefreshTokenDocument> {
 
 export const refreshTokenDbKey = 'refreshToken';
 
-export const refreshTokenSchema = new Schema(
-  {
-    user: {
-      required: true,
-      type: Schema.Types.ObjectId,
-      ref: 'user',
-    },
-    token: {
-      required: true,
-      type: String,
-    },
+export const refreshSchemaDef: TSchemaDefinition<IRefreshToken> = {
+  user: {
+    required: true,
+    type: Schema.Types.ObjectId,
+    ref: 'user',
   },
-  {
-    ...defaultSchemaOptions,
-  }
-);
+  token: {
+    required: true,
+    type: String,
+  },
+};
+
+export const refreshTokenSchema = new Schema(refreshSchemaDef, {
+  ...defaultSchemaOptions,
+});
 
 export class RefreshTokenClass extends Model {
   static findByToken(token: string): Promise<IRefreshTokenDocument | null> {

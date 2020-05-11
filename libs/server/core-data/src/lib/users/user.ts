@@ -1,55 +1,55 @@
 import { Connection, Schema, Document, Model } from 'mongoose';
 import { IUser } from '@ztp/data';
 import { defaultSchemaOptions } from '@ztp/server/utils';
+import { TSchemaDefinition } from '../interface';
 export { userTypeDef } from './user.type';
 
 export const userDbKey = 'user';
 
-export const userSchema = new Schema<IUser>(
-  {
-    username: {
-      type: String,
-      required: true,
-      text: true,
-      unique: true,
-    },
-    givenName: {
-      type: String,
-      required: true,
-    },
-    surname: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: false, // ZTP_AFTER_CLONE -> set `unique: true`
-    },
-    dateOfBirth: {
-      type: String,
-      required: true,
-    },
-    active: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
-    isVerified: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    hashedPassword: {
-      type: String,
-      required: true,
-      select: false,
-    },
+const schemaDefinition: TSchemaDefinition<IUser> = {
+  username: {
+    type: String,
+    required: true,
+    text: true,
+    unique: true,
   },
-  {
-    ...defaultSchemaOptions,
-  }
-);
+  givenName: {
+    type: String,
+    required: true,
+  },
+  surname: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: false, // ZTP_AFTER_CLONE -> set `unique: true`
+  },
+  dateOfBirth: {
+    type: String,
+    required: true,
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+  isVerified: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  hashedPassword: {
+    type: String,
+    required: true,
+    select: false,
+  },
+};
+
+export const userSchema = new Schema<IUser>(schemaDefinition, {
+  ...defaultSchemaOptions,
+});
 
 export class UserClass extends Model {
   /**

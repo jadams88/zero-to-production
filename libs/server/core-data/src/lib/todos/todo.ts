@@ -1,29 +1,32 @@
 import { Connection, Model, Schema, Document } from 'mongoose';
 import { defaultSchemaOptions } from '@ztp/server/utils';
-import { ITodo, ITodoNote } from '@ztp/data';
+import { ITodo } from '@ztp/data';
 import { ITodoNoteDocument } from './notes';
+import { TSchemaDefinition } from '../interface';
 
 // both keys need to be defined here for circular reference reasons
 export const todoDbKey = 'todo';
 export const todoNoteDbKey = 'todonote';
 
-export const todoSchema = new Schema<ITodo>(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: 'user',
-    },
-    title: String,
-    description: String,
-    completed: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    dueDate: Date,
-    notes: [{ type: Schema.Types.ObjectId, ref: todoNoteDbKey }],
+export const todoSchemaDefinition: TSchemaDefinition<ITodo> = {
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'user',
   },
+  title: String,
+  description: String,
+  completed: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  dueDate: Date,
+  notes: [{ type: Schema.Types.ObjectId, ref: todoNoteDbKey }],
+};
+
+export const todoSchema = new Schema<TSchemaDefinition<ITodo>>(
+  todoSchemaDefinition,
   {
     ...defaultSchemaOptions,
   }

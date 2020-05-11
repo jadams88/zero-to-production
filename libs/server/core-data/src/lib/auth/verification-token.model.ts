@@ -1,7 +1,8 @@
 import { Schema, Connection, Model, Document } from 'mongoose';
 import { defaultSchemaOptions } from '@ztp/server/utils';
 import { IUser } from '@ztp/data';
-import { IUserDocument } from '../users/user.js';
+import { IUserDocument } from '../users/user';
+import { TSchemaDefinition } from '../interface';
 
 export interface IVerificationToken {
   id: string;
@@ -10,17 +11,19 @@ export interface IVerificationToken {
 }
 export const verificationTokenDbKey = 'verificationToken';
 
-export const verificationTokenSchema = new Schema<IVerificationToken>(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
-    token: {
-      type: String,
-      required: true,
-    },
+export const verificationSchemaDef: TSchemaDefinition<IVerificationToken> = {
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
   },
+  token: {
+    type: String,
+    required: true,
+  },
+};
+
+export const verificationTokenSchema = new Schema<IVerificationToken>(
+  verificationSchemaDef,
   {
     ...defaultSchemaOptions,
   }
