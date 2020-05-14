@@ -1,8 +1,8 @@
 version: 2.1
 
-# orbs:
-#   aws-cli: circleci/aws-cli@1.0.0
-#   serverless-framework: circleci/serverless-framework@1.0.1
+orbs:
+  aws-cli: circleci/aws-cli@1.0.0
+  serverless-framework: circleci/serverless-framework@1.0.1
 
 setup: &setup
   working_directory: ~/ztp
