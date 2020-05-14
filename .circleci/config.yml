@@ -73,8 +73,8 @@ jobs:
       - run:
         name: Deploy the examples site to Firebase Functions
         command: |-
-          npx nx run examples-web-functions:build-all:production
-          npx nx run examples-web-functions:firebase-deploy-ci --args='--token="$FIREBASE_TOKEN"'
+          npx nx run examples-web-functions:build:production
+          npx nx run examples-web-functions:deploy-ci --args='--token="$FIREBASE_TOKEN"'
 
 workflows:
   version: 2

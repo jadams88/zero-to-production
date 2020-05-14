@@ -1516,7 +1516,7 @@
       "sourceRoot": "apps/examples/examples-web-functions/src",
       "projectType": "application",
       "architect": {
-        "build": {
+        "build-functions": {
           "builder": "@uqt/ng-node:build",
           "options": {
             "outputPath": "apps/examples/examples-web-functions/dist",
@@ -1524,7 +1524,7 @@
             "tsConfig": "apps/examples/examples-web-functions/tsconfig.json"
           }
         },
-        "build-all": {
+        "build": {
           "builder": "@angular-devkit/architect:concat",
           "options": {
             "targets": [
@@ -1535,7 +1535,7 @@
                 "target": "examples-web:server"
               },
               {
-                "target": "examples-web-functions:build"
+                "target": "examples-web-functions:build-functions"
               }
             ]
           },
@@ -1560,7 +1560,7 @@
           "options": {
             "targets": [
               {
-                "target": "examples-web-functions:build-all"
+                "target": "examples-web-functions:build"
               },
               {
                 "target": "examples-web-functions:run"
@@ -1595,7 +1595,7 @@
           "options": {
             "targets": [
               {
-                "target": "examples-web-functions:build-all:production"
+                "target": "examples-web-functions:build:production"
               },
               {
                 "target": "examples-web-functions:firebase-deploy"
