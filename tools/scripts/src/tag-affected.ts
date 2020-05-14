@@ -27,6 +27,7 @@ const execP = (command: string) =>
 const stripLineEndings = (string: string) => string.replace(/\r?\n|\r/, '');
 
 const AFFECTED_APPS = 'npx nx affected:apps --plain --base=origin/master';
+const PUSH_TAGS = 'git push --follow-tags';
 const LATEST_VERSION = 'git describe --abbrev=0 --match "v*';
 
 const tagApplication = (version: string, app: string) =>
@@ -41,4 +42,5 @@ const tagApplication = (version: string, app: string) =>
   const affectedApps = stripLineEndings(apps).split(' ');
 
   await Promise.all(affectedApps.map((app) => tagApplication(version, app)));
+  await execP(PUSH_TAGS);
 })();
