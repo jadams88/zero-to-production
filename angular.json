@@ -1603,6 +1603,17 @@
             ]
           }
         },
+        "deploy-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "firebase deploy --project z2p-firebase --token {args.token}"
+              }
+            ],
+            "cwd": "apps/examples/examples-web-functions"
+          }
+        },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {

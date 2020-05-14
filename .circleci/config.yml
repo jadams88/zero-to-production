@@ -43,7 +43,7 @@ jobs:
           name: Building Affected Applications
           command: npx nx affected --target=build --base=origin/master
 
-  deploy:
+  release:
     <<: *setup
     steps:
       - checkout
@@ -54,27 +54,36 @@ jobs:
           name: Release
           command: npm run semantic-release || true
 
-  # aws-setup:
-  #   <<: *setup
-  #   steps:
-  #     - checkout
-  #     - aws-cli/setup:
-  #         profile-name: default
-  # firebase-setup:
-  #   <<: *setup
-  #   steps:
-  #     - checkout
-  #     - aws-cli/setup:
-  #         profile-name: default
+  server-lambda-deploy:
+    <<: *setup
+    steps:
+      - checkout
+      - aws-cli/setup:
+          profile-name: default
+      - run:
+        name: Deploy the API to AWS lambda
+        command: |-
+          npx nx run server-lambda:build:production
+          npx nx run server-lambda:serverless-deploy
+
+  examples-web-deploy:
+    <<: *setup
+    steps:
+      - checkout
+      - run:
+        name: Deploy the examples site to Firebase Functions
+        command: |-
+          npx nx run examples-web-functions:build-all:production
+          npx nx run examples-web-functions:firebase-deploy-ci --args='--token="$FIREBASE_TOKEN"'
 
 workflows:
   version: 2
   build-and-test:
     jobs:
       - checkout-and-install
-      - affected-build-and-test:
-          requires:
-            - checkout-and-install
+      # - affected-build-and-test:
+      #     requires:
+      #       - checkout-and-install
       # - aws-setup:
       #     context: aws
       #     filters:
@@ -85,9 +94,21 @@ workflows:
       #     filters:
       #       branches:
       #         only: master
-      - deploy:
-          requires:
-            - affected-build-and-test
+      - release:
+          # requires:
+          #   - affected-build-and-test
           filters:
             branches:
-              only: master
+              only: ci-testing
+      - server-lambda-deploy:
+          # requires:
+          #   - affected-build-and-test
+          filters:
+            branches:
+              only: ci-testing
+      - examples-web-deploy:
+          # requires:
+          #   - affected-build-and-test
+          filters:
+            branches:
+              only: ci-testing
