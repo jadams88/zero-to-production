@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+
+# orbs:
+#   aws-cli: circleci/aws-cli@1.0.0
+#   serverless-framework: circleci/serverless-framework@1.0.1
 
 setup: &setup
   working_directory: ~/ztp
@@ -24,7 +28,7 @@ jobs:
       - run: npm install --no-save --silent
       - <<: *deps-cache
 
-  build-and-test-affected:
+  affected-build-and-test:
     <<: *setup
     steps:
       - checkout
@@ -39,26 +43,51 @@ jobs:
           name: Building Affected Applications
           command: npx nx affected --target=build --base=origin/master
 
-#   release:
-#     <<: *setup
-#     steps:
-#       - checkout
-#       - <<: *deps-restore
-#       - run:
-#           name: Release
-#           command: npm run semantic-release || true
+  deploy:
+    <<: *setup
+    steps:
+      - checkout
+      - <<: *deps-restore
+      - aws-cli/setup:
+          profile-name: default
+      - run:
+          name: Release
+          command: npm run semantic-release || true
+
+  # aws-setup:
+  #   <<: *setup
+  #   steps:
+  #     - checkout
+  #     - aws-cli/setup:
+  #         profile-name: default
+  # firebase-setup:
+  #   <<: *setup
+  #   steps:
+  #     - checkout
+  #     - aws-cli/setup:
+  #         profile-name: default
 
 workflows:
   version: 2
   build-and-test:
     jobs:
       - checkout-and-install
-      - build-and-test-affected:
+      - affected-build-and-test:
           requires:
             - checkout-and-install
-    #   - release:
-    #       requires:
-    #         - build-and-validate
-    #       filters:
-    #         branches:
-    #           only: master
+      # - aws-setup:
+      #     context: aws
+      #     filters:
+      #       branches:
+      #         only: master
+      # - firebase-setup:
+      #     context: firebase
+      #     filters:
+      #       branches:
+      #         only: master
+      - deploy:
+          requires:
+            - affected-build-and-test
+          filters:
+            branches:
+              only: master

@@ -122,11 +122,11 @@ Along with the normal Angular Cli targets (**`ng build|test|lint <project>`**) s
   $ firebase server --project <your-firebase-project>
   ```
 - **`serve`**: executes `build-all` then `run`
-- **`deploy`**: sets the CWD the project src directory (i.e. `apps/todos/todos-web-functions`) and executes.
+- **`firebase-deploy`**: sets the CWD the project src directory (i.e. `apps/todos/todos-web-functions`) and executes.
   ```bash
   $ firebase deploy --project <your-firebase-project>
   ```
-- **`build-and-deploy`**: runs `build-all:production` then `deploy`
+- **`deploy`**: runs `build-all:production` then `firebase-deploy`
 
 Additionally a **`functions`** build target has been added to the `todos-web` project as below.
 
@@ -199,13 +199,13 @@ $ ng run todos-web-functions:build-all:production
 deploy your application:
 
 ```bash
-$ ng run todos-web-functions:deploy
+$ ng run todos-web-functions:firebase-deploy
 ```
 
 Note: The above two commands can be combined by running
 
 ```bash
-$ ng run todos-web-functions:build-and-deploy
+$ ng run todos-web-functions:deploy
 ```
 
 The URL's that your application is hosted at will be output to the terminal.

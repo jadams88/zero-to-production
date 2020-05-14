@@ -19,7 +19,7 @@ ng serve server-lambda
 When you are ready to build and deploy your cloud functions run
 
 ```bash
-ng run server-lambda:build-and-deploy
+ng run server-lambda:deploy
 ```
 
 This will build and bundle your application inside the `dist/` directory of the project and then [serverless] will package and deploy your API to AWS Lambda.

@@ -236,7 +236,7 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
             cwd: functionsDirectory,
           },
         },
-        deploy: {
+        'firebase-deploy': {
           builder: '@nrwl/workspace:run-commands',
           options: {
             commands: [
@@ -245,12 +245,12 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
             cwd: functionsDirectory,
           },
         },
-        'build-and-deploy': {
+        deploy: {
           builder: '@angular-devkit/architect:concat',
           options: {
             targets: [
               { target: `${projectName}:build-all:production` },
-              { target: `${projectName}:deploy` },
+              { target: `${projectName}:firebase-deploy` },
             ],
           },
         },
