@@ -132,6 +132,7 @@ workflows:
             branches:
               only: master
       - server-lambda-deploy:
+          context: aws
           requires:
             - release
           filters:

@@ -20,7 +20,7 @@ steps:
     args:
       - build
       - -t
-      - gcr.io/[PROJECT_ID]/$_PROJECT_NAME
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME
       - -f
       - docker/server.Dockerfile
       - --build-arg
@@ -32,14 +32,14 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       - tag
-      - gcr.io/[PROJECT_ID]/$_PROJECT_NAME
-      - gcr.io/[PROJECT_ID]/$_PROJECT_NAME:[$TAG_NAME]
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME:$TAG_NAME
 
   # Push the image to Google Cloud Registry
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - gcr.io/[PROJECT_ID]/$_PROJECT_NAME:[$TAG_NAME]
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME:$TAG_NAME
 
   # Trigger a rolling update for the cluster
   - name: gcr.io/cloud-builders/kubectl
@@ -47,7 +47,7 @@ steps:
       - set
       - image
       - deployment/$_DEPLOYMENT_NAME
-      - $_CONTAINER_NAME=gcr.io/[PROJECT_ID]/$_PROJECT_NAME:[$TAG_NAME]
+      - $_CONTAINER_NAME=gcr.io/$PROJECT_ID/$_PROJECT_NAME:$TAG_NAME
     env:
       # - CLOUDSDK_COMPUTE_REGION=$_CLUSTER_REGION
       - CLOUDSDK_COMPUTE_ZONE=$_CLUSTER_ZONE
