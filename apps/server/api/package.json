@@ -8,9 +8,9 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "@koa/cors": "^3.0.0",
+    "@koa/cors": "^3.1.0",
     "@koa/router": "^8.0.8",
-    "@sendgrid/mail": "^7.1.0",
+    "@sendgrid/mail": "^7.1.1",
     "apollo-server-koa": "^2.13.1",
     "bcryptjs": "^2.4.3",
     "dataloader": "^2.0.0",
@@ -18,7 +18,7 @@
     "graphql": "^15.0.0",
     "graphql-iso-date": "^3.6.1",
     "jsonwebtoken": "^8.5.1",
-    "koa": "^2.11.0",
+    "koa": "^2.12.0",
     "koa-bearer-token": "^1.0.0",
     "koa-bodyparser": "^4.3.0",
     "koa-compress": "^4.0.1",
@@ -26,14 +26,14 @@
     "lodash.keyby": "^4.6.0",
     "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
-    "mongoose": "^5.9.13",
+    "mongoose": "^5.9.14",
     "pem-jwk": "^2.0.0",
     "jwks-rsa": "^1.8.0"
   },
   "devDependencies": {
-    "@angular/cli": "^9.1.5",
+    "@angular/cli": "^9.1.6",
     "@uqt/ng-node": "^0.0.6",
     "typescript": "~3.8.3",
-    "@types/mongoose": "^5.7.18"
+    "@types/mongoose": "^5.7.20"
   }
 }

@@ -8,6 +8,8 @@
 # $_CLUSTER_ZONE: k8s cluster zone
 # $_CLUSTER_NAME: k8s cluster name
 #
+# The build account must have the 'Kubernetes Engine - Kubernetes Engine Developer' role enabled
+#
 # This may vary for your use case, however for the purpose of the example/guide the build
 # trigger is set up to trigger when a new tag (semantic release bot) of 'v*' is pushed to
 # the repo. This will trigger and new
