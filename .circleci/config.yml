@@ -19,6 +19,11 @@ deps-cache: &deps-cache
     paths:
       - ./node_modules
 
+master-only: &master-only
+  filters:
+    branches:
+      only: master
+
 jobs:
   checkout-and-install:
     <<: *setup
@@ -116,31 +121,21 @@ workflows:
   release-and-deploy:
     jobs:
       - checkout-and-install:
-          filters:
-            branches:
-              only: master
+          <<: *master-only
       - build-and-test-latest:
+          <<: *master-only
           requires:
             - checkout-and-install
-          filters:
-            branches:
-              only: master
       - release:
+          <<: *master-only
           requires:
             - build-and-test-latest
-          filters:
-            branches:
-              only: master
       - server-lambda-deploy:
           context: aws
+          <<: *master-only
           requires:
             - release
-          filters:
-            branches:
-              only: master
       - examples-web-deploy:
+          <<: *master-only
           requires:
             - release
-          filters:
-            branches:
-              only: master
