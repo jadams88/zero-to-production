@@ -11,7 +11,8 @@
 
 // https://tympanus.net/Development/InlineAnchorStyles/
 
-a[href*='http'] {
+a[href*='http'],
+a[href*='#'] {
   --anchor-link: var(--anchor-link-http-light);
   outline: none;
   text-decoration: none;
@@ -30,7 +31,8 @@ a[href*='http'] {
 }
 
 .dark-theme {
-  a[href*='http'] {
+  a[href*='http'],
+  a[href*='#'] {
     --anchor-link: var(--anchor-link-http-dark);
   }
 }

@@ -16,10 +16,10 @@ spec:
     spec:
       restartPolicy: Always
       containers:
-        - name: z2p-api
+        - name: server-api
           # The image of the container on google cloud
           # Replace the image name with image you created from your API server
-          image: gcr.io/zero-to-production/z2p-api
+          image: gcr.io/zero-to-production/server-api
           imagePullPolicy: Always
           # Configure all the environment variables
           env:

@@ -3,8 +3,11 @@
 #
 # $_PROJECT_NAME : The name of the project in the monorepo
 # $_PROJECT_DIRECTORY: The directory of src files
-# $_DEPLOYMENT_NAME: The name of the K8s deployment (used by kubectl to update the image and perform a rolling update)
-# $_CONTAINER_NAME: The name of the specific container
+#
+# The following are used by kubectl to update the image and trigger a rolling update)
+#
+# $_DEPLOYMENT_NAME: The name of the K8s deployment
+# $_CONTAINER_NAME: The name of the specific container.
 # $_CLUSTER_ZONE: k8s cluster zone
 # $_CLUSTER_NAME: k8s cluster name
 #
@@ -12,8 +15,10 @@
 #
 # This may vary for your use case, however for the purpose of the example/guide the build
 # trigger is set up to trigger when a new tag (semantic release bot) of 'v*' is pushed to
-# the repo. This will trigger and new
-
+# the repo. This will trigger a rebuild and update of the kubernetes deployment
+#
+# Alternatively the command `kubectl rollout restart deployment` can be used to trigger an update.
+#
 # https://cloud.google.com/cloud-build/docs/configuring-builds/substitute-variable-values
 #
 steps:
@@ -54,14 +59,3 @@ steps:
       # - CLOUDSDK_COMPUTE_REGION=$_CLUSTER_REGION
       - CLOUDSDK_COMPUTE_ZONE=$_CLUSTER_ZONE
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER_NAME
-  # # Trigger a rolling update for the cluster
-  # - name: gcr.io/cloud-builders/kubectl
-  #   args:
-  #     - rollout
-  #     - restart
-  #     - deployment
-  #     - $_DEPLOYMENT_NAME
-  #   env:
-  #     # - CLOUDSDK_COMPUTE_REGION=$_CLUSTER_REGION
-  #     - CLOUDSDK_COMPUTE_ZONE=$_CLUSTER_ZONE
-  #     - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER_NAME
