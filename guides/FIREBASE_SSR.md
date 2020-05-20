@@ -114,19 +114,16 @@ const distFolder = join(process.cwd(), 'dist/todos-web/browser');
 const distFolder = join(process.cwd(), 'dist/browser');
 ```
 
-Along with the normal Angular Cli targets (**`ng build|test|lint <project>`**) some additional targets have been added.
+The available Angular CLI targets are:
 
-- **`build-all`** (& **`build-all:production`**): build the functions as well as both the client app and server side bundle into the functions `dist/` directory.
-- **`run`**: sets the CWD to the project src directory (i.e. `apps/todos/todos-web-functions`) and executes
+- **`build`** (& **`build:production`**): builds project as well as both the client app and server side bundle into the functions `dist/` directory.
+- **`serve`**: builds and serves the project with
   ```bash
-  $ firebase server --project <your-firebase-project>
+  firebase server --project <your-firebase-project>
   ```
-- **`serve`**: executes `build-all` then `run`
-- **`firebase-deploy`**: sets the CWD the project src directory (i.e. `apps/todos/todos-web-functions`) and executes.
-  ```bash
-  $ firebase deploy --project <your-firebase-project>
-  ```
-- **`deploy`**: runs `build-all:production` then `firebase-deploy`
+- **`deploy`**: executes `build:production` then deploys the project to firebase.
+
+Refer to the `angular.json` file for a complete list of targets.
 
 Additionally a **`functions`** build target has been added to the `todos-web` project as below.
 
@@ -193,16 +190,10 @@ $ ng serve todos-web-functions
 When ready for deployment, make a production build:
 
 ```bash
-$ ng run todos-web-functions:build-all:production
+$ ng run todos-web-functions:build:production
 ```
 
 deploy your application:
-
-```bash
-$ ng run todos-web-functions:firebase-deploy
-```
-
-Note: The above two commands can be combined by running
 
 ```bash
 $ ng run todos-web-functions:deploy
