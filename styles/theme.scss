@@ -1,11 +1,11 @@
 :root {
   // General color pallet
-  --light-primary-color: #ffaa00;
-  --light-accent-color: #0047b3;
-  --dark-primary-color: #d33685;
-  --dark-accent-color: #20eff0;
+  --light-primary-color: #516a84;
+  --light-accent-color: #519191;
+  --dark-primary-color: #80a7d1;
+  --dark-accent-color: #f7ded6;
 
   // Anchor tag color
-  --anchor-link-http-light: #0084c2;
-  --anchor-link-http-dark: #ba3075; //#e03a8d
+  --anchor-link-http-light: var(--light-accent-color);
+  --anchor-link-http-dark: var(--dark-accent-color);
 }

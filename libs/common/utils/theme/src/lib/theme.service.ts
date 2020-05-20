@@ -11,6 +11,11 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { Observable, BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { MediaQueryService } from '@ztp/common/utils/media-query';
 
+// TODO -> Document theme service
+// Credits
+// https://medium.com/better-programming/angular-multiple-themes-without-killing-bundle-size-with-material-or-not-5a80849b6b34
+//
+
 interface IThemeSettings {
   darkMode?: boolean;
   lightPrimary?: string | null;
@@ -82,10 +87,10 @@ export class ThemeService extends MediaQueryService implements OnDestroy {
 
   get defaultTheme() {
     return {
-      lightPrimary: '#ffaa00',
-      lightAccent: '#0047B3',
-      darkPrimary: '#d33685',
-      darkAccent: '#20eff0',
+      lightPrimary: '#516a84',
+      lightAccent: '#519191',
+      darkPrimary: '#80a7d1',
+      darkAccent: '#f7ded6',
     };
   }
 
@@ -100,12 +105,14 @@ export class ThemeService extends MediaQueryService implements OnDestroy {
     darkPrimary = null,
     darkAccent = null,
   }: IThemeSettings = {}) {
-    const rootElement = this.document.querySelector(':root') as HTMLElement;
+    if (isPlatformBrowser(this.platformId)) {
+      const rootElement = this.document.querySelector(':root') as HTMLElement;
 
-    rootElement.style.setProperty('--light-primary-color', lightPrimary);
-    rootElement.style.setProperty('--light-accent-color', lightAccent);
-    rootElement.style.setProperty('--dark-primary-color', darkPrimary);
-    rootElement.style.setProperty('--dark-accent-color', darkAccent);
+      rootElement.style.setProperty('--light-primary-color', lightPrimary);
+      rootElement.style.setProperty('--light-accent-color', lightAccent);
+      rootElement.style.setProperty('--dark-primary-color', darkPrimary);
+      rootElement.style.setProperty('--dark-accent-color', darkAccent);
+    }
   }
 
   private setThemeSettings(theme: { [key: string]: string | boolean }) {
