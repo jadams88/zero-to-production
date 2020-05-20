@@ -24,6 +24,11 @@ master-only: &master-only
     branches:
       only: master
 
+ignore-master: &ignore-master
+  filters:
+    branches:
+      ignore: master
+
 jobs:
   checkout-and-install:
     <<: *setup
@@ -114,8 +119,10 @@ workflows:
   version: 2
   build-and-test:
     jobs:
-      - checkout-and-install
+      - checkout-and-install:
+          <<: *ignore-master
       - build-and-test-affected:
+          <<: *ignore-master
           requires:
             - checkout-and-install
   release-and-deploy:
