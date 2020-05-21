@@ -1,51 +1,59 @@
 $darkColor: rgba(white, 0.74);
 
-.nav-button {
-  margin-right: 0.1;
-  @media screen and (min-width: 600px) {
-    margin-right: 0.5rem;
-  }
-
-  &:last-child {
-    margin-right: 0;
-  }
-}
-
-.git-logo {
-  text-decoration: none;
-  height: 1.75em;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  cursor: pointer;
-
-  > svg {
-    height: 100%;
-    * > path {
-      fill: black;
-    }
-  }
-
-  > p {
+:host {
+  .nav-button {
+    margin-right: 0.1;
     color: black;
-    display: none;
-    font-size: 1em;
-    margin: 0 0.5em;
-
+    text-decoration: none;
     @media screen and (min-width: 600px) {
-      display: inline;
+      margin-right: 0.5rem;
+    }
+
+    &:last-child {
+      margin-right: 0;
     }
   }
-}
 
-:host-context(.dark-theme) {
   .git-logo {
-    p {
+    text-decoration: none;
+    height: 1.75em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+
+    > svg {
+      height: 100%;
+      * > path {
+        fill: black;
+      }
+    }
+
+    > p {
+      color: black;
+      display: none;
+      font-size: 1em;
+      margin: 0 0.5em;
+
+      @media screen and (min-width: 600px) {
+        display: inline;
+      }
+    }
+  }
+
+  :host-context(.dark-theme) {
+    .nav-button {
       color: $darkColor;
     }
-    > svg {
-      * > path {
-        fill: $darkColor;
+
+    .git-logo {
+      p {
+        color: $darkColor;
+      }
+      > svg {
+        * > path {
+          fill: $darkColor;
+        }
       }
     }
   }
