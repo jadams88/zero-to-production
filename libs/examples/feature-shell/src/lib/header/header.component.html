@@ -4,14 +4,13 @@
       <a
         *ngFor="let route of navRoutes"
         class="nav-button"
-        ztp-anchor
         [routerLink]="route.link"
         [state]="{ skipLink: 'main-nav-' + route.aria }"
         ztpSkipLink
         [title]="'main-nav-' + route.aria"
         routerLinkActive
         #rla="routerLinkActive"
-        [active]="rla.isActive"
+        [ngClass]="{ active: rla.isActive }"
       >
         {{ route.label }}
       </a>

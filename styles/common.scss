@@ -11,9 +11,9 @@
 
 // https://tympanus.net/Development/InlineAnchorStyles/
 
-// a[href*='http'],
-// a[href*='#'] {
-a {
+// material components use a class of 'mat-...' for whatever
+// component they use. Style all components NOT material ones
+a:not([class*='mat-']) {
   --anchor-link: var(--anchor-link-http-light);
   outline: none;
   text-decoration: none;
@@ -32,9 +32,7 @@ a {
 }
 
 .dark-theme {
-  // a[href*='http'],
-  // a[href*='#'] {
-  a {
+  a:not([class*='mat-']) {
     --anchor-link: var(--anchor-link-http-dark);
   }
 }

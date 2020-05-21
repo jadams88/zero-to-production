@@ -3,10 +3,19 @@ $darkColor: rgba(white, 0.74);
 :host {
   .nav-button {
     margin-right: 0.1;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     color: black;
     text-decoration: none;
+
     @media screen and (min-width: 600px) {
       margin-right: 0.5rem;
+    }
+
+    &:focus,
+    &:hover,
+    &.active {
+      background-color: rgba(0, 0, 0, 0.1);
     }
 
     &:last-child {
