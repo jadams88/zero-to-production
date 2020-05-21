@@ -1,3 +1,17 @@
+# This CI configuration is broken into two workflows
+#
+# build-and-test: Workflow jobs are triggered on PR's into the master branch
+# Uses 'nx affected' to lint, test & build any app or lib that has been affected
+# bt the PR
+#
+# release-and-deploy: Workflow jobs only run when commit to master has been added
+# (a PR has been merged). This workflow with lint, test & build the affected apps
+# between the last commit to master. It will then run 'semantic release' to create
+# a new semver GitHub release based on the commit message. If either the
+# 'examples-web-functions' app (demo site hosted on Firebase) or the 'server-lambda'
+# app (API server hosted on AWS Lambda) are affected by the release they will be built
+# and automatically deployed.
+#
 version: 2.1
 
 orbs:
@@ -38,6 +52,7 @@ jobs:
       - run: npm install --no-save --silent
       - <<: *deps-cache
 
+  # Uses 'nx affected' to lint, test & build and effected project from the PR
   build-and-test-affected:
     <<: *setup
     steps:
@@ -53,6 +68,7 @@ jobs:
           name: Building Affected Applications
           command: npx nx affected --target=build --base=origin/master --head=HEAD --parallel=false --configuration=ci
 
+  # Uses 'nx affected' to lint, test & build and effected project between the latest commit
   build-and-test-latest:
     <<: *setup
     steps:
@@ -68,6 +84,7 @@ jobs:
           name: Building Affected Applications
           command: npx nx affected --target=build --base=master~1 --head=master --parallel=false --configuration=ci
 
+  # Run semantic release to create a new semver release and publish to github
   release:
     <<: *setup
     steps:
@@ -77,6 +94,7 @@ jobs:
           name: Release
           command: npm run semantic-release || true
 
+  # Check if the 'server-lambda' project was affected and deploy
   server-lambda-deploy:
     <<: *setup
     steps:
@@ -97,7 +115,8 @@ jobs:
               echo "Server Lambda was not affected";
             fi
 
-  examples-web-deploy:
+  # Check if the 'examples-web-functions' project was affected and deploy
+  examples-web-functions-deploy:
     <<: *setup
     steps:
       - checkout
@@ -142,7 +161,7 @@ workflows:
           <<: *master-only
           requires:
             - release
-      - examples-web-deploy:
+      - examples-web-functions-deploy:
           <<: *master-only
           requires:
             - release

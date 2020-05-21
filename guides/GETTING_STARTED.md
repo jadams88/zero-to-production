@@ -97,6 +97,14 @@ Note that before you can run the the API the following must be configured
 
 - Nested `package.json` files - Although this is a Monorepo with a root level `package.json` for managing dependencies, an additional `package.json` file is located within the API server directory. The `server.Dockerfile` build process will use the nested `package.json` to install all its development & production dependencies that are specific to the the server project only. If you install or remove any dependencies (via `npm install/uninstall <package>`) for the API they will have to be added manually to nested `package.json` file. Once the dependencies have been added, on each git commit the version numbering will be synced to the root `package.json` file automatically.
 
+#### Continuos Integration & Semantic Release
+
+In shot, Circle CI is set up to run two workflows. The first, `build-and-test`, will run on any PR into master and lint, test & build all affected apps/libs by the changes.
+
+The second, `release-and-deploy`, runs on any commit to master (i,e, any PR being merged) and will lint, test, & build the effected projects, generate a new semver release based on the commit messages and publish to GitHub. If any of the projects are affected by the changes they will be deployed to the respective service (Firebase Functions, AWS Lambda). Any release will also trigger a Kubernetes rolling update of the API server. See the [kubernetes guide] for further info.
+
+Edit the CI config file located at`.circleci/config.yml` to suite your own needs.
+
 #### Guides & Deployment
 
 The following guides are a series of instructions to take your newly cloned project from local development to a deployed working frontend & API.
@@ -149,6 +157,7 @@ Deploy your serverless API with [AWS Lambda]
 [google cloud]: https://cloud.google.com
 [aws]: https://aws.amazon.com/
 [aws lambda]: https://zero-to-production/guides/guides/aws-lambda
+[kubernetes guide]: https://zero-to-production.dev/guides/google-cloud-k8s
 
 <!-- - Deploy your serverless API with [AWS Lambda]
 - Deploy you Angular app with [Firebase Hosting]
