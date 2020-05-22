@@ -23,7 +23,7 @@ const updatedTodo = {
 
 createGraphQLSpec(
   schema,
-  authConfig.accessToken,
+  { ...authConfig.accessToken, keyId: 'keyId' },
   server,
   /*userResource */ true
 )(Todo, 'Todo', todo, updatedTodo, User);
