@@ -156,7 +156,7 @@ Deploy your serverless API with [AWS Lambda]
 [firebase]: https://firebase.google.com
 [google cloud]: https://cloud.google.com
 [aws]: https://aws.amazon.com/
-[aws lambda]: https://zero-to-production/guides/guides/aws-lambda
+[aws lambda]: https://zero-to-production.dev/guides/guides/aws-lambda
 [kubernetes guide]: https://zero-to-production.dev/guides/google-cloud-k8s
 
 <!-- - Deploy your serverless API with [AWS Lambda]
@@ -164,7 +164,7 @@ Deploy your serverless API with [AWS Lambda]
 - Add server side rendering to your Angular app with [Angular Universal & Firebase Functions]
 - Migrate your API from serverless functions to a Kubernetes Cluster with [Google Cloud Kubernetes] -->
 
-<!-- [firebase hosting]: https://zero-to-production/guides/guides/firebase-hosting -->
+<!-- [firebase hosting]: https://zero-to-production.dev/guides/guides/firebase-hosting -->
 <!--
-[angular universal & firebase functions]: https://zero-to-production/guides/ssr-firebase-functions -->
-<!-- [google cloud kubernetes]: https://zero-to-production/guides/google-cloud-k8s -->
+[angular universal & firebase functions]: https://zero-to-production.dev/guides/ssr-firebase-functions -->
+<!-- [google cloud kubernetes]: https://zero-to-production.dev/guides/google-cloud-k8s -->

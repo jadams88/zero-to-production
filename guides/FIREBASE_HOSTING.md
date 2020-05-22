@@ -69,4 +69,4 @@ When your application warrants it add server side rendering by follow the [SSR a
 [prerequisites]: https://zero-to-production.dev/guides/getting-started
 [nginx & docker]: https://github.com/jonathonadams/zero-to-production/docker/README.md
 [custom domain]: https://firebase.google.com/docs/hosting/custom-domain
-[ssr and deploy on firebase functions]: https://zerp-to-production/guides/ssr-firebase-functions
+[ssr and deploy on firebase functions]: https://zero-to-production.dev/guides/ssr-firebase-functions
