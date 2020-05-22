@@ -26,7 +26,7 @@
 
 ### DevOps
 
-- [ ] Configure the build script to tag Docker images
+- [x] Configure the build script to tag Docker images
 - [ ] Configure the Load Balance to uses HTTP2 from Load balancer through to Reverse Proxy
   - Can the certificates be accessed from the ManagedCertificate Resource?
 - [ ] Create a lambda / cron docker container to create database indexes
