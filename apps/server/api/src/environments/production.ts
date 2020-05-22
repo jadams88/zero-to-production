@@ -7,9 +7,6 @@ import { ServerAuthConfig } from '@ztp/server/auth';
 const audience = getEnvVariableOrWarn('AUDIENCE');
 const authServerUrl = getEnvVariableOrWarn('AUTH_SERVER_URL');
 
-// TODO -> They keyId should be some sort of hash or something
-const keyId = 'some-random-key-id';
-
 /**
  * Production environment settings
  */
@@ -34,7 +31,6 @@ export const prodAuthConfig: ServerAuthConfig = {
     ),
     issuer: getEnvVariableOrWarn('ISSUER'),
     audience,
-    keyId,
   },
   refreshToken: {
     privateKey: getEnvVariableOrWarn('REFRESH_TOKEN_PRIVATE_KEY'),

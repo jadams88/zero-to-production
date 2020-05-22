@@ -1,4 +1,4 @@
-import { createPublicKey } from 'crypto';
+import { createPublicKey, createHash } from 'crypto';
 // @ts-ignore
 import omit from 'lodash.omit';
 import { IUserModel } from '@ztp/server/core-data';
@@ -12,7 +12,6 @@ import {
   IVerificationTokenModel,
   IRefreshTokenModel,
   AuthModuleConfig,
-  JWKSGuardConfig,
 } from './auth.interface';
 
 export function isPasswordAllowed(password: string): boolean {
@@ -72,16 +71,24 @@ export function generateAuthModuleConfig(
   config: ServerAuthConfig
 ): AuthModuleConfig {
   const { publicKey, privateKey } = config.accessToken;
+  const pubKey = publicKey ? publicKey : createPublicPemFromPrivate(privateKey);
+
+  // The KeyId is used to retrieve the appropriate public key from a JWKS.
+  // There structure of the key is unspecified (https://tools.ietf.org/html/rfc7517#section-4.5)
+  // It is common practice to generate a UUID or similar as the key, however this
+  // will not work in a scenario such as a cloud functions (lambda) or in K8s
+  // where they can be any number of containers. So create a hash from public
+  // key as the keyId
+  const keyId = createHash('md5').update(pubKey).digest('hex');
+
   return {
     jwks: config.jwksRoute
       ? {
-          publicKey: publicKey
-            ? publicKey
-            : createPublicPemFromPrivate(privateKey),
-          keyId: config.accessToken.keyId,
+          publicKey: pubKey,
+          keyId,
         }
       : undefined,
-    login: { User, ...config.accessToken },
+    login: { User, ...config.accessToken, keyId },
     register: { User, VerificationToken, ...config.accessToken },
     verify: { User, VerificationToken, ...config.accessToken },
     authorize: {
@@ -89,11 +96,13 @@ export function generateAuthModuleConfig(
       RefreshToken,
       ...config.accessToken,
       ...config.refreshToken,
+      keyId,
     },
     refresh: {
       RefreshToken,
       ...config.accessToken,
       ...config.refreshToken,
+      keyId,
     },
     revoke: { RefreshToken },
     email: config.email,

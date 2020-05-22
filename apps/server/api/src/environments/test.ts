@@ -5,7 +5,6 @@ import { ServerAuthConfig } from '@ztp/server/auth';
 
 const audience = 'http://localhost:3000';
 const authServerUrl = audience;
-const keyId = 'some-random-key-id';
 
 const privateKey = `-----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAXf+ZATlbBu+O
@@ -67,7 +66,6 @@ export const testAuthConfig: ServerAuthConfig = {
     expireTime: 86400,
     issuer: 'ISSUER',
     audience,
-    keyId,
   },
   refreshToken: {
     privateKey,

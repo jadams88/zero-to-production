@@ -8,9 +8,6 @@ const audience = process.env.AUDIENCE || `http://localhost:${process.env.PORT}`;
 const authServerUrl =
   process.env.AUTH_SERVER_URL || `http://localhost:${process.env.PORT}`;
 
-// TODO -> They keyId should be some sort of hash or something
-const keyId = 'some-random-key-id';
-
 /**
  * Development environment settings
  */
@@ -33,7 +30,6 @@ export const devAuthConfig: ServerAuthConfig = {
     expireTime: envToNumber(process.env.ACCESS_TOKEN_EXPIRE_TIME, 86400),
     issuer: getEnvVariableOrWarn('ISSUER'),
     audience,
-    keyId,
   },
   refreshToken: {
     privateKey: getEnvVariableOrWarn('REFRESH_TOKEN_PRIVATE_KEY'),

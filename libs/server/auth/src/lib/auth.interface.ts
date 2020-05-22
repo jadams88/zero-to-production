@@ -165,7 +165,6 @@ export interface ServerAuthConfig {
     publicKey?: string;
     expireTime: number;
     issuer: string;
-    keyId: string;
     audience: string;
   };
   refreshToken: {
