@@ -7,6 +7,10 @@ A full stack Monorepo starter with Angular, NgRx, Koa.js, GraphQL & Kubernetes.
 by Jonathon Adams  
 Email: [jono.adams22@gmail.com](mailto:jono.adams22@gmail.com?subject=Zero%20to%20Production)
 
+<img src="./pics/main.png"  alt="main page" title="Main" width="600" style="text-align:center" /><br/>
+<img src="./pics/examples.png"  alt="examples page" title="Examples" width="400" />
+<img src="./pics/guides.png"  alt="guides page" title="Guides" width="400" />
+
 ## Demo Site
 
 Visit the [demo site]
@@ -21,8 +25,8 @@ Follow the [getting started] guide to re-band, setup local development and make 
 
 Follow the following guides to deploy your Web App and API server.
 
-- Serverless API on [AWS Lambda]
-- Angular App on [Firebase Hosting]
+- Deploy your serverless API on [AWS Lambda]
+- Host your Angular App on [Firebase Hosting]
 - Convert your Angular App to server side rendering with [Firebase Functions]
 - Migrate your serverless API to Kubernetes on [Google Cloud Kubernetes]
 
