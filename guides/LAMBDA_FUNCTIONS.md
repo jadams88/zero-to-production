@@ -2,7 +2,7 @@
 
 Ensure you have completed all the [prerequisites].
 
-#### Run you Functions locally
+#### Run your Functions locally
 
 Almost all of the heavy lifting of deploying and configuring your [AWS Lambda] functions is taken care of by the [Serverless] framework.
 
