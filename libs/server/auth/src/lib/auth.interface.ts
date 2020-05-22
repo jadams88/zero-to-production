@@ -70,7 +70,7 @@ export interface VerifyControllerConfig {
 }
 
 export interface RegistrationControllerConfig extends VerifyControllerConfig {
-  verificationEmail: VerifyEmail;
+  verifyEmail: VerifyEmail;
 }
 
 // export interface AvailableControllerConfig {

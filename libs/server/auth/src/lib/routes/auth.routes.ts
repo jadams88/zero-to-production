@@ -40,13 +40,13 @@ import { createJsonWebKeySetRoute } from './jwks';
  * JWKS Route at '/.well-known/jwks.json' that hosts the public key
  */
 export function applyAuthRoutes(config: AuthModuleConfig) {
-  const verificationEmail = setupEmailVerification(config.email);
+  const verifyEmail = setupEmailVerification(config.email);
 
   const router = new Router();
   router.post('/authorize/login', login(config.login));
   router.post(
     '/authorize/register',
-    register({ ...config.register, verificationEmail })
+    register({ ...config.register, verifyEmail })
   );
   router.get('/authorize/verify', verify(config.verify));
   router.get('/authorize/available', usernameAvailable(config.login));

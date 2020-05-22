@@ -13,7 +13,7 @@ TODO
 ## Configuration Options
 
 TODO -> Document environment variables for Auth module
-TODO -> Sendgrid API Key, including template
+TODO -> Sendgrid API Key, including template -> move out of auth module?
 TODO -> With JWKS or without (for guards). With Refresh Token route or not
 
 ## Generate RS256 Private / Pub Key pair

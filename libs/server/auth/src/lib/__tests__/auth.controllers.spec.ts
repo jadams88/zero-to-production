@@ -50,7 +50,7 @@ function mockRegistrationController(email: jest.Mock<any, any> = jest.fn()) {
   return setupRegisterController({
     User: (MockUserModel as unknown) as IUserModel,
     VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,
-    verificationEmail: email,
+    verifyEmail: email,
   });
 }
 
@@ -115,7 +115,7 @@ describe(`Authentication Controllers`, () => {
       const createdUser = await setupRegisterController({
         User: (MockUserModel as unknown) as IUserModel,
         VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,
-        verificationEmail: jest.fn(),
+        verifyEmail: jest.fn(),
       })({ ...userWithPassword });
 
       expect(createdUser).toBeTruthy();

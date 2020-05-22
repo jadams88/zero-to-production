@@ -16,8 +16,8 @@ import { setupEmailVerification } from '../send-email';
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 // email they receive
 export function getAuthResolvers(config: AuthModuleConfig): IResolvers {
-  const verificationEmail = setupEmailVerification(config.email);
-  const registerConfig = { ...config.register, verificationEmail };
+  const verifyEmail = setupEmailVerification(config.email);
+  const registerConfig = { ...config.register, verifyEmail };
   return {
     Query: {
       usernameAvailable: usernameAvailableResolver(config.login),

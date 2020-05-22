@@ -18,7 +18,7 @@ import { verifyRefreshToken } from './authenticate';
 export function setupRegisterController({
   User,
   VerificationToken,
-  verificationEmail,
+  verifyEmail,
 }: RegistrationControllerConfig) {
   return async (user: IUser) => {
     const password: string = (user as any).password;
@@ -50,7 +50,7 @@ export function setupRegisterController({
     const [savedUser] = await Promise.all([
       newUser.save(),
       verificationToken.save(),
-      verificationEmail(user.email, verificationToken.token),
+      verifyEmail(user.email, verificationToken.token),
     ]);
 
     return userToJSON<IUser>(savedUser);
