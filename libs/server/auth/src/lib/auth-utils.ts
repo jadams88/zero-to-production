@@ -12,6 +12,7 @@ import {
   IVerificationTokenModel,
   IRefreshTokenModel,
   AuthModuleConfig,
+  VerifyEmail,
 } from './auth.interface';
 
 export function isPasswordAllowed(password: string): boolean {
@@ -68,7 +69,8 @@ export function generateAuthModuleConfig(
   User: IUserModel,
   VerificationToken: IVerificationTokenModel,
   RefreshToken: IRefreshTokenModel,
-  config: ServerAuthConfig
+  config: ServerAuthConfig,
+  email: VerifyEmail
 ): AuthModuleConfig {
   const { publicKey, privateKey } = config.accessToken;
   const pubKey = publicKey ? publicKey : createPublicPemFromPrivate(privateKey);
@@ -105,7 +107,7 @@ export function generateAuthModuleConfig(
       keyId,
     },
     revoke: { RefreshToken },
-    email: config.email,
+    email,
   };
 }
 

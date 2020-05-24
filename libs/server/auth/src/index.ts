@@ -19,6 +19,7 @@ export {
 } from './lib/auth.interface';
 export { getRestGuards } from './lib/routes/route.guards';
 export { applyAuthRoutes } from './lib/routes/auth.routes';
+export { configureSendGridEmail } from './lib/send-email';
 
 export * from './lib/graphql';
 

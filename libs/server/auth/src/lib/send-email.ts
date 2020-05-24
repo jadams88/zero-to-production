@@ -1,7 +1,7 @@
 import sgMail from '@sendgrid/mail';
 import { EmailVerificationConfig } from './auth.interface';
 
-export function setupEmailVerification({
+export function configureSendGridEmail({
   sendGridApiKey,
   authServerUrl,
 }: EmailVerificationConfig) {

@@ -5,11 +5,11 @@ import { IUser } from '@ztp/data';
 import { IUserModel } from '@ztp/server/core-data';
 import {
   setupRegisterController,
+  setupVerifyController,
   setupLoginController,
   setupAuthorizeController,
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
-  setupVerifyController,
   setupUsernameAvailableController,
 } from '../auth.controllers';
 import { MockUserModel } from './user.mock';
@@ -17,14 +17,50 @@ import { MockRefreshTokenModel } from './refresh-token.mock';
 import { signRefreshToken } from '../sign-tokens';
 import { MockVerificationToken } from './verification.mock';
 import { privateKey } from './rsa-keys';
+import { IVerificationTokenModel } from '../auth.interface';
 import {
-  IVerificationTokenModel,
-  IRefreshTokenModel,
-  LoginControllerConfig,
-} from '../auth.interface';
+  mockRegistrationConfig,
+  audience,
+  issuer,
+  mockVerificationConfig,
+  mockLoginConfig,
+  mockAuthorizeConfig,
+  mockRefreshTokenConfig,
+  mockRevokeConfig,
+} from './setup';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();
+}
+
+export function mockRegistrationController(
+  email: jest.Mock<any, any> = jest.fn()
+) {
+  return setupRegisterController(mockRegistrationConfig(email));
+}
+
+export function mockVerificationController() {
+  return setupVerifyController(mockVerificationConfig());
+}
+
+export function mockLoginController() {
+  return setupLoginController(mockLoginConfig());
+}
+
+export function mockAuthorizeController() {
+  return setupAuthorizeController(mockAuthorizeConfig());
+}
+
+export function mockRefreshTokenController() {
+  return setupRefreshAccessTokenController(mockRefreshTokenConfig());
+}
+
+export function mockRevokeController() {
+  return setupRevokeRefreshTokenController(mockRevokeConfig());
+}
+
+export function mockUsernameAvailableController() {
+  return setupUsernameAvailableController(mockLoginConfig());
 }
 
 const userToRegister = ({
@@ -41,71 +77,6 @@ const userWithPassword = ({
   ...userToRegister,
   password: 'adf#jf3@#FD!',
 } as any) as IUser;
-
-const issuer = 'some-issuer';
-const audience = 'say-hello!!!';
-const keyId = 'key-id';
-
-function mockRegistrationController(email: jest.Mock<any, any> = jest.fn()) {
-  return setupRegisterController({
-    User: (MockUserModel as unknown) as IUserModel,
-    VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,
-    verifyEmail: email,
-  });
-}
-
-function mockVerificationController() {
-  return setupVerifyController({
-    User: (MockUserModel as unknown) as IUserModel,
-    VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,
-  });
-}
-
-function mockLoginController() {
-  return setupLoginController({
-    User: (MockUserModel as unknown) as IUserModel,
-    privateKey,
-    expireTime: 100000,
-    issuer,
-    audience,
-    keyId,
-  });
-}
-
-function mockAuthorizeController() {
-  return setupAuthorizeController({
-    User: (MockUserModel as unknown) as IUserModel,
-    privateKey,
-    expireTime: 100000,
-    issuer,
-    audience,
-    keyId,
-    RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
-  });
-}
-
-function mockRefreshTokenController() {
-  return setupRefreshAccessTokenController({
-    privateKey,
-    audience,
-    keyId,
-    expireTime: 100000,
-    issuer,
-    RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
-  });
-}
-
-function mockRevokeController() {
-  return setupRevokeRefreshTokenController({
-    RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
-  });
-}
-
-function mockUsernameAvailableController() {
-  return setupUsernameAvailableController({
-    User: (MockUserModel as unknown) as IUserModel,
-  } as LoginControllerConfig);
-}
 
 describe(`Authentication Controllers`, () => {
   describe('register', () => {
@@ -135,7 +106,9 @@ describe(`Authentication Controllers`, () => {
       });
 
       expect(spy).toHaveBeenCalled();
-      expect(spy.mock.calls[0][0]).toBe(createdUser.email);
+      const [to, verificationToken] = spy.mock.calls[0];
+      expect(to).toBe(createdUser.email);
+      expect(verificationToken).toBeString();
 
       MockUserModel.reset();
       MockVerificationToken.reset();
@@ -300,7 +273,20 @@ describe(`Authentication Controllers`, () => {
       MockUserModel.reset();
     });
 
-    it('should throw unauthorized errors if the credentials are incorrect', async () => {
+    it('should throw unauthorized error if the User is not found', async () => {
+      MockUserModel.userToRespondWith = null;
+
+      await expect(
+        mockLoginController()(
+          userWithPassword.username,
+          (userWithPassword as any).password
+        )
+      ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+    });
+
+    it('should throw unauthorized error if the credentials are incorrect', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),
@@ -367,7 +353,7 @@ describe(`Authentication Controllers`, () => {
       MockRefreshTokenModel.reset();
     });
 
-    it('should throw unauthorized errors if the credentials are incorrect', async () => {
+    it('should throw unauthorized error if the credentials are incorrect', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),

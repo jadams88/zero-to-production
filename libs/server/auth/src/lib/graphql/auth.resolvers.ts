@@ -9,15 +9,13 @@ import {
 import {
   LoginControllerConfig,
   RegistrationControllerConfig,
-  AuthModuleConfig,
+  LoginAndRegisterConfig,
 } from '../auth.interface';
-import { setupEmailVerification } from '../send-email';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 // email they receive
-export function getAuthResolvers(config: AuthModuleConfig): IResolvers {
-  const verifyEmail = setupEmailVerification(config.email);
-  const registerConfig = { ...config.register, verifyEmail };
+export function getAuthResolvers(config: LoginAndRegisterConfig): IResolvers {
+  const registerConfig = { ...config.register, verifyEmail: config.email };
   return {
     Query: {
       usernameAvailable: usernameAvailableResolver(config.login),

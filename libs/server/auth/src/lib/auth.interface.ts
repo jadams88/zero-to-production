@@ -15,7 +15,7 @@ export interface LoginAndRegisterConfig {
   login: LoginControllerConfig;
   verify: VerifyControllerConfig;
   register: VerifyControllerConfig; // This is the same as verify because setting up the SendGrid email happens in the controller
-  email: EmailVerificationConfig;
+  email: VerifyEmail;
 }
 
 export interface AuthWithRefreshTokenConfig extends LoginAndRegisterConfig {

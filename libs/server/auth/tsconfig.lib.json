@@ -5,7 +5,7 @@
     "tsBuildInfoFile": "../../../dist/buildcache/server-auth.tsbuildinfo",
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts"],
+  "exclude": ["**/*.spec.ts", "**/__tests__/*.ts"],
   "include": ["**/*.ts"],
   "references": [
     { "path": "../../data/tsconfig.lib.json" },

@@ -4,16 +4,20 @@ import {
   generateAuthModuleConfig,
   createAuthSchema,
   getAuthResolvers,
+  configureSendGridEmail,
 } from '@ztp/server/auth';
 import { authConfig } from '../../environments';
 import { User } from '../api/users';
 import { VerificationToken, RefreshToken } from './models';
 
+const verifyEmail = configureSendGridEmail(authConfig.email);
+
 const authModuleConfig = generateAuthModuleConfig(
   User,
   VerificationToken,
   RefreshToken,
-  authConfig
+  authConfig,
+  verifyEmail
 );
 
 /**

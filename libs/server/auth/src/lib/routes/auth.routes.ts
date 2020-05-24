@@ -19,7 +19,6 @@ import {
   RevokeControllerConfig,
   AuthModuleConfig,
 } from '../auth.interface';
-import { setupEmailVerification } from '../send-email';
 import { isRefreshConfig } from '../auth-utils';
 import { createJsonWebKeySetRoute } from './jwks';
 
@@ -40,13 +39,11 @@ import { createJsonWebKeySetRoute } from './jwks';
  * JWKS Route at '/.well-known/jwks.json' that hosts the public key
  */
 export function applyAuthRoutes(config: AuthModuleConfig) {
-  const verifyEmail = setupEmailVerification(config.email);
-
   const router = new Router();
   router.post('/authorize/login', login(config.login));
   router.post(
     '/authorize/register',
-    register({ ...config.register, verifyEmail })
+    register({ ...config.register, verifyEmail: config.email })
   );
   router.get('/authorize/verify', verify(config.verify));
   router.get('/authorize/available', usernameAvailable(config.login));

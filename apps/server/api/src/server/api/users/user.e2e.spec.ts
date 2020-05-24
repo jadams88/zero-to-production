@@ -14,14 +14,14 @@ import { User } from './user.model';
 // and the Auth guard needs to be able to retrieve the JWKS
 const server = new ApiServer(new Koa());
 
-const user: IUser = ({
+const user: IUser = {
   username: 'test user',
   givenName: 'test',
   surname: 'user',
   email: 'test@domain.com',
   dateOfBirth: '2019-01-01',
   hashedPassword: 'some-password-hash',
-} as any) as IUser;
+} as IUser;
 
 const updatedUser = { username: 'updated user' };
 
@@ -95,45 +95,6 @@ describe(`GraphQL / User`, () => {
       );
     });
   });
-
-  // TODO - move ot auth lib
-  // describe(`register($input: NewUserInput!)`, () => {
-  //   it(`should create a new User`, async () => {
-  //     const differentUser = {
-  //       ...user,
-  //       username: 'Adifferentuser',
-  //       email: 'someDifferent@email.com',
-  //       password: 'SomE$2jDA'
-  //     };
-  //     delete differentUser['role'];
-  //     delete differentUser['hashedPassword'];
-
-  //     const queryName = `register`;
-  //     const result = await runQuery(schema)(
-  //       `
-  //     mutation Register($input: NewUserInput!) {
-  //       ${queryName}(input: $input) {
-  //         id
-  //         username
-  //       }
-  //     }
-  //   `,
-  //       { input: differentUser },
-  //       jwt
-  //     );
-
-  //     expect(result.errors).not.toBeDefined();
-  //     expect(
-  //       (result.data as any)[queryName]
-  //     ).toBeObject();
-  //     expect(
-  //       (result.data as any)[queryName].id
-  //     ).toBeString();
-  //     expect(
-  //       (result.data as any)[queryName].username
-  //     ).toEqual(differentUser.username);
-  //   });
-  // });
 
   describe(`updateUser($input: UpdatedUserInput!)`, () => {
     it(`should update an User`, async () => {

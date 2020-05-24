@@ -8,8 +8,11 @@ import {
   generateAuthModuleConfig,
   applyAuthRoutes,
   createAuthSchema,
+  configureSendGridEmail,
 } from '@ztp/server/auth';
 import { authConfig } from '../../environments/environment';
+
+const verifyEmail = configureSendGridEmail(authConfig.email);
 
 /**
  * Applies all required auth routes
@@ -22,7 +25,8 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
     User,
     VerificationToken,
     RefreshToken,
-    authConfig
+    authConfig,
+    verifyEmail
   );
 
   app.use(applyAuthRoutes(config));
@@ -39,7 +43,8 @@ export function authResolvers(conn: Connection) {
     User,
     VerificationToken,
     RefreshToken,
-    authConfig
+    authConfig,
+    verifyEmail
   );
 
   return getAuthResolvers(config);

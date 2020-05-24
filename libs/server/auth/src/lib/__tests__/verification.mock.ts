@@ -9,10 +9,11 @@ export function newId() {
  */
 export class MockVerificationToken {
   static _token: any | null | undefined;
-  _token: any;
+  _details: any;
+  // _token: any;
 
   constructor(details: { userId: string; token: string }) {
-    this._token = details;
+    this._details = details;
   }
 
   static set tokenToRespondWith(token: any | null) {
@@ -36,14 +37,22 @@ export class MockVerificationToken {
     this._token = undefined;
   }
 
+  get token() {
+    if (this._details) {
+      return this._details.token;
+    }
+    return null;
+  }
+
   async remove() {
+    this._details = null;
     return true;
   }
 
   async save() {
-    if (!this._token.id) {
-      this._token.id = newId();
+    if (!this._details.id) {
+      this._details.id = newId();
     }
-    return this._token;
+    return this._details;
   }
 }
