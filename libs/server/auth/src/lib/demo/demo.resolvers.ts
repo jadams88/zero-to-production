@@ -10,14 +10,14 @@ import {
 } from './demo.interface';
 import {
   loginResolver,
-  usernameAvailableResolver,
+  userAvailableResolver,
 } from '../graphql/auth.resolvers';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 export function getDemoAuthResolvers(config: DemoAuthModuleConfig): IResolvers {
   return {
     Query: {
-      usernameAvailable: usernameAvailableResolver(config.login),
+      userAvailable: userAvailableResolver(config.login),
     },
     Mutation: {
       login: loginResolver(config.login),

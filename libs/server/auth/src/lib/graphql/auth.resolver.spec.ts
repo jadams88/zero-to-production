@@ -252,11 +252,11 @@ describe(`GraphQL / Authentication`, () => {
     });
   });
 
-  describe('usernameAvailable(username: String!): UsernameAvailable!', () => {
+  describe('userAvailable(username: String!): UserAvailable!', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
       MockUserModel.userToRespondWith = null;
 
-      const queryName = `usernameAvailable`;
+      const queryName = `userAvailable`;
       const result = await runQuery(schema)(
         `
         query IsAvailable($username: String!) {
@@ -284,7 +284,7 @@ describe(`GraphQL / Authentication`, () => {
 
       MockUserModel.userToRespondWith = user;
 
-      const queryName = `usernameAvailable`;
+      const queryName = `userAvailable`;
       const result = await runQuery(schema)(
         `
         query IsAvailable($username: String!) {

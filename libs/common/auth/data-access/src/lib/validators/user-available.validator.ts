@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
 import { AuthFacade } from '../+state/auth.facade';
 
 @Injectable({ providedIn: 'root' })
-export class UsernameAvailableValidator implements AsyncValidator {
+export class UserAvailableValidator implements AsyncValidator {
   constructor(private auth: AuthService, private facade: AuthFacade) {}
 
   validate(ctrl: AbstractControl): Observable<ValidationErrors | null> {
@@ -24,14 +24,14 @@ export class UsernameAvailableValidator implements AsyncValidator {
           ? this.facade.usernamePending()
           : this.facade.clearAvailable()
       ),
-      switchMap((val) => this.auth.isUsernameAvailable(ctrl.value)),
+      switchMap((val) => this.auth.isUserAvailable(ctrl.value)),
       map(
         (mutationResponse) =>
           (mutationResponse.data as {
-            usernameAvailable: { isAvailable: boolean };
-          }).usernameAvailable
+            userAvailable: { isAvailable: boolean };
+          }).userAvailable
       ),
-      tap((available) => this.facade.usernameAvailable(available)), // set the available status
+      tap((available) => this.facade.userAvailable(available)), // set the available status
       map(({ isAvailable }) => (isAvailable ? null : { notAvailable: true })),
       catchError((e: any) => of(null))
     );

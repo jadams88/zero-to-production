@@ -78,16 +78,16 @@ export class AuthService {
     return this.apollo.query<{ User: IUser }>({ query, variables: { id } });
   }
 
-  public isUsernameAvailable(username: string) {
+  public isUserAvailable(username: string) {
     const query = gql`
-      query IsUsernameAvailable($username: String!) {
-        usernameAvailable(username: $username) {
+      query IsUserAvailable($username: String!) {
+        userAvailable(username: $username) {
           isAvailable
         }
       }
     `;
 
-    return this.apollo.query<{ usernameAvailable: { isAvailable: boolean } }>({
+    return this.apollo.query<{ userAvailable: { isAvailable: boolean } }>({
       query,
       variables: { username },
     });

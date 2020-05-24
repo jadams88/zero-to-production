@@ -47,7 +47,7 @@ export const setAuthenticated = createAction(
 
 export const usernamePending = createAction('[Auth/API] Username Pending');
 
-export const usernameAvailable = createAction(
+export const userAvailable = createAction(
   '[Auth/API] Username Available',
   props<{ isAvailable: boolean }>()
 );

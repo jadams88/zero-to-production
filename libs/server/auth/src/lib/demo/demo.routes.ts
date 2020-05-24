@@ -8,7 +8,7 @@ import {
   DemoAuthModuleConfig,
 } from './demo.interface';
 import { createJsonWebKeySetRoute } from '../routes/jwks';
-import { login, usernameAvailable } from '../routes/auth.routes';
+import { login, userAvailable } from '../routes/auth.routes';
 
 /**
  * This will register 3 routes for authentication
@@ -22,7 +22,7 @@ export function applyDemoAuthRoutes(config: DemoAuthModuleConfig) {
   const router = new Router();
   router.post('/authorize/login', login(config.login));
   router.post('/authorize/register', register(config.register));
-  router.get('/authorize/available', usernameAvailable(config.login));
+  router.get('/authorize/available', userAvailable(config.login));
 
   // Only crete the JWKS if the config is specified
   if (config.jwks) {

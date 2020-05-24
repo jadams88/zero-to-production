@@ -7,7 +7,7 @@ import {
   InputFieldTypes,
 } from '@ztp/common/dynamic-form';
 import {
-  UsernameAvailableValidator,
+  UserAvailableValidator,
   passwordValidator,
 } from '@ztp/common/auth/data-access';
 
@@ -20,7 +20,7 @@ const PASSWORD_GROUP: IFormGroup = {
       name: 'username',
       label: 'Username',
       validators: [Validators.required],
-      asyncValidators: [UsernameAvailableValidator],
+      asyncValidators: [UserAvailableValidator],
     },
     {
       type: FormFieldTypes.Input,

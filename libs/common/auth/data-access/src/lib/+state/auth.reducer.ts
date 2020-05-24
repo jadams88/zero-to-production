@@ -49,7 +49,7 @@ const authReducer = createReducer(
   on(fromAuth.usernamePending, (state) => {
     return { ...state, isAvailable: 'pending' as 'pending' };
   }),
-  on(fromAuth.usernameAvailable, (state, { isAvailable }) => {
+  on(fromAuth.userAvailable, (state, { isAvailable }) => {
     return { ...state, isAvailable };
   }),
   on(fromAuth.clearAvailable, (state) => {

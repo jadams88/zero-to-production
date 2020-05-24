@@ -221,9 +221,7 @@ export function setupRevokeRefreshTokenController({
   };
 }
 
-export function setupUsernameAvailableController(
-  config: LoginControllerConfig
-) {
+export function setupUserAvailableController(config: LoginControllerConfig) {
   const { User } = config;
 
   return async (username: string | undefined) => {

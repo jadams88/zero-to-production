@@ -55,8 +55,8 @@ export class AuthFacade {
     this.store.dispatch(AuthActions.usernamePending());
   }
 
-  usernameAvailable(isAvailable: { isAvailable: boolean }) {
-    this.store.dispatch(AuthActions.usernameAvailable(isAvailable));
+  userAvailable(isAvailable: { isAvailable: boolean }) {
+    this.store.dispatch(AuthActions.userAvailable(isAvailable));
   }
 
   clearAvailable() {

@@ -24,12 +24,12 @@ export const authTypeDef = gql`
     dateOfBirth: String!
   }
 
-  type UsernameAvailable {
+  type UserAvailable {
     isAvailable: Boolean!
   }
 
   type Query {
-    usernameAvailable(username: String!): UsernameAvailable!
+    userAvailable(username: String!): UserAvailable!
   }
 
   type Mutation {

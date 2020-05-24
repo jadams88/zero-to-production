@@ -4,7 +4,7 @@ import { IUser } from '@ztp/data';
 import {
   setupLoginController,
   setupRegisterController,
-  setupUsernameAvailableController,
+  setupUserAvailableController,
 } from '../auth.controllers';
 import {
   LoginControllerConfig,
@@ -18,7 +18,7 @@ export function getAuthResolvers(config: LoginAndRegisterConfig): IResolvers {
   const registerConfig = { ...config.register, verifyEmail: config.email };
   return {
     Query: {
-      usernameAvailable: usernameAvailableResolver(config.login),
+      userAvailable: userAvailableResolver(config.login),
     },
     Mutation: {
       login: loginResolver(config.login),
@@ -54,11 +54,11 @@ export function registerResolver(
   };
 }
 
-export function usernameAvailableResolver(
+export function userAvailableResolver(
   config: LoginControllerConfig
 ): GraphQLFieldResolver<any, { input: IUser }, any> {
-  const usernameAvailableController = setupUsernameAvailableController(config);
+  const userAvailableController = setupUserAvailableController(config);
   return (root, args, ctx, i) => {
-    return usernameAvailableController(args.username);
+    return userAvailableController(args.username);
   };
 }

@@ -8,7 +8,7 @@ import {
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
   setupVerifyController,
-  setupUsernameAvailableController,
+  setupUserAvailableController,
 } from '../auth.controllers';
 import {
   RegistrationControllerConfig,
@@ -46,7 +46,7 @@ export function applyAuthRoutes(config: AuthModuleConfig) {
     register({ ...config.register, verifyEmail: config.email })
   );
   router.get('/authorize/verify', verify(config.verify));
-  router.get('/authorize/available', usernameAvailable(config.login));
+  router.get('/authorize/available', userAvailable(config.login));
 
   // Only if the config requires everything for refresh tokens as well
   if (isRefreshConfig(config)) {
@@ -131,12 +131,12 @@ export function revokeRefreshToken(config: RevokeControllerConfig) {
   };
 }
 
-export function usernameAvailable(config: LoginControllerConfig) {
-  const usernameAvailableController = setupUsernameAvailableController(config);
+export function userAvailable(config: LoginControllerConfig) {
+  const userAvailableController = setupUserAvailableController(config);
   return async (ctx: Koa.ParameterizedContext) => {
     const username: string | undefined = ctx.query.username;
     ctx.status = 200;
-    ctx.body = await usernameAvailableController(username);
+    ctx.body = await userAvailableController(username);
   };
 }
 

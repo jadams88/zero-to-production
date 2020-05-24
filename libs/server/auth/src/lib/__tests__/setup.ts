@@ -75,7 +75,7 @@ export function mockRevokeConfig(): RevokeControllerConfig {
   };
 }
 
-// export function mockUsernameAvailableConfig(): LoginControllerConfig{
+// export function mockUserAvailableConfig(): LoginControllerConfig{
 //   return {
 //     User: (MockUserModel as unknown) as IUserModel,
 //   } as LoginContro

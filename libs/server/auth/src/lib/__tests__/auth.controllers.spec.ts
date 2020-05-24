@@ -10,7 +10,7 @@ import {
   setupAuthorizeController,
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
-  setupUsernameAvailableController,
+  setupUserAvailableController,
 } from '../auth.controllers';
 import { MockUserModel } from './user.mock';
 import { MockRefreshTokenModel } from './refresh-token.mock';
@@ -59,8 +59,8 @@ export function mockRevokeController() {
   return setupRevokeRefreshTokenController(mockRevokeConfig());
 }
 
-export function mockUsernameAvailableController() {
-  return setupUsernameAvailableController(mockLoginConfig());
+export function mockUserAvailableController() {
+  return setupUserAvailableController(mockLoginConfig());
 }
 
 const userToRegister = ({
@@ -540,11 +540,11 @@ describe(`Authentication Controllers`, () => {
     });
   });
 
-  describe('usernameAvailable', () => {
+  describe('userAvailable', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
       MockUserModel.userToRespondWith = null;
 
-      const { isAvailable } = await mockUsernameAvailableController()(
+      const { isAvailable } = await mockUserAvailableController()(
         'mockUsername'
       );
 
@@ -561,7 +561,7 @@ describe(`Authentication Controllers`, () => {
 
       MockUserModel.userToRespondWith = user;
 
-      const { isAvailable } = await mockUsernameAvailableController()(
+      const { isAvailable } = await mockUserAvailableController()(
         takenUsername
       );
 
