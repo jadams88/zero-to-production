@@ -6,12 +6,6 @@ All files related to deploying to Google Cloud Kubernetes are located in the `de
 
 **WARNING**: This guide is in no way a comprehensive guide to deploying your application in Kubernetes, rather a starting point for you to test and get your feet wet with deploying your containers to the cloud. This example deploys the single node API with [traefik] as a reveres proxy, an architect that may not warrant the complexity. That being said, the kubernetes resource configurations should give you an idea of how to add additional services and deployments to you cluster e.g. separate the Authentication module to it's own server.
 
-#### Contents
-
-- [Create the initial API docker image](#google-cloud-build-trigger---initial-image)
-- [Deploy on Google Cloud Kubernetes Engine](#google-cloud---kubernetes-engine)
-- [Auto build and trigger rolling updates with semantic releases](#google-cloud-build-trigger---trigger-update)
-
 #### Google Cloud Build Trigger - Initial Image
 
 Rather than build and push our container to the cloud registry, Google Cloud offers a Cloud Build service to build your images from source. A `Dockerfile` to build our API project from the source files is provided at `docker/server.Dockerfile`. Please see the [Docker README] for further details.
