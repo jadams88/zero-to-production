@@ -11,13 +11,9 @@ import {
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
   setupUserAvailableController,
-} from '../auth.controllers';
-import { MockUserModel } from './user.mock';
-import { MockRefreshTokenModel } from './refresh-token.mock';
-import { signRefreshToken } from '../sign-tokens';
-import { MockVerificationToken } from './verification.mock';
-import { privateKey } from './rsa-keys';
-import { IVerificationTokenModel } from '../auth.interface';
+} from './auth.controllers';
+import { signRefreshToken } from './sign-tokens';
+import { IVerificationTokenModel } from './auth.interface';
 import {
   mockRegistrationConfig,
   audience,
@@ -27,7 +23,11 @@ import {
   mockAuthorizeConfig,
   mockRefreshTokenConfig,
   mockRevokeConfig,
-} from './setup';
+  MockUserModel,
+  MockVerificationToken,
+  privateKey,
+  MockRefreshTokenModel,
+} from './__tests__';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();

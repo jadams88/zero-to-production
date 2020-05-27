@@ -11,7 +11,7 @@ import {
   verifyToken,
   isActiveUser,
   verifyUserRole,
-  retrievePublicKeyFormJWKS,
+  retrievePublicKeyFromJWKS,
 } from '../authenticate';
 
 export function getGraphQLGuards(config: GuardConfig | JWKSGuarConfig) {
@@ -55,7 +55,7 @@ export function authenticated(config: VerifyTokenConfig) {
  * Verify the token signature
  */
 export function authenticatedJWKS(config: VerifyTokenJWKSConfig) {
-  const getPublicKey = retrievePublicKeyFormJWKS(config);
+  const getPublicKey = retrievePublicKeyFromJWKS(config);
 
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {
     const publicKey = await getPublicKey(ctx.token);

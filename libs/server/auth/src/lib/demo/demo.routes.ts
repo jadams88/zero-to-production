@@ -8,7 +8,7 @@ import {
   DemoAuthModuleConfig,
 } from './demo.interface';
 import { createJsonWebKeySetRoute } from '../routes/jwks';
-import { login, userAvailable } from '../routes/auth.routes';
+import { login, userAvailable } from '../routes/auth-routes';
 
 /**
  * This will register 3 routes for authentication

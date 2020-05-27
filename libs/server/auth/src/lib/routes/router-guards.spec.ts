@@ -7,7 +7,7 @@ import {
   authenticate,
   verifyActiveUser,
   authenticateJWKS,
-} from './route.guards';
+} from './router-guards';
 import { signAccessToken } from '../sign-tokens';
 import { MockUserModel } from '../__tests__/user.mock';
 import { IUserDocument, IUserModel } from '@ztp/server/core-data';

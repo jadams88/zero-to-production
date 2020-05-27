@@ -9,6 +9,7 @@ export function newId() {
  * A mock user to test the auth routes
  */
 export class MockUserModel {
+  _userProps = ['id', 'username'];
   static _user: IUser | null | undefined;
   _user: IUser;
 
@@ -54,7 +55,10 @@ export class MockUserModel {
   }
 
   toJSON() {
-    return this._user;
+    return this._userProps.reduce((acc, curr) => {
+      acc[curr] = (this._user as any)[curr];
+      return acc;
+    }, {} as any);
   }
 
   set(details: any) {
@@ -65,6 +69,6 @@ export class MockUserModel {
     if (!this._user.id) {
       this._user.id = newId();
     }
-    return this._user;
+    return this.toJSON();
   }
 }

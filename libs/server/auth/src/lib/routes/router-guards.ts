@@ -3,7 +3,7 @@ import { isJWKS } from '../auth-utils';
 import {
   verifyToken,
   isActiveUser,
-  retrievePublicKeyFormJWKS,
+  retrievePublicKeyFromJWKS,
 } from '../authenticate';
 import {
   JWKSGuarConfig,
@@ -45,7 +45,7 @@ export function authenticate(config: VerifyTokenConfig) {
  * Returns the payload decoded if the signature is valid and optional expiration, audience, or issuer are valid. If not, it will throw the error.
  */
 export function authenticateJWKS(config: VerifyTokenJWKSConfig) {
-  const getPublicKey = retrievePublicKeyFormJWKS(config);
+  const getPublicKey = retrievePublicKeyFromJWKS(config);
 
   return async (ctx: any, next: () => Promise<any>) => {
     const publicKey = await getPublicKey(ctx.request.token);

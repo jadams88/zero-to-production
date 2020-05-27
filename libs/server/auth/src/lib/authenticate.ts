@@ -53,7 +53,7 @@ export function verifyRefreshToken(config: RefreshTokenConfig) {
   return (token: string) => verifyToken(token, publicKey, config);
 }
 
-export function retrievePublicKeyFormJWKS(config: JWKSGuardConfig) {
+export function retrievePublicKeyFromJWKS(config: JWKSGuardConfig) {
   const jwksUri = `${config.authServerUrl}/.well-known/jwks.json`;
 
   const jwtSecret = koaJwtSecret({

@@ -1,4 +1,4 @@
-import { isPasswordAllowed, userToJSON } from '../auth-utils';
+import { isPasswordAllowed, userToJSON } from './auth-utils';
 
 describe('Authentication Utils', () => {
   describe('isPasswordAllowed', () => {
