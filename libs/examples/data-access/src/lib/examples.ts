@@ -10,7 +10,7 @@ export const EXAMPLES: IExample[] = [
       'Create a dynamic form component to remove the pain from using angular form.',
     description:
       'With the amount of boiler plate required to use forms in Angular they ' +
-      'can become tedious quickly. Creating and using a dynamic form component ' +
+      'can become tedious quickly. Creating a dynamic form component ' +
       'application wide can significantly simplify forms and help standardize styling, ' +
       'validation, animations etc.',
     url: 'dynamic-form',
