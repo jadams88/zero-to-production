@@ -7,7 +7,7 @@ import {
   authenticated,
   authenticatedJWKS,
   verifyActiveUser,
-} from './graphql.guards';
+} from './graphql-guards';
 import { signAccessToken } from '../sign-tokens';
 import { MockUserModel } from '../__tests__/user.mock';
 import { IUserDocument, IUserModel } from '@ztp/server/core-data';
@@ -30,7 +30,7 @@ const audience = 'say-hello!!!';
 const keyId = 'key-id';
 const expireTime = 1 * 60 * 60 * 1000;
 
-describe('GraphQL Auth Guards', () => {
+describe('GraphQL - Auth Guards', () => {
   let jwt: string;
   let invalidJwt: string;
 

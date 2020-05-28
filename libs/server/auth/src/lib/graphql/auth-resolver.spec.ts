@@ -2,7 +2,7 @@ import 'jest-extended';
 import { IUser } from '@ztp/data';
 import { GraphQLSchema, graphql } from 'graphql';
 import { createAuthSchema } from './schema';
-import { getAuthResolvers } from './auth.resolvers';
+import { getAuthResolvers } from './auth-resolvers';
 import { LoginAndRegisterConfig } from '../auth.interface';
 import {
   mockLoginConfig,
@@ -40,7 +40,7 @@ const user: IUser = ({
   password: 'SomE$2jDA',
 } as any) as IUser;
 
-describe(`GraphQL / Authentication`, () => {
+describe(`GraphQL - Auth Queries`, () => {
   describe(`register(input: RegisterInput!): RegisterSuccess!`, () => {
     it(`should register a new User`, async () => {
       const queryName = `register`;

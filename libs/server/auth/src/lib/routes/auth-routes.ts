@@ -40,11 +40,12 @@ import { createJsonWebKeySetRoute } from './jwks';
  */
 export function applyAuthRoutes(config: AuthModuleConfig) {
   const router = new Router();
-  router.post('/authorize/login', login(config.login));
+
   router.post(
     '/authorize/register',
     register({ ...config.register, verifyEmail: config.email })
   );
+  router.post('/authorize/login', login(config.login));
   router.get('/authorize/verify', verify(config.verify));
   router.get('/authorize/available', userAvailable(config.login));
 
@@ -63,6 +64,15 @@ export function applyAuthRoutes(config: AuthModuleConfig) {
   return router.routes();
 }
 
+export function register(config: RegistrationControllerConfig) {
+  const registerController = setupRegisterController(config);
+
+  return async (ctx: Koa.ParameterizedContext) => {
+    const user = (ctx.request as any).body;
+    ctx.body = await registerController(user);
+  };
+}
+
 /**
  *  A function that handles logging a user in
  *
@@ -76,15 +86,6 @@ export function login(config: LoginControllerConfig) {
     const { username, password } = restUsernameAndPasswordCheck(ctx);
 
     ctx.body = await loginController(username, password);
-  };
-}
-
-export function register(config: RegistrationControllerConfig) {
-  const registerController = setupRegisterController(config);
-
-  return async (ctx: Koa.ParameterizedContext) => {
-    const user = (ctx.request as any).body;
-    ctx.body = await registerController(user);
   };
 }
 

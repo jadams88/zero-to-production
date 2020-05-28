@@ -11,7 +11,7 @@ import {
 import {
   loginResolver,
   userAvailableResolver,
-} from '../graphql/auth.resolvers';
+} from '../graphql/auth-resolvers';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 export function getDemoAuthResolvers(config: DemoAuthModuleConfig): IResolvers {

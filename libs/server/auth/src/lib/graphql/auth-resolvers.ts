@@ -21,9 +21,18 @@ export function getAuthResolvers(config: LoginAndRegisterConfig): IResolvers {
       userAvailable: userAvailableResolver(config.login),
     },
     Mutation: {
-      login: loginResolver(config.login),
       register: registerResolver(registerConfig),
+      login: loginResolver(config.login),
     },
+  };
+}
+
+export function registerResolver(
+  config: RegistrationControllerConfig
+): GraphQLFieldResolver<any, { input: IUser }, any> {
+  const registerController = setupRegisterController(config);
+  return function register(root, args, ctx, i) {
+    return registerController(args.input);
   };
 }
 
@@ -42,15 +51,6 @@ export function loginResolver(
     const password: string = args.password;
 
     return loginController(username, password);
-  };
-}
-
-export function registerResolver(
-  config: RegistrationControllerConfig
-): GraphQLFieldResolver<any, { input: IUser }, any> {
-  const registerController = setupRegisterController(config);
-  return function register(root, args, ctx, i) {
-    return registerController(args.input);
   };
 }
 

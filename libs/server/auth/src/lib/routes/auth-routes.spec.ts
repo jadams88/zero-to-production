@@ -14,9 +14,29 @@ import {
   mockRevokeConfig,
 } from '../__tests__/setup';
 import { IUser } from '@ztp/data';
+import { Types } from 'mongoose';
+import { hash } from 'bcryptjs';
+import { MockUserModel, MockVerificationToken } from '../__tests__';
 
 const URL = 'http://localhost';
 const PORT = 9999;
+
+const setupTestServer = () => {
+  const app = new Koa();
+  app.use(bodyParser());
+  app.use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (e) {
+      if (e.isBoom) {
+        // Is A Boom
+        ctx.status = e.output.statusCode;
+        ctx.body = e.output.payload;
+      }
+    }
+  });
+  return app;
+};
 
 const agentRequest = (path: string) => `${URL}:${PORT}${path}`;
 
@@ -41,12 +61,11 @@ const user: IUser = ({
   password: 'SomE$2jDA',
 } as any) as IUser;
 
-describe('AuthRoutes', () => {
+describe('Router - Auth', () => {
   let server: Server;
 
   beforeAll(async () => {
-    const app = new Koa();
-    app.use(bodyParser());
+    const app = setupTestServer();
     app.use(applyAuthRoutes(config));
     server = app.listen(9999);
   });
@@ -55,7 +74,7 @@ describe('AuthRoutes', () => {
     server.close();
   });
 
-  describe('register', () => {
+  describe('/authorize/register', () => {
     it('should register a new User', async () => {
       const response = await superagent
         .post(agentRequest('/authorize/register'))
@@ -67,15 +86,10 @@ describe('AuthRoutes', () => {
     });
 
     it(`should throw if User is invalid`, async () => {
-      const newUser = {
-        ...user,
-        email: 10,
-        ignoredProperty: 'this is not allowed',
-      };
-
+      // Don't pass anything on the req.body
       await expect(
         superagent.post(agentRequest('/authorize/register'))
-      ).rejects.toThrowError();
+      ).rejects.toThrowError('Bad Request');
     });
 
     it('should not return the new Users password', async () => {
@@ -85,6 +99,119 @@ describe('AuthRoutes', () => {
 
       expect(response.body.password).not.toBeDefined();
       expect(response.body.hashedPassword).not.toBeDefined();
+    });
+  });
+
+  describe('/authorize/login', () => {
+    it('should return an access token if correct credentials are provided', async () => {
+      const userWithId = {
+        ...user,
+        id: Types.ObjectId().toHexString(),
+        active: true,
+      };
+
+      // Set the hashed password to be correct
+      userWithId.hashedPassword = await hash((user as any).password, 10);
+
+      MockUserModel.userToRespondWith = userWithId;
+
+      const response = await superagent
+        .post(agentRequest('/authorize/login'))
+        .send(userWithId);
+
+      expect(response.body).toBeDefined();
+      expect(response.body.token).toBeString();
+
+      MockUserModel.reset();
+    });
+
+    it('should throw unauthorized error if the user is not found', async () => {
+      const userWithId = {
+        ...user,
+        id: Types.ObjectId().toHexString(),
+        active: true,
+      };
+
+      MockUserModel.userToRespondWith = null;
+
+      await expect(
+        superagent
+          .post(agentRequest('/authorize/login'))
+          .send({ ...userWithId })
+      ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+    });
+
+    it('should throw an unauthorized error if the user is not active', async () => {
+      const userWithId = {
+        ...user,
+        id: Types.ObjectId().toHexString(),
+        active: false,
+      };
+
+      MockUserModel.userToRespondWith = userWithId;
+
+      await expect(
+        superagent
+          .post(agentRequest('/authorize/login'))
+          .send({ ...userWithId })
+      ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+    });
+  });
+
+  describe('/authorize/verify', () => {
+    it('should verify a users email', async () => {
+      const userId = '1';
+      const token = 'SOME_TOKEN';
+
+      // const setVerifiedValue = jest.fn();
+      // const removeVerificationToken = jest.fn();
+
+      const unverifiedUser = {
+        id: userId,
+        isVerified: false,
+        ...user,
+      };
+
+      MockUserModel.userToRespondWith = unverifiedUser;
+
+      const verificationToken = {
+        token,
+        userId,
+      };
+
+      MockVerificationToken.tokenToRespondWith = verificationToken;
+
+      // const { message } = await mockVerificationController()(
+      //   userToRegister.email,
+      //   token
+      // );
+
+      const mUser = MockUserModel.currentUser;
+      console.error(mUser);
+      expect(MockUserModel.currentUser?.isVerified).toBe(false);
+
+      console.error(`/authorize/verify?token=${token}&email=${user.email}`);
+
+      try {
+        const response = await superagent.get(
+          agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+        );
+      } catch (e) {
+        console.error(e);
+      }
+
+      expect(MockUserModel.currentUser?.isVerified).toBe(true);
+
+      // expect(setVerifiedValue).toHaveBeenCalled();
+      // expect(setVerifiedValue.mock.calls[0][0]).toEqual({ isVerified: true });
+      // expect(removeVerificationToken).toHaveBeenCalled();
+
+      MockVerificationToken.reset();
+      MockUserModel.reset();
     });
   });
 });

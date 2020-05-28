@@ -9,8 +9,8 @@ export function newId() {
  * A mock user to test the auth routes
  */
 export class MockUserModel {
-  _userProps = ['id', 'username'];
   static _user: IUser | null | undefined;
+  _userProps = ['id', 'username'];
   _user: IUser;
 
   constructor(user: IUser) {
@@ -23,6 +23,10 @@ export class MockUserModel {
     } else {
       this._user = { ...user } as IUser;
     }
+  }
+
+  static get currentUser() {
+    return this._user;
   }
 
   static async findByUsername(username: string) {
@@ -62,6 +66,7 @@ export class MockUserModel {
   }
 
   set(details: any) {
+    console.error('HERERER');
     this._user = { ...this._user, ...details };
   }
 

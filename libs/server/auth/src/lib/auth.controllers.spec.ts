@@ -96,7 +96,7 @@ describe(`Authentication Controllers`, () => {
       MockVerificationToken.reset();
     });
 
-    it('should send a verification email the users email', async () => {
+    it('should send a verification email to the users email', async () => {
       MockUserModel.userToRespondWith = null;
 
       const spy = jest.fn();
@@ -157,29 +157,35 @@ describe(`Authentication Controllers`, () => {
       const userId = '1';
       const token = 'SOME-TOKEN';
 
-      const setMock = jest.fn();
-      const removeMock = jest.fn();
-      MockUserModel.userToRespondWith = {
+      const setVerifiedValue = jest.fn();
+      const removeVerificationToken = jest.fn();
+
+      const unverifiedUser = {
         id: userId,
         ...userToRegister,
-        ...{ set: setMock, save: jest.fn() },
+        ...{ set: setVerifiedValue, save: jest.fn() },
       };
-      MockVerificationToken.tokenToRespondWith = {
+
+      expect(unverifiedUser.isVerified).toBe(false);
+
+      MockUserModel.userToRespondWith = unverifiedUser;
+
+      const verificationToken = {
         token,
         userId,
-        ...{ remove: removeMock },
+        ...{ remove: removeVerificationToken },
       };
 
-      expect((MockUserModel._user as IUser).isVerified).toBe(false);
+      MockVerificationToken.tokenToRespondWith = verificationToken;
 
-      const message = await mockVerificationController()(
+      const { message } = await mockVerificationController()(
         userToRegister.email,
         token
       );
 
-      expect(setMock).toHaveBeenCalled();
-      expect(setMock.mock.calls[0][0]).toEqual({ isVerified: true });
-      expect(removeMock).toHaveBeenCalled();
+      expect(setVerifiedValue).toHaveBeenCalled();
+      expect(setVerifiedValue.mock.calls[0][0]).toEqual({ isVerified: true });
+      expect(removeVerificationToken).toHaveBeenCalled();
 
       MockVerificationToken.reset();
       MockUserModel.reset();
