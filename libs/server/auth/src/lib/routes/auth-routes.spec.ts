@@ -167,13 +167,27 @@ describe('Router - Auth', () => {
       const userId = '1';
       const token = 'SOME_TOKEN';
 
-      // const setVerifiedValue = jest.fn();
-      // const removeVerificationToken = jest.fn();
+      const removeVerificationToken = jest.fn();
+
+      // const unv = new MockUserModel({
+      //   id: userId,
+      //   ...user,
+      //   isVerified: false,
+      // });
 
       const unverifiedUser = {
         id: userId,
-        isVerified: false,
         ...user,
+        isVerified: false,
+        ...{
+          // Mock the 'set' method to update itself with the properties
+          set: function (details: any) {
+            Object.keys(details).forEach((property) => {
+              (this as any)[property] = details[property];
+            });
+          },
+          save: jest.fn(),
+        },
       };
 
       MockUserModel.userToRespondWith = unverifiedUser;
@@ -181,28 +195,16 @@ describe('Router - Auth', () => {
       const verificationToken = {
         token,
         userId,
+        ...{ remove: removeVerificationToken },
       };
 
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
-      // const { message } = await mockVerificationController()(
-      //   userToRegister.email,
-      //   token
-      // );
-
-      const mUser = MockUserModel.currentUser;
-      console.error(mUser);
       expect(MockUserModel.currentUser?.isVerified).toBe(false);
 
-      console.error(`/authorize/verify?token=${token}&email=${user.email}`);
-
-      try {
-        const response = await superagent.get(
-          agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
-        );
-      } catch (e) {
-        console.error(e);
-      }
+      const response = await superagent.get(
+        agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+      );
 
       expect(MockUserModel.currentUser?.isVerified).toBe(true);
 

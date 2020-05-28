@@ -70,39 +70,35 @@ export function setupVerifyController({
   VerificationToken,
 }: VerifyControllerConfig) {
   return async (email: string, token: string) => {
-    try {
-      /**
-       * Check the user exists and is not already registered
-       */
-      const user = await User.findOne({ email }).exec();
+    /**
+     * Check the user exists and is not already registered
+     */
+    const user = await User.findOne({ email }).exec();
 
-      if (!user) throw Boom.badRequest('Email address is not available');
-      if (user.isVerified) throw Boom.badRequest('User is already registered');
+    if (!user) throw Boom.badRequest('Email address is not available');
+    if (user.isVerified) throw Boom.badRequest('User is already registered');
 
-      /**
-       * Check the provided Token is valid
-       */
-      const verificationToken = await VerificationToken.findOne({
-        token,
-      }).exec();
-      if (!verificationToken) throw Boom.badRequest('Token is not valid');
+    /**
+     * Check the provided Token is valid
+     */
+    const verificationToken = await VerificationToken.findOne({
+      token,
+    }).exec();
+    if (!verificationToken) throw Boom.badRequest('Token is not valid');
 
-      /**
-       * Is the provided token and email a match
-       */
-      if (verificationToken.userId.toString() !== user.id.toString())
-        throw Boom.badRequest('Token does not match email address');
+    /**
+     * Is the provided token and email a match
+     */
+    if (verificationToken.userId.toString() !== user.id.toString())
+      throw Boom.badRequest('Token does not match email address');
 
-      user.set({ isVerified: true });
-      /**
-       * Update the user status to valid, and remove the token from the db.
-       */
-      await Promise.all([user.save(), verificationToken.remove()]);
+    user.set({ isVerified: true });
+    /**
+     * Update the user status to valid, and remove the token from the db.
+     */
+    await Promise.all([user.save(), verificationToken.remove()]);
 
-      return { message: `User with ${user.email} has been verified` };
-    } catch (e) {
-      console.error(e);
-    }
+    return { message: `User with ${user.email} has been verified` };
   };
 }
 
