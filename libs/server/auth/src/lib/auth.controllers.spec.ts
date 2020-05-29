@@ -414,19 +414,22 @@ describe(`Authentication Controllers`, () => {
         issuer,
       })(userWithId);
 
-      const refreshToken = await MockRefreshTokenModel.create({
+      // const refreshToken = await MockRefreshTokenModel.create({
+      const refreshToken = {
         user: {
           id: userWithId.id,
           username: userWithId.username,
         } as IUser,
         token: refreshTokenString,
-      });
+      };
 
-      MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
 
       const { token } = await mockRefreshTokenController()(
         userWithId.username,
-        refreshToken.toJSON().token
+        refreshToken.token
       );
 
       expect(token).toBeDefined();
@@ -448,25 +451,32 @@ describe(`Authentication Controllers`, () => {
         issuer,
       })(userWithId);
 
-      const refreshToken = await MockRefreshTokenModel.create({
+      // const refreshToken = await MockRefreshTokenModel.create({
+      //   user: {
+      //     id: userWithId.id,
+      //     username: userWithId.username,
+      //   } as IUser,
+      //   token: refreshTokenString,
+      // });
+
+      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
+
+      const refreshToken = {
         user: {
           id: userWithId.id,
           username: userWithId.username,
         } as IUser,
         token: refreshTokenString,
-      });
+      };
 
-      MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
 
       await expect(
         mockRefreshTokenController()(userWithId.username, 'incorrect token')
       ).rejects.toThrowError('Unauthorized');
 
       await expect(
-        mockRefreshTokenController()(
-          'incorrect username',
-          refreshToken.toJSON().token
-        )
+        mockRefreshTokenController()('incorrect username', refreshToken.token)
       ).rejects.toThrowError('Unauthorized');
 
       MockUserModel.reset();
@@ -487,19 +497,27 @@ describe(`Authentication Controllers`, () => {
         issuer,
       })(userWithId);
 
-      const refreshToken = await MockRefreshTokenModel.create({
+      // const refreshToken = await MockRefreshTokenModel.create({
+      //   user: {
+      //     id: userWithId.id,
+      //     username: userWithId.username,
+      //   } as IUser,
+      //   token: refreshTokenString,
+      // });
+
+      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
+
+      const refreshToken = {
         user: {
           id: userWithId.id,
           username: userWithId.username,
         } as IUser,
         token: refreshTokenString,
-      });
+      };
 
-      MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
 
-      const { success } = await mockRevokeController()(
-        refreshToken.toJSON().token
-      );
+      const { success } = await mockRevokeController()(refreshToken.token);
 
       expect(success).toBe(true);
 
@@ -519,15 +537,25 @@ describe(`Authentication Controllers`, () => {
         issuer,
       })(userWithId);
 
-      const refreshToken = await MockRefreshTokenModel.create({
+      // const refreshToken = await MockRefreshTokenModel.create({
+      //   user: {
+      //     id: userWithId.id,
+      //     username: userWithId.username,
+      //   } as IUser,
+      //   token: refreshTokenString,
+      // });
+
+      const refreshToken = {
         user: {
           id: userWithId.id,
           username: userWithId.username,
         } as IUser,
         token: refreshTokenString,
-      });
+      };
 
-      MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
 
       await expect(
         mockRevokeController()('THIS IS NOT A THE CORRECT TOKEN')

@@ -154,10 +154,12 @@ export function setupAuthorizeController(config: AuthorizeControllerConfig) {
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
-    await RefreshToken.create({
+    const token = new RefreshToken({
       user: user.id,
       token: refreshToken,
     });
+
+    await token.save();
 
     return {
       token: accessToken,
@@ -175,18 +177,16 @@ export function setupRefreshAccessTokenController(
   const verify = verifyRefreshToken(config);
   const createAccessToken = signAccessToken(config);
 
-  return async (username: string, refreshTokenProvided: string) => {
+  return async (username: string, providedToken: string) => {
     // Verify the refresh token. Don't care about decoding it (as we retrieve form DB as well),
     // Just catch and throw an unauthorized error
     try {
-      await verify(refreshTokenProvided);
+      await verify(providedToken);
     } catch (err) {
       throw Boom.unauthorized(null, 'Bearer');
     }
 
-    const savedToken = await RefreshToken.findByTokenWithUser(
-      refreshTokenProvided
-    );
+    const savedToken = await RefreshToken.findByTokenWithUser(providedToken);
     // No token found
     if (savedToken === null) throw Boom.unauthorized(null, 'Bearer');
 

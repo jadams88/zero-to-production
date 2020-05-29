@@ -125,6 +125,7 @@ export interface VerifyUserConfig {
 // Interfaces for each Model
 // -------------------------------------
 export interface IRefreshToken {
+  id: string;
   user: IUserDocument;
   token: string;
 }
