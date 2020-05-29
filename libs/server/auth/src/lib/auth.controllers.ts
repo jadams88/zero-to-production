@@ -1,6 +1,5 @@
 import { randomBytes } from 'crypto';
 import { compare, hash } from 'bcryptjs';
-import { Types } from 'mongoose';
 import Boom from '@hapi/boom';
 import { signAccessToken, signRefreshToken } from './sign-tokens';
 import {
@@ -34,21 +33,20 @@ export function setupRegisterController({
     user.hashedPassword = await hash(password, 10);
 
     // Generate the id
-    const id = Types.ObjectId();
     const newUser = new User({
       ...user,
       isVerified: false,
       active: true,
-      id,
     });
 
+    const savedUser = await newUser.save();
+
     const verificationToken = new VerificationToken({
-      userId: id,
+      userId: savedUser.id,
       token: randomBytes(16).toString('hex'),
     });
 
-    const [savedUser] = await Promise.all([
-      newUser.save(),
+    await Promise.all([
       verificationToken.save(),
       verifyEmail(user.email, verificationToken.token),
     ]);
