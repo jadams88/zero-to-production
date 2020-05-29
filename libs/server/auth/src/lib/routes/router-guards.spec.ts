@@ -17,6 +17,7 @@ import {
   invalidPrivateKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
+import { IUser } from '@ztp/data';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();
@@ -26,7 +27,8 @@ const issuer = 'some-issuer';
 const audience = 'say-hello!!!';
 const keyId = 'key-id';
 const expireTime = 1 * 60 * 60 * 1000;
-describe('Rest Auth Guards', () => {
+
+describe('Router - Auth Guards', () => {
   let jwt: string;
   let invalidJwt: string;
 
@@ -39,7 +41,7 @@ describe('Rest Auth Guards', () => {
       keyId,
     })({
       id: '1',
-    } as IUserDocument);
+    } as IUser);
     invalidJwt = signAccessToken({
       privateKey: invalidPrivateKey,
       expireTime,
@@ -48,7 +50,7 @@ describe('Rest Auth Guards', () => {
       audience,
     })({
       id: '1',
-    } as IUserDocument);
+    } as IUser);
   });
 
   describe('authenticate', () => {
@@ -248,9 +250,7 @@ describe('Rest Auth Guards', () => {
       const mockUser = {
         id,
         active: true,
-      } as IUserDocument;
-
-      const spy = jest.spyOn(MockUserModel, 'findById');
+      } as IUser;
 
       MockUserModel.userToRespondWith = mockUser;
       await expect(
@@ -260,8 +260,6 @@ describe('Rest Auth Guards', () => {
         )
       ).resolves.not.toThrowError();
 
-      expect(spy).toHaveBeenCalled();
-      expect(spy).toHaveBeenCalledWith(id);
       expect(nextSpy).toHaveBeenCalled();
 
       MockUserModel.reset();

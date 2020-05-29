@@ -67,7 +67,7 @@ const userToRegister = ({
   username: 'uniqueUsername',
   firstName: 'test',
   lastName: 'user',
-  emailAddress: 'unique@email.com',
+  email: 'unique@email.com',
   dateOfBirth: new Date(),
   active: true,
   isVerified: false,
@@ -157,35 +157,29 @@ describe(`Authentication Controllers`, () => {
       const userId = '1';
       const token = 'SOME-TOKEN';
 
-      const setVerifiedValue = jest.fn();
-      const removeVerificationToken = jest.fn();
-
       const unverifiedUser = {
         id: userId,
         ...userToRegister,
-        ...{ set: setVerifiedValue, save: jest.fn() },
       };
-
-      expect(unverifiedUser.isVerified).toBe(false);
-
-      MockUserModel.userToRespondWith = unverifiedUser;
 
       const verificationToken = {
         token,
         userId,
-        ...{ remove: removeVerificationToken },
       };
 
+      MockUserModel.userToRespondWith = unverifiedUser;
       MockVerificationToken.tokenToRespondWith = verificationToken;
+
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
+      expect(MockVerificationToken.currentSetModel).toBeDefined();
 
       const { message } = await mockVerificationController()(
         userToRegister.email,
         token
       );
 
-      expect(setVerifiedValue).toHaveBeenCalled();
-      expect(setVerifiedValue.mock.calls[0][0]).toEqual({ isVerified: true });
-      expect(removeVerificationToken).toHaveBeenCalled();
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
+      expect(MockVerificationToken.currentSetModel).toBe(null);
 
       MockVerificationToken.reset();
       MockUserModel.reset();
@@ -236,8 +230,6 @@ describe(`Authentication Controllers`, () => {
     it('should throw if the token does not belong to the user', async () => {
       const token = 'SOME-TOKEN';
 
-      const setMock = jest.fn();
-      const removeMock = jest.fn();
       MockUserModel.userToRespondWith = {
         id: '1',
         ...userToRegister,

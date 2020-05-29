@@ -18,6 +18,7 @@ import {
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
 import { TResolver } from '../auth.interface';
+import { IUser } from '@ztp/data';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();
@@ -245,7 +246,7 @@ describe('GraphQL - Auth Guards', () => {
       const mockUser = {
         id,
         active: true,
-      } as IUserDocument;
+      } as IUser;
 
       const spy = jest.spyOn(MockUserModel, 'findById');
 
@@ -260,7 +261,9 @@ describe('GraphQL - Auth Guards', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledWith(id);
-      expect(ctx.user).toEqual(mockUser);
+      // The ctx.user property will be replaced
+      expect((ctx.user as any).id).toEqual(mockUser.id);
+      expect((ctx.user as any).active).toEqual(mockUser.active);
 
       MockUserModel.reset();
     });

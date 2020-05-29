@@ -92,7 +92,8 @@ export function setupVerifyController({
     if (verificationToken.userId.toString() !== user.id.toString())
       throw Boom.badRequest('Token does not match email address');
 
-    user.set({ isVerified: true });
+    // user.set({ isVerified: true });
+    user.isVerified = true;
     /**
      * Update the user status to valid, and remove the token from the db.
      */

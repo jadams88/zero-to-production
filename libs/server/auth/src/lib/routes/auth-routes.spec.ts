@@ -167,27 +167,10 @@ describe('Router - Auth', () => {
       const userId = '1';
       const token = 'SOME_TOKEN';
 
-      const removeVerificationToken = jest.fn();
-
-      // const unv = new MockUserModel({
-      //   id: userId,
-      //   ...user,
-      //   isVerified: false,
-      // });
-
       const unverifiedUser = {
         id: userId,
         ...user,
         isVerified: false,
-        ...{
-          // Mock the 'set' method to update itself with the properties
-          set: function (details: any) {
-            Object.keys(details).forEach((property) => {
-              (this as any)[property] = details[property];
-            });
-          },
-          save: jest.fn(),
-        },
       };
 
       MockUserModel.userToRespondWith = unverifiedUser;
@@ -195,22 +178,17 @@ describe('Router - Auth', () => {
       const verificationToken = {
         token,
         userId,
-        ...{ remove: removeVerificationToken },
       };
 
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
-      expect(MockUserModel.currentUser?.isVerified).toBe(false);
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
 
       const response = await superagent.get(
         agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
       );
 
-      expect(MockUserModel.currentUser?.isVerified).toBe(true);
-
-      // expect(setVerifiedValue).toHaveBeenCalled();
-      // expect(setVerifiedValue.mock.calls[0][0]).toEqual({ isVerified: true });
-      // expect(removeVerificationToken).toHaveBeenCalled();
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
 
       MockVerificationToken.reset();
       MockUserModel.reset();
