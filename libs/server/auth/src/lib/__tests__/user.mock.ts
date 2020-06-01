@@ -1,12 +1,12 @@
 import { IUser } from '@ztp/data';
-import { Types } from 'mongoose';
+import { BaseMockModel } from './base-mock';
 
 /**
  * A mock user to test the auth routes
  */
-export class MockUserModel {
-  static _userModel: MockUserModel | null;
-  _userProps = [
+export class MockUserModel extends BaseMockModel<IUser> {
+  // static _model: MockUserModel | null;
+  _props = [
     'id',
     'username',
     'email',
@@ -15,27 +15,25 @@ export class MockUserModel {
     'hashedPassword',
   ];
 
-  _user: IUser;
+  // _details: IUser;
 
   constructor(user: IUser) {
-    this._user = { ...user };
+    super(user);
+    // this._details = { ...user };
     return new Proxy(this, this);
   }
 
-  static set userToRespondWith(user: IUser | null) {
+  static set modelToRespondWith(user: IUser | null) {
     if (user) {
-      this._userModel = new MockUserModel(user);
+      this._model = new this(user);
     } else {
-      this._userModel = null;
+      this._model = null;
     }
   }
 
-  static get currentSetModel() {
-    return (this._userModel as any) as IUser;
-  }
-
   static async findByUsername(username: string) {
-    const currentUser = this._userModel;
+    // return this.findOne({ username });
+    const currentUser = this._model;
     if (currentUser) {
       const user = currentUser.toJSON();
 
@@ -46,79 +44,85 @@ export class MockUserModel {
     return null;
   }
 
-  static async findById(id: string) {
-    const currentUser = this._userModel;
+  // static async findById(id: string) {
+  //   const currentUser = this._model;
 
-    if (currentUser) {
-      const user = currentUser.toJSON();
+  //   if (currentUser) {
+  //     const user = currentUser.toJSON();
 
-      if (currentUser && id === (currentUser as any).id) {
-        return currentUser;
-      }
-    }
+  //     if (currentUser && id === (currentUser as any).id) {
+  //       return currentUser;
+  //     }
+  //   }
+  //   return null;
+  // }
+
+  // static findOne(details: { [prop: string]: any }) {
+  //   const model = this._model;
+  //   return {
+  //     exec: async () => {
+  //       return model &&
+  //         Object.keys(details).every(
+  //           (prop: string, i: number) =>
+  //             (model as any)[prop] && (model as any)[prop] === details[prop]
+  //         )
+  //         ? model
+  //         : null;
+  //     },
+  //   };
+  // }
+
+  // static reset() {
+  //   this._model = null;
+  // }
+
+  // get(target: this, prop: symbol | string | number, receiver: this) {
+  //   if ((target as any)[prop]) return (target as any)[prop];
+
+  //   const isProp = target._props.includes(prop as string);
+  //   if (isProp) {
+  //     return (target._details as any)[prop as string];
+  //   }
+  //   return undefined;
+  // }
+
+  // set(
+  //   target: this,
+  //   prop: string | number | symbol,
+  //   value: any,
+  //   receiver: this
+  // ) {
+  //   if (
+  //     !target.hasOwnProperty(prop) &&
+  //     target._props.includes(prop as string)
+  //   ) {
+  //     target._details = { ...target._details, ...{ [prop]: value } };
+  //   }
+
+  //   return true;
+  // }
+
+  // toJSON(): IUser | null {
+  //   if (!this._details) return null;
+
+  //   return this._props.reduce((acc, curr) => {
+  //     if ((this._details as any)[curr]) {
+  //       acc[curr] = (this._details as any)[curr];
+  //     }
+  //     return acc;
+  //   }, {} as any);
+  // }
+
+  async remove() {
+    this._details = undefined as any;
+    MockUserModel.modelToRespondWith = null;
     return null;
   }
 
-  static findOne(details: any) {
-    const currentUser = this._userModel;
-    return {
-      exec: async () => {
-        return currentUser;
-      },
-    };
-  }
-
-  static reset() {
-    this._userModel = null;
-  }
-
-  get(target: this, prop: symbol | string | number, receiver: this) {
-    if ((target as any)[prop]) return (target as any)[prop];
-
-    const isProp = target._userProps.includes(prop as string);
-    if (isProp) {
-      return (target._user as any)[prop as string];
-    }
-    return undefined;
-  }
-
-  set(
-    target: this,
-    prop: string | number | symbol,
-    value: any,
-    receiver: this
-  ) {
-    if (
-      !target.hasOwnProperty(prop) &&
-      this._userProps.includes(prop as string)
-    ) {
-      target._user = { ...target._user, ...{ [prop]: value } };
-    }
-
-    return true;
-  }
-
-  toJSON(): IUser | null {
-    if (!this._user) return null;
-
-    return this._userProps.reduce((acc, curr) => {
-      if ((this._user as any)[curr]) {
-        acc[curr] = (this._user as any)[curr];
-      }
-      return acc;
-    }, {} as any);
-  }
-
-  async remove() {
-    this._user = undefined as any;
-    MockUserModel.userToRespondWith = null;
-    return true;
-  }
-
-  async save() {
-    if (!this._user.id) {
-      this._user.id = Types.ObjectId().toHexString();
-    }
-    return this._user;
-  }
+  // async save() {
+  //   if (!this._details.id) {
+  //     this._details.id = Types.ObjectId().toHexString();
+  //   }
+  //   return this._details;
+  // }
 }

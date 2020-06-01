@@ -251,7 +251,7 @@ describe('GraphQL - Auth Guards', () => {
       const spy = jest.spyOn(MockUserModel, 'findById');
 
       const ctx = { user: { sub: id } };
-      MockUserModel.userToRespondWith = mockUser;
+      MockUserModel.modelToRespondWith = mockUser;
 
       await expect(
         verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
@@ -273,7 +273,7 @@ describe('GraphQL - Auth Guards', () => {
       const spy = jest.spyOn(MockUserModel, 'findById');
 
       const ctx = { user: { sub: id } };
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       await expect(
         verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
@@ -298,7 +298,7 @@ describe('GraphQL - Auth Guards', () => {
       const spy = jest.spyOn(MockUserModel, 'findById');
 
       const ctx = { user: { sub: id } };
-      MockUserModel.userToRespondWith = mockUser;
+      MockUserModel.modelToRespondWith = mockUser;
 
       await expect(
         verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(

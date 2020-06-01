@@ -78,10 +78,10 @@ const userWithPassword = ({
   password: 'adf#jf3@#FD!',
 } as any) as IUser;
 
-describe(`Authentication Controllers`, () => {
+describe('Auth - Controllers', () => {
   describe('register', () => {
     it('should register a new user', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       const createdUser = await setupRegisterController({
         User: (MockUserModel as unknown) as IUserModel,
@@ -97,7 +97,7 @@ describe(`Authentication Controllers`, () => {
     });
 
     it('should send a verification email to the users email', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       const spy = jest.fn();
 
@@ -115,7 +115,7 @@ describe(`Authentication Controllers`, () => {
     });
 
     it('should not return the password or hashed password if successful', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       const createdUser = await mockRegistrationController()({
         ...userWithPassword,
@@ -135,13 +135,13 @@ describe(`Authentication Controllers`, () => {
         emailAddress: 'anotherUnique@email.com',
       } as IUser;
 
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       await expect(
         mockRegistrationController()(userWithUniqueDetails)
       ).resolves.not.toThrowError();
 
-      MockUserModel.userToRespondWith = userWithUniqueDetails;
+      MockUserModel.modelToRespondWith = userWithUniqueDetails;
 
       await expect(
         mockRegistrationController()(userWithUniqueDetails)
@@ -167,7 +167,7 @@ describe(`Authentication Controllers`, () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockUserModel.modelToRespondWith = unverifiedUser;
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
       expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
@@ -187,7 +187,7 @@ describe(`Authentication Controllers`, () => {
 
     it('should throw if a user cannot be found', async () => {
       const token = 'SOME-TOKEN';
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       await expect(
         mockVerificationController()(userToRegister.email, token)
@@ -200,7 +200,7 @@ describe(`Authentication Controllers`, () => {
     it('should throw if the user is already valid', async () => {
       const token = 'SOME-TOKEN';
 
-      MockUserModel.userToRespondWith = {
+      MockUserModel.modelToRespondWith = {
         ...userToRegister,
         isVerified: true,
       };
@@ -216,7 +216,7 @@ describe(`Authentication Controllers`, () => {
     it('should throw if the token is not valid', async () => {
       const token = 'SOME-TOKEN';
 
-      MockUserModel.userToRespondWith = { ...userToRegister };
+      MockUserModel.modelToRespondWith = { ...userToRegister };
       MockVerificationToken.tokenToRespondWith = null;
 
       await expect(
@@ -230,7 +230,7 @@ describe(`Authentication Controllers`, () => {
     it('should throw if the token does not belong to the user', async () => {
       const token = 'SOME-TOKEN';
 
-      MockUserModel.userToRespondWith = {
+      MockUserModel.modelToRespondWith = {
         id: '1',
         ...userToRegister,
       };
@@ -258,7 +258,7 @@ describe(`Authentication Controllers`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockUserModel.modelToRespondWith = userWithId;
 
       const { token } = await mockLoginController()(
         userWithId.username,
@@ -272,7 +272,7 @@ describe(`Authentication Controllers`, () => {
     });
 
     it('should throw unauthorized error if the User is not found', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       await expect(
         mockLoginController()(
@@ -293,7 +293,7 @@ describe(`Authentication Controllers`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockUserModel.modelToRespondWith = userWithId;
 
       await expect(
         mockLoginController()(userWithId.username, 'somWrongPassword')
@@ -317,7 +317,7 @@ describe(`Authentication Controllers`, () => {
         ...userWithId,
         active: false,
       };
-      MockUserModel.userToRespondWith = inactiveUser;
+      MockUserModel.modelToRespondWith = inactiveUser;
 
       await expect(
         mockLoginController()(userWithId.username, (userWithId as any).password)
@@ -335,7 +335,7 @@ describe(`Authentication Controllers`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockUserModel.modelToRespondWith = userWithId;
 
       const { token, refreshToken } = await mockAuthorizeController()(
         userWithId.username,
@@ -360,7 +360,7 @@ describe(`Authentication Controllers`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockUserModel.modelToRespondWith = userWithId;
 
       await expect(
         mockAuthorizeController()(userWithId.username, 'somWrongPassword')
@@ -387,7 +387,7 @@ describe(`Authentication Controllers`, () => {
         10
       );
 
-      MockUserModel.userToRespondWith = inactiveUser;
+      MockUserModel.modelToRespondWith = inactiveUser;
 
       await expect(
         mockAuthorizeController()(
@@ -525,7 +525,7 @@ describe(`Authentication Controllers`, () => {
       MockRefreshTokenModel.reset();
     });
 
-    it('should throw a bad request if the token can not be found', async () => {
+    it('should throw if the token can not be found', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),
@@ -557,6 +557,9 @@ describe(`Authentication Controllers`, () => {
 
       // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
 
+      // console.error(refreshTokenString);
+      // console.error(MockRefreshTokenModel.findByTokenWithUser('some name'));
+
       await expect(
         mockRevokeController()('THIS IS NOT A THE CORRECT TOKEN')
       ).rejects.toThrowError('Bad Request');
@@ -568,7 +571,7 @@ describe(`Authentication Controllers`, () => {
 
   describe('userAvailable', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockUserModel.modelToRespondWith = null;
 
       const { isAvailable } = await mockUserAvailableController()(
         'mockUsername'
@@ -585,7 +588,7 @@ describe(`Authentication Controllers`, () => {
         username: takenUsername,
       } as IUser;
 
-      MockUserModel.userToRespondWith = user;
+      MockUserModel.modelToRespondWith = user;
 
       const { isAvailable } = await mockUserAvailableController()(
         takenUsername

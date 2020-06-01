@@ -4,8 +4,8 @@ import { Types } from 'mongoose';
  * A mock VerificationToken to test the auth routes
  */
 export class MockVerificationToken {
-  static _tokenModel: MockVerificationToken | null;
-  _tokenProps = ['userId', 'token'];
+  static _model: MockVerificationToken | null;
+  _props = ['userId', 'token'];
   _details: { id?: string; userId: string; token: string };
 
   constructor(details: { userId: string; token: string }) {
@@ -16,32 +16,41 @@ export class MockVerificationToken {
 
   static set tokenToRespondWith(token: any | null) {
     if (token) {
-      this._tokenModel = new MockVerificationToken(token);
+      this._model = new MockVerificationToken(token);
     } else {
-      this._tokenModel = null;
+      this._model = null;
     }
   }
 
   static get currentSetModel() {
-    return (this._tokenModel as any) as { userId: string; token: string };
+    return (this._model as any) as {
+      userId: string;
+      token: string;
+    };
   }
 
-  static findOne(details: any) {
-    const token = this._tokenModel;
+  static findOne(details: { [prop: string]: any }) {
+    const model = this._model;
     return {
       exec: async () => {
-        return token;
+        return model &&
+          Object.keys(details).every(
+            (prop: string, i: number) =>
+              (model as any)[prop] && (model as any)[prop] === details[prop]
+          )
+          ? model
+          : null;
       },
     };
   }
 
   static reset() {
-    this._tokenModel = null;
+    this._model = null;
   }
 
   get(target: this, prop: symbol | string | number, receiver: this) {
     if ((target as any)[prop]) return (target as any)[prop];
-    const isProp = target._tokenProps.includes(prop as string);
+    const isProp = target._props.includes(prop as string);
 
     if (isProp) {
       return (target._details as any)[prop as string];
@@ -57,8 +66,11 @@ export class MockVerificationToken {
   ) {
     if (target.hasOwnProperty(prop)) {
       (target as any)[prop] = value;
-    } else if (this._tokenProps.includes(prop as string)) {
-      target._details = { ...target._details, ...{ [prop]: value } } as any;
+    } else if (this._props.includes(prop as string)) {
+      target._details = {
+        ...target._details,
+        ...{ [prop]: value },
+      } as any;
     }
     return true;
   }
@@ -66,7 +78,7 @@ export class MockVerificationToken {
   toJSON(): { userId: string; token: string } | null {
     if (!this._details) return null;
 
-    return this._tokenProps.reduce((acc, curr) => {
+    return this._props.reduce((acc, curr) => {
       if ((this._details as any)[curr]) {
         acc[curr] = (this._details as any)[curr];
       }

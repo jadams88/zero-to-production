@@ -252,7 +252,7 @@ describe('Router - Auth Guards', () => {
         active: true,
       } as IUser;
 
-      MockUserModel.userToRespondWith = mockUser;
+      MockUserModel.modelToRespondWith = mockUser;
       await expect(
         verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
           ({ user: { sub: id } } as unknown) as Koa.ParameterizedContext,
@@ -277,7 +277,7 @@ describe('Router - Auth Guards', () => {
 
       const spy = jest.spyOn(MockUserModel, 'findById');
 
-      MockUserModel.userToRespondWith = mockUser;
+      MockUserModel.modelToRespondWith = mockUser;
 
       await expect(
         verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
@@ -302,7 +302,7 @@ describe('Router - Auth Guards', () => {
 
       const spy = jest.spyOn(MockUserModel, 'findById');
 
-      MockUserModel.userToRespondWith = mockUser;
+      MockUserModel.modelToRespondWith = mockUser;
       await expect(
         verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
           ({ user: { sub: id } } as unknown) as Koa.ParameterizedContext,
