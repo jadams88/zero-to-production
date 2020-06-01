@@ -1,16 +1,20 @@
 import Koa from 'koa';
+import { compose } from 'ramda';
 import {
   applyAuthRoutes,
   generateAuthModuleConfig,
   createAuthSchema,
   getAuthResolvers,
-  configureSendGridEmail,
+  createEmailMessage,
 } from '@ztp/server/auth';
 import { authConfig } from '../../environments';
 import { User } from '../api/users';
 import { VerificationToken, RefreshToken } from './models';
+import { configureSendgrid } from '@ztp/server/utils';
 
-const verifyEmail = configureSendGridEmail(authConfig.email);
+const emailClient = configureSendgrid(authConfig.email.sendGridApiKey);
+const createMessage = createEmailMessage(authConfig.email.authServerUrl);
+const verifyEmail = compose(emailClient, createMessage);
 
 const authModuleConfig = generateAuthModuleConfig(
   User,

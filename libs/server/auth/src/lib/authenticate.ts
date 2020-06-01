@@ -1,4 +1,3 @@
-import { createPublicKey } from 'crypto';
 import { verify, decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
 import { IUserModel } from '@ztp/server/core-data';
@@ -8,6 +7,7 @@ import {
   JWKSGuardConfig,
 } from './auth.interface';
 import { koaJwtSecret } from 'jwks-rsa';
+import { createPublicPemFromPrivate } from './auth-utils';
 
 export function verifyToken(
   token: string,
@@ -47,8 +47,7 @@ export function verifyUserRole(requiredRole: string) {
 
 export function verifyRefreshToken(config: RefreshTokenConfig) {
   // Create a public key from the private key
-  const publicPem = createPublicKey(config.privateKey);
-  const publicKey = publicPem.export({ format: 'pem', type: 'spki' }) as string;
+  const publicKey = createPublicPemFromPrivate(config.privateKey);
 
   return (token: string) => verifyToken(token, publicKey, config);
 }

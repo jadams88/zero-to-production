@@ -4,7 +4,7 @@ import { IUserModel, IUserDocument } from '@ztp/server/core-data';
 
 export type TResolver = GraphQLFieldResolver<any, any, any>;
 export type TResolverFactory = (next: TResolver) => TResolver;
-export type VerifyEmail = (to: string, token: string) => Promise<[any, {}]>;
+export type VerifyEmail = (to: string, token: string) => Promise<any>;
 
 export type AuthModuleConfig =
   | LoginAndRegisterConfig

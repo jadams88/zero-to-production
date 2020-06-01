@@ -14,6 +14,7 @@ import {
   AuthModuleConfig,
   VerifyEmail,
 } from './auth.interface';
+import { MailDataRequired } from '@sendgrid/mail';
 
 export function isPasswordAllowed(password: string): boolean {
   return (
@@ -67,7 +68,7 @@ export function generateAuthGuardConfig(
 
 // A no-op placeholder function for if no email verification is provided
 export const noOpEmailVerification: VerifyEmail = async (to, token) =>
-  Promise.resolve([undefined, {}]);
+  Promise.resolve(true);
 
 export function generateAuthModuleConfig(
   User: IUserModel,
@@ -116,7 +117,18 @@ export function generateAuthModuleConfig(
 }
 
 export function createPublicPemFromPrivate(privateKey: string) {
-  const publicPem = createPublicKey(privateKey);
+  const publicKey = createPublicKey(privateKey);
 
-  return publicPem.export({ format: 'pem', type: 'spki' }) as string;
+  return publicKey.export({ format: 'pem', type: 'spki' }) as string;
+}
+
+export function createEmailMessage(authServerUrl: string) {
+  return (to: string, token: string) => {
+    return {
+      to,
+      from: 'register@zero-to-production.com',
+      subject: 'Verify Your Email',
+      text: `Click on the link to verify your email ${authServerUrl}/authorize/verify?token=${token}&email=${to}`,
+    };
+  };
 }

@@ -12,3 +12,4 @@ export {
 } from './lib/controllers/create-rest-router';
 export { generateResolvers } from './lib/resolvers/create-resolvers';
 export { createTypeResolver } from './lib/resolvers/resolvers';
+export { configureSendgrid } from './lib/email/sendgrid';

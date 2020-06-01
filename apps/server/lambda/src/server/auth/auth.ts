@@ -1,4 +1,5 @@
 import Koa from 'koa';
+import { compose } from 'ramda';
 import { Connection } from 'mongoose';
 import { getUserModel } from '@ztp/server/core-data';
 import {
@@ -8,11 +9,14 @@ import {
   generateAuthModuleConfig,
   applyAuthRoutes,
   createAuthSchema,
-  configureSendGridEmail,
+  createEmailMessage,
 } from '@ztp/server/auth';
 import { authConfig } from '../../environments/environment';
+import { configureSendgrid } from '@ztp/server/utils';
 
-const verifyEmail = configureSendGridEmail(authConfig.email);
+const emailClient = configureSendgrid(authConfig.email.sendGridApiKey);
+const createMessage = createEmailMessage(authConfig.email.authServerUrl);
+const verifyEmail = compose(emailClient, createMessage);
 
 /**
  * Applies all required auth routes
