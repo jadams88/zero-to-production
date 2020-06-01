@@ -65,12 +65,16 @@ export function generateAuthGuardConfig(
   }
 }
 
+// A no-op placeholder function for if no email verification is provided
+export const noOpEmailVerification: VerifyEmail = async (to, token) =>
+  Promise.resolve([undefined, {}]);
+
 export function generateAuthModuleConfig(
   User: IUserModel,
   VerificationToken: IVerificationTokenModel,
   RefreshToken: IRefreshTokenModel,
   config: ServerAuthConfig,
-  email: VerifyEmail
+  email?: VerifyEmail
 ): AuthModuleConfig {
   const { publicKey, privateKey } = config.accessToken;
   const pubKey = publicKey ? publicKey : createPublicPemFromPrivate(privateKey);
@@ -107,7 +111,7 @@ export function generateAuthModuleConfig(
       keyId,
     },
     revoke: { RefreshToken },
-    email,
+    email: email ? email : noOpEmailVerification,
   };
 }
 
