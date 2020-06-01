@@ -117,7 +117,7 @@ describe('Router - Auth', () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const response = await superagent
         .post(agentRequest('/authorize/login'))
@@ -136,7 +136,7 @@ describe('Router - Auth', () => {
         active: true,
       };
 
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       await expect(
         superagent
@@ -154,7 +154,7 @@ describe('Router - Auth', () => {
         active: false,
       };
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       await expect(
         superagent
@@ -182,7 +182,7 @@ describe('Router - Auth', () => {
         userId,
       };
 
-      MockUserModel.modelToRespondWith = unverifiedUser;
+      MockUserModel.userToRespondWith = unverifiedUser;
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
       expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
@@ -206,7 +206,7 @@ describe('Router - Auth', () => {
         userId,
       };
 
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
       await expect(
@@ -234,7 +234,7 @@ describe('Router - Auth', () => {
         userId,
       };
 
-      MockUserModel.modelToRespondWith = verifiedUser;
+      MockUserModel.userToRespondWith = verifiedUser;
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
       await expect(
@@ -257,7 +257,7 @@ describe('Router - Auth', () => {
         isVerified: false,
       };
 
-      MockUserModel.modelToRespondWith = unverifiedUser;
+      MockUserModel.userToRespondWith = unverifiedUser;
       MockVerificationToken.tokenToRespondWith = null;
 
       await expect(
@@ -284,7 +284,7 @@ describe('Router - Auth', () => {
         userId: '2',
       };
 
-      MockUserModel.modelToRespondWith = unverifiedUser;
+      MockUserModel.userToRespondWith = unverifiedUser;
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
       await expect(
@@ -309,7 +309,7 @@ describe('Router - Auth', () => {
         hashedPassword,
       };
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const response = await superagent
         .post(agentRequest('/authorize'))
@@ -332,7 +332,7 @@ describe('Router - Auth', () => {
     //   // Set the hashed password to be correct
     //   userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-    //   MockUserModel.modelToRespondWith = userWithId;
+    //   MockUserModel.userToRespondWith = userWithId;
 
     //   await expect(
     //     mockAuthorizeController()(userWithId.username, 'somWrongPassword')
@@ -359,7 +359,7 @@ describe('Router - Auth', () => {
     //     10
     //   );
 
-    //   MockUserModel.modelToRespondWith = inactiveUser;
+    //   MockUserModel.userToRespondWith = inactiveUser;
 
     //   await expect(
     //     mockAuthorizeController()(

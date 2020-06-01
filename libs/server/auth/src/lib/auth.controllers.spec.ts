@@ -81,7 +81,7 @@ const userWithPassword = ({
 describe('Auth - Controllers', () => {
   describe('register', () => {
     it('should register a new user', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       const createdUser = await setupRegisterController({
         User: (MockUserModel as unknown) as IUserModel,
@@ -97,7 +97,7 @@ describe('Auth - Controllers', () => {
     });
 
     it('should send a verification email to the users email', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       const spy = jest.fn();
 
@@ -115,7 +115,7 @@ describe('Auth - Controllers', () => {
     });
 
     it('should not return the password or hashed password if successful', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       const createdUser = await mockRegistrationController()({
         ...userWithPassword,
@@ -135,13 +135,13 @@ describe('Auth - Controllers', () => {
         emailAddress: 'anotherUnique@email.com',
       } as IUser;
 
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       await expect(
         mockRegistrationController()(userWithUniqueDetails)
       ).resolves.not.toThrowError();
 
-      MockUserModel.modelToRespondWith = userWithUniqueDetails;
+      MockUserModel.userToRespondWith = userWithUniqueDetails;
 
       await expect(
         mockRegistrationController()(userWithUniqueDetails)
@@ -167,7 +167,7 @@ describe('Auth - Controllers', () => {
         userId,
       };
 
-      MockUserModel.modelToRespondWith = unverifiedUser;
+      MockUserModel.userToRespondWith = unverifiedUser;
       MockVerificationToken.tokenToRespondWith = verificationToken;
 
       expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
@@ -187,7 +187,7 @@ describe('Auth - Controllers', () => {
 
     it('should throw if a user cannot be found', async () => {
       const token = 'SOME-TOKEN';
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       await expect(
         mockVerificationController()(userToRegister.email, token)
@@ -200,7 +200,7 @@ describe('Auth - Controllers', () => {
     it('should throw if the user is already valid', async () => {
       const token = 'SOME-TOKEN';
 
-      MockUserModel.modelToRespondWith = {
+      MockUserModel.userToRespondWith = {
         ...userToRegister,
         isVerified: true,
       };
@@ -216,7 +216,7 @@ describe('Auth - Controllers', () => {
     it('should throw if the token is not valid', async () => {
       const token = 'SOME-TOKEN';
 
-      MockUserModel.modelToRespondWith = { ...userToRegister };
+      MockUserModel.userToRespondWith = { ...userToRegister };
       MockVerificationToken.tokenToRespondWith = null;
 
       await expect(
@@ -230,7 +230,7 @@ describe('Auth - Controllers', () => {
     it('should throw if the token does not belong to the user', async () => {
       const token = 'SOME-TOKEN';
 
-      MockUserModel.modelToRespondWith = {
+      MockUserModel.userToRespondWith = {
         id: '1',
         ...userToRegister,
       };
@@ -258,7 +258,7 @@ describe('Auth - Controllers', () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const { token } = await mockLoginController()(
         userWithId.username,
@@ -272,7 +272,7 @@ describe('Auth - Controllers', () => {
     });
 
     it('should throw unauthorized error if the User is not found', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       await expect(
         mockLoginController()(
@@ -293,7 +293,7 @@ describe('Auth - Controllers', () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       await expect(
         mockLoginController()(userWithId.username, 'somWrongPassword')
@@ -317,7 +317,7 @@ describe('Auth - Controllers', () => {
         ...userWithId,
         active: false,
       };
-      MockUserModel.modelToRespondWith = inactiveUser;
+      MockUserModel.userToRespondWith = inactiveUser;
 
       await expect(
         mockLoginController()(userWithId.username, (userWithId as any).password)
@@ -335,7 +335,7 @@ describe('Auth - Controllers', () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const { token, refreshToken } = await mockAuthorizeController()(
         userWithId.username,
@@ -360,7 +360,7 @@ describe('Auth - Controllers', () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((userWithId as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       await expect(
         mockAuthorizeController()(userWithId.username, 'somWrongPassword')
@@ -387,7 +387,7 @@ describe('Auth - Controllers', () => {
         10
       );
 
-      MockUserModel.modelToRespondWith = inactiveUser;
+      MockUserModel.userToRespondWith = inactiveUser;
 
       await expect(
         mockAuthorizeController()(
@@ -571,7 +571,7 @@ describe('Auth - Controllers', () => {
 
   describe('userAvailable', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       const { isAvailable } = await mockUserAvailableController()(
         'mockUsername'
@@ -588,7 +588,7 @@ describe('Auth - Controllers', () => {
         username: takenUsername,
       } as IUser;
 
-      MockUserModel.modelToRespondWith = user;
+      MockUserModel.userToRespondWith = user;
 
       const { isAvailable } = await mockUserAvailableController()(
         takenUsername

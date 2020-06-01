@@ -131,7 +131,7 @@ describe(`GraphQL - Auth Queries`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -159,7 +159,7 @@ describe(`GraphQL - Auth Queries`, () => {
     });
 
     it('should throw unauthorized error if the user is not found', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -193,7 +193,7 @@ describe(`GraphQL - Auth Queries`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -227,7 +227,7 @@ describe(`GraphQL - Auth Queries`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.modelToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithId;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -254,7 +254,7 @@ describe(`GraphQL - Auth Queries`, () => {
 
   describe('userAvailable(username: String!): UserAvailable!', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockUserModel.modelToRespondWith = null;
+      MockUserModel.userToRespondWith = null;
 
       const queryName = `userAvailable`;
       const result = await runQuery(schema)(
@@ -282,7 +282,7 @@ describe(`GraphQL - Auth Queries`, () => {
         username: takenUsername,
       } as IUser;
 
-      MockUserModel.modelToRespondWith = user;
+      MockUserModel.userToRespondWith = user;
 
       const queryName = `userAvailable`;
       const result = await runQuery(schema)(
