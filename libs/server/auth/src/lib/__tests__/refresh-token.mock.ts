@@ -18,7 +18,7 @@ export class MockRefreshTokenModel extends BaseMockModel<IRefreshToken> {
   }
 
   static async findByTokenWithUser(token: string) {
-    if (this._model && this._model?._details.token === token) {
+    if (this._model && this._model._details.token === token) {
       return this._model;
     } else {
       return null;

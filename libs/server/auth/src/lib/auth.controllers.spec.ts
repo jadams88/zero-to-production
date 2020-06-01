@@ -414,18 +414,16 @@ describe('Auth - Controllers', () => {
         issuer,
       })(userWithId);
 
-      // const refreshToken = await MockRefreshTokenModel.create({
       const refreshToken = {
         user: {
           id: userWithId.id,
           username: userWithId.username,
+          active: true,
         } as IUser,
         token: refreshTokenString,
       };
 
       MockRefreshTokenModel.tokenToRespondWith = refreshToken;
-
-      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
 
       const { token } = await mockRefreshTokenController()(
         userWithId.username,
@@ -439,7 +437,7 @@ describe('Auth - Controllers', () => {
       MockRefreshTokenModel.reset();
     });
 
-    it('should throw a unauthorized errors if invalid username or token provided', async () => {
+    it('should throw a unauthorized error if invalid token provided', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),
@@ -451,20 +449,11 @@ describe('Auth - Controllers', () => {
         issuer,
       })(userWithId);
 
-      // const refreshToken = await MockRefreshTokenModel.create({
-      //   user: {
-      //     id: userWithId.id,
-      //     username: userWithId.username,
-      //   } as IUser,
-      //   token: refreshTokenString,
-      // });
-
-      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
-
       const refreshToken = {
         user: {
           id: userWithId.id,
           username: userWithId.username,
+          active: true,
         } as IUser,
         token: refreshTokenString,
       };
@@ -475,9 +464,71 @@ describe('Auth - Controllers', () => {
         mockRefreshTokenController()(userWithId.username, 'incorrect token')
       ).rejects.toThrowError('Unauthorized');
 
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+
+    it('should throw a unauthorized errors if invalid username provided', async () => {
+      const userWithId = {
+        ...userWithPassword,
+        id: newId(),
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: true,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
       await expect(
         mockRefreshTokenController()('incorrect username', refreshToken.token)
       ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+
+    it('should throw a unauthorized errors if the user is not active', async () => {
+      const userWithId = {
+        ...userWithPassword,
+        id: newId(),
+        active: false,
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: false,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      await expect(
+        mockRefreshTokenController()(userWithId.username, refreshToken.token)
+      ).rejects.toThrowError('Unauthorized');
+
+      // check the 'remove' handler has been called
+      expect(MockRefreshTokenModel.currentSetModel).toBe(null);
 
       MockUserModel.reset();
       MockRefreshTokenModel.reset();
@@ -497,16 +548,6 @@ describe('Auth - Controllers', () => {
         issuer,
       })(userWithId);
 
-      // const refreshToken = await MockRefreshTokenModel.create({
-      //   user: {
-      //     id: userWithId.id,
-      //     username: userWithId.username,
-      //   } as IUser,
-      //   token: refreshTokenString,
-      // });
-
-      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
-
       const refreshToken = {
         user: {
           id: userWithId.id,
@@ -520,49 +561,8 @@ describe('Auth - Controllers', () => {
       const { success } = await mockRevokeController()(refreshToken.token);
 
       expect(success).toBe(true);
-
-      MockUserModel.reset();
-      MockRefreshTokenModel.reset();
-    });
-
-    it('should throw if the token can not be found', async () => {
-      const userWithId = {
-        ...userWithPassword,
-        id: newId(),
-      };
-
-      const refreshTokenString = signRefreshToken({
-        privateKey,
-        audience,
-        issuer,
-      })(userWithId);
-
-      // const refreshToken = await MockRefreshTokenModel.create({
-      //   user: {
-      //     id: userWithId.id,
-      //     username: userWithId.username,
-      //   } as IUser,
-      //   token: refreshTokenString,
-      // });
-
-      const refreshToken = {
-        user: {
-          id: userWithId.id,
-          username: userWithId.username,
-        } as IUser,
-        token: refreshTokenString,
-      };
-
-      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
-
-      // MockRefreshTokenModel.findByTokenWithUserResponse = refreshToken.toJSON();
-
-      // console.error(refreshTokenString);
-      // console.error(MockRefreshTokenModel.findByTokenWithUser('some name'));
-
-      await expect(
-        mockRevokeController()('THIS IS NOT A THE CORRECT TOKEN')
-      ).rejects.toThrowError('Bad Request');
+      // check if remove was called
+      expect(MockRefreshTokenModel.currentSetModel).toBe(null);
 
       MockUserModel.reset();
       MockRefreshTokenModel.reset();

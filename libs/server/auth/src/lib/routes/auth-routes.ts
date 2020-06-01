@@ -53,7 +53,7 @@ export function applyAuthRoutes(config: AuthModuleConfig) {
   if (isRefreshConfig(config)) {
     router.post('/authorize', authorize(config.authorize));
     router.post('/authorize/refresh', refreshAccessToken(config.refresh));
-    router.post('/authorize/token/revoke', revokeRefreshToken(config.revoke));
+    router.post('/authorize/revoke', revokeRefreshToken(config.revoke));
   }
 
   // Only crete the JWKS if the config is specified
@@ -118,7 +118,7 @@ export function refreshAccessToken(config: RefreshControllerConfig) {
       throw Boom.unauthorized('Username and password must be provided');
 
     const success = await refreshAccessTokenCtr(username, refreshToken);
-    ctx.status = 403;
+    ctx.status = 200;
     ctx.body = success;
   };
 }

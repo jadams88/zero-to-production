@@ -180,25 +180,27 @@ export function setupRefreshAccessTokenController(
   return async (username: string, providedToken: string) => {
     // Verify the refresh token. Don't care about decoding it (as we retrieve form DB as well),
     // Just catch and throw an unauthorized error
-    try {
-      await verify(providedToken);
-    } catch (err) {
+    // verify will throw a 401 if incorrect
+    await verify(providedToken);
+
+    const savedToken = await RefreshToken.findByTokenWithUser(providedToken);
+
+    // No token found
+    if (savedToken === null) {
       throw Boom.unauthorized(null, 'Bearer');
     }
 
-    const savedToken = await RefreshToken.findByTokenWithUser(providedToken);
-    // No token found
-    if (savedToken === null) throw Boom.unauthorized(null, 'Bearer');
-
     // No user found or matched with given parameters
-    if (savedToken.user === null || savedToken.user.username !== username)
+    if (savedToken.user === null || savedToken.user.username !== username) {
       throw Boom.unauthorized(null, 'Bearer');
+    }
 
     // revoke refreshToken if user is inactive
-    if (savedToken.user.active === false) {
+    if (savedToken.user.active !== true) {
       await savedToken.remove();
       throw Boom.unauthorized(null, 'Bearer');
     }
+
     const accessToken = createAccessToken(savedToken.user);
 
     return {
@@ -214,9 +216,9 @@ export function setupRevokeRefreshTokenController({
   return async (token: string) => {
     const refreshToken = await RefreshToken.findOne({ token }).exec();
 
-    if (refreshToken === null) throw Boom.badRequest();
-
-    await refreshToken.remove();
+    if (refreshToken !== null) {
+      await refreshToken.remove();
+    }
 
     return { success: true };
   };
@@ -226,12 +228,10 @@ export function setupUserAvailableController(config: LoginControllerConfig) {
   const { User } = config;
 
   return async (username: string | undefined) => {
-    let isAvailable: boolean;
+    let isAvailable = false;
     if (username) {
       const resource = await User.findByUsername(username);
-      isAvailable = !resource ? true : false;
-    } else {
-      isAvailable = false;
+      isAvailable = resource === null ? true : false;
     }
 
     return { isAvailable };

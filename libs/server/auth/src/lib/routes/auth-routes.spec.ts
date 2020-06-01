@@ -20,7 +20,11 @@ import {
   MockUserModel,
   MockVerificationToken,
   MockRefreshTokenModel,
+  privateKey,
+  audience,
+  issuer,
 } from '../__tests__';
+import { signRefreshToken } from '../sign-tokens';
 
 const URL = 'http://localhost';
 const PORT = 9999;
@@ -45,6 +49,8 @@ const setupTestServer = () => {
 const agentRequest = (path: string) => `${URL}:${PORT}${path}`;
 
 const email: jest.Mock<any, any> = jest.fn();
+
+const newId = () => Types.ObjectId().toHexString();
 
 const config: AuthWithRefreshTokenConfig = {
   login: mockLoginConfig(),
@@ -302,18 +308,23 @@ describe('Router - Auth', () => {
     it('should return an accessToken and refreshToken if the credentials correct', async () => {
       const hashedPassword = await hash((user as any).password, 10);
 
-      const userWithId = {
+      const userWithPassword = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: newId(),
         active: true,
+      };
+
+      const userWithCorrectPassword = {
+        ...userWithPassword,
+        password: undefined,
         hashedPassword,
       };
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockUserModel.userToRespondWith = userWithCorrectPassword;
 
       const response = await superagent
         .post(agentRequest('/authorize'))
-        .send(userWithId);
+        .send(userWithPassword);
 
       expect(response.body).toBeDefined();
       expect(response.body.token).toBeString();
@@ -323,53 +334,295 @@ describe('Router - Auth', () => {
       MockRefreshTokenModel.reset();
     });
 
-    // it('should throw unauthorized error if the credentials are incorrect', async () => {
-    //   const userWithId = {
-    //     ...userWithPassword,
-    //     id: newId(),
-    //   };
+    it('should throw unauthorized error if the credentials are incorrect', async () => {
+      const hashedPassword = await hash((user as any).password, 10);
 
-    //   // Set the hashed password to be correct
-    //   userWithId.hashedPassword = await hash((userWithId as any).password, 10);
+      const userWithPassword = {
+        ...user,
+        id: newId(),
+        active: true,
+        hashedPassword,
+      };
 
-    //   MockUserModel.userToRespondWith = userWithId;
+      const userWithIncorrectUsername = {
+        ...userWithPassword,
+        username: 'wrong username',
+        hashedPassword: undefined,
+      };
 
-    //   await expect(
-    //     mockAuthorizeController()(userWithId.username, 'somWrongPassword')
-    //   ).rejects.toThrowError('Unauthorized');
+      const userWithIncorrectCorrectPassword = {
+        ...userWithPassword,
+        password: 'Wrong Password',
+        hashedPassword: undefined,
+      };
 
-    //   await expect(
-    //     mockAuthorizeController()(
-    //       'someWrongUsername',
-    //       (userWithId as any).password
-    //     )
-    //   ).rejects.toThrowError('Unauthorized');
-    // });
+      MockUserModel.userToRespondWith = userWithPassword;
 
-    // it('should throw an unauthorized error if the user is not active', async () => {
-    //   const inactiveUser = {
-    //     ...userWithPassword,
-    //     id: newId(),
-    //     active: false,
-    //   };
+      await expect(
+        superagent
+          .post(agentRequest('/authorize'))
+          .send(userWithIncorrectUsername)
+      ).rejects.toThrowError('Unauthorized');
 
-    //   // Set the hashed password to be correct
-    //   inactiveUser.hashedPassword = await hash(
-    //     (inactiveUser as any).password,
-    //     10
-    //   );
+      await expect(
+        superagent
+          .post(agentRequest('/authorize'))
+          .send(userWithIncorrectCorrectPassword)
+      ).rejects.toThrowError('Unauthorized');
 
-    //   MockUserModel.userToRespondWith = inactiveUser;
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
 
-    //   await expect(
-    //     mockAuthorizeController()(
-    //       inactiveUser.username,
-    //       (inactiveUser as any).password
-    //     )
-    //   ).rejects.toThrowError('Unauthorized');
+    it('should throw an unauthorized error if the user is not active', async () => {
+      const hashedPassword = await hash((user as any).password, 10);
 
-    //   MockUserModel.reset();
-    //   MockRefreshTokenModel.reset();
-    // });
+      const inactiveUser = {
+        ...user,
+        id: newId(),
+        active: false,
+        hashedPassword,
+      };
+
+      MockUserModel.userToRespondWith = inactiveUser;
+
+      await expect(
+        superagent.post(agentRequest('/authorize')).send(inactiveUser)
+      ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+  });
+
+  describe('/authorize/refresh', () => {
+    it('should return a new access token when the a valid refresh token is provided', async () => {
+      const userWithId = {
+        ...user,
+        id: newId(),
+        active: true,
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: true,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      const requestBody = {
+        username: userWithId.username,
+        refreshToken: refreshTokenString,
+      };
+      const response = await superagent
+        .post(agentRequest('/authorize/refresh'))
+        .send(requestBody);
+
+      expect(response.body).toBeDefined();
+      expect(response.body.token).toBeString();
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+
+    it('should throw a unauthorized error if invalid token provided', async () => {
+      const userWithId = {
+        ...user,
+        id: newId(),
+        active: true,
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: true,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      const requestBody = {
+        username: userWithId.username,
+        refreshToken: 'incorrect token',
+      };
+
+      await expect(
+        superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
+      ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+
+    it('should throw a unauthorized errors if invalid username provided', async () => {
+      const userWithId = {
+        ...user,
+        id: newId(),
+        active: true,
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: true,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      const requestBody = {
+        username: 'wrong user',
+        refreshToken: refreshTokenString,
+      };
+
+      await expect(
+        superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
+      ).rejects.toThrowError('Unauthorized');
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+
+    it('should throw a unauthorized errors if the user is not active', async () => {
+      const userWithId = {
+        ...user,
+        id: newId(),
+        active: false,
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: false,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      const requestBody = {
+        username: userWithId.username,
+        refreshToken: refreshTokenString,
+      };
+
+      await expect(
+        superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
+      ).rejects.toThrowError('Unauthorized');
+
+      // check the 'remove' handler has been called
+      expect(MockRefreshTokenModel.currentSetModel).toBe(null);
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+  });
+
+  describe('/authorize/revoke', () => {
+    it('should revoke the refresh token provided', async () => {
+      const userWithId = {
+        ...user,
+        id: newId(),
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: true,
+        } as IUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+
+      const requestBody = {
+        refreshToken: refreshTokenString,
+      };
+
+      const response = await superagent
+        .post(agentRequest('/authorize/revoke'))
+        .send(requestBody);
+
+      expect(response.body).toBeDefined();
+      expect(response.body.success).toBe(true);
+
+      // check if remove was called
+      expect(MockRefreshTokenModel.currentSetModel).toBe(null);
+
+      MockUserModel.reset();
+      MockRefreshTokenModel.reset();
+    });
+
+    describe('/authorize/available', () => {
+      it('isAvailable should be true if a user with that username can not be found', async () => {
+        MockUserModel.userToRespondWith = null;
+
+        const response = await superagent.get(
+          agentRequest('/authorize/available?username=username')
+        );
+
+        expect(response.body).toBeDefined();
+        expect(response.body.isAvailable).toBe(true);
+
+        MockUserModel.reset();
+      });
+
+      it('isAvailable should be false if a user with that username is found', async () => {
+        const takenUsername = 'takenUsername';
+        const user = {
+          username: takenUsername,
+        } as IUser;
+
+        MockUserModel.userToRespondWith = user;
+
+        const response = await superagent.get(
+          agentRequest(`/authorize/available?username=${takenUsername}`)
+        );
+
+        expect(response.body).toBeDefined();
+        expect(response.body.isAvailable).toBe(false);
+
+        MockUserModel.reset();
+      });
+    });
   });
 });
