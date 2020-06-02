@@ -3,12 +3,7 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import { setupGlobalMiddleware } from '@ztp/server/middleware';
 import { apolloServer, applyGraphQLEndpoint } from './graphql';
-
-// ZTP_AFTER_CLONE -> delete the below import
-// import { applyApiAuthRoutes } from './auth/demo.auth';
-// ZTP_AFTER_CLONE -> uncomment the below import
 import { applyApiAuthRoutes } from './auth/auth';
-
 import { config } from '../environments';
 import { connect } from 'mongoose';
 import { applyRestEndpoints } from './rest';

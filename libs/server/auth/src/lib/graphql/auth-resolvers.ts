@@ -8,27 +8,26 @@ import {
 } from '../auth.controllers';
 import {
   LoginControllerConfig,
-  RegistrationWithVerificationConftrollerConfig,
-  LoginAndRegisterConfig,
+  AuthModuleConfig,
+  RegistrationConfig,
 } from '../auth.interface';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 // email they receive
-export function getAuthResolvers(config: LoginAndRegisterConfig): IResolvers {
-  const registerConfig = { ...config.register, verifyEmail: config.email };
+export function getAuthResolvers(config: AuthModuleConfig): IResolvers {
   return {
     Query: {
       userAvailable: userAvailableResolver(config.login),
     },
     Mutation: {
-      register: registerResolver(registerConfig),
+      register: registerResolver(config.register),
       login: loginResolver(config.login),
     },
   };
 }
 
 export function registerResolver(
-  config: RegistrationWithVerificationConftrollerConfig
+  config: RegistrationConfig
 ): GraphQLFieldResolver<any, { input: IUser }, any> {
   const registerController = setupRegisterController(config);
   return function register(root, args, ctx, i) {

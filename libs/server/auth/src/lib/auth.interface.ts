@@ -6,27 +6,61 @@ export type TResolver = GraphQLFieldResolver<any, any, any>;
 export type TResolverFactory = (next: TResolver) => TResolver;
 export type VerifyEmail = (to: string, token: string) => Promise<any>;
 
-export type AuthModuleConfig =
-  | LoginAndRegisterConfig
-  | AuthWithRefreshTokenConfig;
+// export type AuthModuleConfig =
+//   | LoginAndRegisterConfig
+//   | AuthWithRefreshTokenConfig;
 
-export interface LoginAndRegisterConfig {
+// export interface LoginAndRegisterConfig {
+//   authServerUrl: string;
+//   register: RegistrationConfig;
+//   login: LoginControllerConfig;
+//   verify?: VerifyControllerConfig;
+//   email?: VerifyEmail;
+//   jwks?: JWKSRouteConfig;
+// }
+
+// export interface AuthWithRefreshTokenConfig extends LoginAndRegisterConfig {
+//   authorize: AuthorizeControllerConfig;
+//   refresh: RefreshControllerConfig;
+//   revoke: RevokeControllerConfig;
+// }
+
+export type AuthModuleConfig =
+  | BasicAuthModule
+  | AuthWithValidation
+  | BasicAuthWithRefresh
+  | AuthWithRefresh;
+
+//
+export interface BasicAuthModule {
   jwks?: JWKSRouteConfig;
-  login: LoginControllerConfig;
-  verify: VerifyControllerConfig;
-  register: VerifyControllerConfig;
   authServerUrl: string;
-  email: VerifyEmail;
+  login: LoginControllerConfig;
+  register: RegistrationConfig;
 }
 
-export interface AuthWithRefreshTokenConfig extends LoginAndRegisterConfig {
+export interface AuthWithValidation extends BasicAuthModule {
+  register: RegistrationWithVerificationConftrollerConfig;
+  verify: VerifyControllerConfig;
+}
+
+export interface BasicAuthWithRefresh extends BasicAuthModule {
   authorize: AuthorizeControllerConfig;
   refresh: RefreshControllerConfig;
   revoke: RevokeControllerConfig;
 }
 
+export interface AuthWithRefresh extends AuthWithValidation {
+  authorize: AuthorizeControllerConfig;
+  refresh: RefreshControllerConfig;
+  revoke: RevokeControllerConfig;
+}
+
+export type IncludeRefresh = BasicAuthWithRefresh | AuthWithRefresh;
+export type ExcludeRefresh = BasicAuthModule | AuthWithValidation;
+
 // -------------------------------------
-// For signing access and refresh tokens
+// For signing and validation access and refresh tokens
 // -------------------------------------
 
 export interface AccessTokenConfig {
@@ -56,6 +90,9 @@ export interface JWKSGuardConfig {
 // -------------------------------------
 // Interfaces for each controller
 // -------------------------------------
+export interface LoginControllerConfig extends AccessTokenConfig {
+  User: IUserModel;
+}
 
 export interface BasicRegistrationControllerConfig {
   User: IUserModel;
@@ -67,9 +104,9 @@ export interface RegistrationWithVerificationConftrollerConfig
   verifyEmail: VerifyEmail;
 }
 
-export interface LoginControllerConfig extends AccessTokenConfig {
-  User: IUserModel;
-}
+export type RegistrationConfig =
+  | BasicRegistrationControllerConfig
+  | RegistrationWithVerificationConftrollerConfig;
 
 export interface VerifyControllerConfig {
   User: IUserModel;

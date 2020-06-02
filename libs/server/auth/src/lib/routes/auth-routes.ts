@@ -11,15 +11,15 @@ import {
   setupUserAvailableController,
 } from '../auth.controllers';
 import {
-  RegistrationControllerConfig,
   VerifyControllerConfig,
   LoginControllerConfig,
   AuthorizeControllerConfig,
   RefreshControllerConfig,
   RevokeControllerConfig,
+  RegistrationConfig,
   AuthModuleConfig,
 } from '../auth.interface';
-import { isRefreshConfig } from '../auth-utils';
+import { includeEmailVerification, includeRefresh } from '../auth-utils';
 import { createJsonWebKeySetRoute } from './jwks';
 
 /**
@@ -41,16 +41,17 @@ import { createJsonWebKeySetRoute } from './jwks';
 export function applyAuthRoutes(config: AuthModuleConfig) {
   const router = new Router();
 
-  router.post(
-    '/authorize/register',
-    register({ ...config.register, verifyEmail: config.email })
-  );
-  router.post('/authorize/login', login(config.login));
-  router.get('/authorize/verify', verify(config.verify));
   router.get('/authorize/available', userAvailable(config.login));
+  router.post('/authorize/login', login(config.login));
+  router.post('/authorize/register', register(config.register));
+
+  if (includeEmailVerification(config.register)) {
+    // registration route is using email verification
+    router.get('/authorize/verify', verify(config.register));
+  }
 
   // Only if the config requires everything for refresh tokens as well
-  if (isRefreshConfig(config)) {
+  if (includeRefresh(config)) {
     router.post('/authorize', authorize(config.authorize));
     router.post('/authorize/refresh', refreshAccessToken(config.refresh));
     router.post('/authorize/revoke', revokeRefreshToken(config.revoke));
@@ -64,7 +65,7 @@ export function applyAuthRoutes(config: AuthModuleConfig) {
   return router.routes();
 }
 
-export function register(config: RegistrationControllerConfig) {
+export function register(config: RegistrationConfig) {
   const registerController = setupRegisterController(config);
 
   return async (ctx: Koa.ParameterizedContext) => {

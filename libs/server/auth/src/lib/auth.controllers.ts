@@ -8,18 +8,14 @@ import {
   AuthorizeControllerConfig,
   RefreshControllerConfig,
   RevokeControllerConfig,
-  BasicRegistrationControllerConfig,
   RegistrationWithVerificationConftrollerConfig,
+  RegistrationConfig,
 } from './auth.interface';
 import { IUser } from '@ztp/data';
 import { isPasswordAllowed, userToJSON } from './auth-utils';
 import { verifyRefreshToken } from './authenticate';
 
-export function setupRegisterController(
-  config:
-    | BasicRegistrationControllerConfig
-    | RegistrationWithVerificationConftrollerConfig
-) {
+export function setupRegisterController(config: RegistrationConfig) {
   // The 'registration' controller may either include email verification or not so
   // the VerificationToken model may be undefined
   const {

@@ -21,11 +21,3 @@ export {
 } from './lib/auth.interface';
 export { getRestGuards } from './lib/routes/router-guards';
 export { applyAuthRoutes } from './lib/routes/auth-routes';
-
-/**
- * ZTP_AFTER_CLONE -> Delete from this line onwards after cloning the repo
- *
- * For further details, see
- * https://github.com/jonathonadams/zero-to-production/tree/master/libs/server/auth/README.md
- */
-export * from './lib/demo';

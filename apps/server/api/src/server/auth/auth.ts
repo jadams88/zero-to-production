@@ -12,17 +12,21 @@ import { User } from '../api/users';
 import { VerificationToken, RefreshToken } from './models';
 import { configureSendgrid } from '@ztp/server/utils';
 
-const emailClient = configureSendgrid(config.sendgridApiKey);
-const createMessage = createEmailMessage(authConfig.authServerUrl);
-const verifyEmail = compose(emailClient, createMessage);
+// Basic AuthModule (no email verification)
+const authModuleConfig = generateAuthModuleConfig({ User, config: authConfig });
 
-const authModuleConfig = generateAuthModuleConfig(
-  User,
-  VerificationToken,
-  RefreshToken,
-  authConfig,
-  verifyEmail
-);
+// ZTP_AFTER_CLONE -> uncomment the below import
+// const emailClient = configureSendgrid(config.sendgridApiKey);
+// const createMessage = createEmailMessage(authConfig.authServerUrl);
+// const verifyEmail = compose(emailClient, createMessage);
+
+// const authModuleConfig = generateAuthModuleConfig({
+//   User,
+//   VerificationToken,
+//   RefreshToken,
+//   config: authConfig,
+//   emailClient: verifyEmail,
+// });
 
 /**
  * Applies all required auth routes
