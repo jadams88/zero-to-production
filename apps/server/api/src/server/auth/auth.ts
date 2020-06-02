@@ -7,13 +7,13 @@ import {
   getAuthResolvers,
   createEmailMessage,
 } from '@ztp/server/auth';
-import { authConfig } from '../../environments';
+import { config, authConfig } from '../../environments';
 import { User } from '../api/users';
 import { VerificationToken, RefreshToken } from './models';
 import { configureSendgrid } from '@ztp/server/utils';
 
-const emailClient = configureSendgrid(authConfig.email.sendGridApiKey);
-const createMessage = createEmailMessage(authConfig.email.authServerUrl);
+const emailClient = configureSendgrid(config.sendgridApiKey);
+const createMessage = createEmailMessage(authConfig.authServerUrl);
 const verifyEmail = compose(emailClient, createMessage);
 
 const authModuleConfig = generateAuthModuleConfig(

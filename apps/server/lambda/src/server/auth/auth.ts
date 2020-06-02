@@ -11,11 +11,11 @@ import {
   createAuthSchema,
   createEmailMessage,
 } from '@ztp/server/auth';
-import { authConfig } from '../../environments/environment';
+import { config, authConfig } from '../../environments/environment';
 import { configureSendgrid } from '@ztp/server/utils';
 
-const emailClient = configureSendgrid(authConfig.email.sendGridApiKey);
-const createMessage = createEmailMessage(authConfig.email.authServerUrl);
+const emailClient = configureSendgrid(config.sendgridApiKey);
+const createMessage = createEmailMessage(authConfig.authServerUrl);
 const verifyEmail = compose(emailClient, createMessage);
 
 /**
@@ -25,7 +25,7 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
   const User = getUserModel(conn);
   const VerificationToken = getVerificationTokenModel(conn);
   const RefreshToken = getRefreshTokenModel(conn);
-  const config = generateAuthModuleConfig(
+  const moduleConfig = generateAuthModuleConfig(
     User,
     VerificationToken,
     RefreshToken,
@@ -33,7 +33,7 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
     verifyEmail
   );
 
-  app.use(applyAuthRoutes(config));
+  app.use(applyAuthRoutes(moduleConfig));
 }
 
 /**
@@ -43,7 +43,7 @@ export function authResolvers(conn: Connection) {
   const User = getUserModel(conn);
   const VerificationToken = getVerificationTokenModel(conn);
   const RefreshToken = getRefreshTokenModel(conn);
-  const config = generateAuthModuleConfig(
+  const moduleConfig = generateAuthModuleConfig(
     User,
     VerificationToken,
     RefreshToken,
@@ -51,7 +51,7 @@ export function authResolvers(conn: Connection) {
     verifyEmail
   );
 
-  return getAuthResolvers(config);
+  return getAuthResolvers(moduleConfig);
 }
 
 export function createAuthSchemaFromConnection(conn: Connection) {

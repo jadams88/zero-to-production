@@ -73,8 +73,4 @@ export const testAuthConfig: ServerAuthConfig = {
     issuer: 'ISSUER',
     audience,
   },
-  email: {
-    authServerUrl,
-    sendGridApiKey: '',
-  },
 };

@@ -2,6 +2,10 @@ import { createConnection, Connection } from 'mongoose';
 import { config } from '../environments/environment';
 import { initDbSchemasModels } from './db-schemas';
 
+// Because `connection` is in the global scope, Lambda may retain it between
+// function calls thanks to `callbackWaitsForEmptyEventLoop`.
+// This means your Lambda function doesn't have to go through the
+// potentially expensive process of connecting to MongoDB every time.
 let connection: Connection | null = null;
 
 /**

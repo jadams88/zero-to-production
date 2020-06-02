@@ -14,7 +14,8 @@ export interface LoginAndRegisterConfig {
   jwks?: JWKSRouteConfig;
   login: LoginControllerConfig;
   verify: VerifyControllerConfig;
-  register: VerifyControllerConfig; // This is the same as verify because setting up the SendGrid email happens in the controller
+  register: VerifyControllerConfig;
+  authServerUrl: string;
   email: VerifyEmail;
 }
 
@@ -42,11 +43,6 @@ export interface RefreshTokenConfig {
   issuer: string;
 }
 
-export interface EmailVerificationConfig {
-  sendGridApiKey: string;
-  authServerUrl: string;
-}
-
 export interface JWKSRouteConfig {
   publicKey: string;
   keyId: string;
@@ -72,10 +68,6 @@ export interface VerifyControllerConfig {
 export interface RegistrationControllerConfig extends VerifyControllerConfig {
   verifyEmail: VerifyEmail;
 }
-
-// export interface AvailableControllerConfig {
-//   User: IUserModel;
-// }
 
 export interface AuthorizeControllerConfig
   extends LoginControllerConfig,
@@ -173,9 +165,5 @@ export interface ServerAuthConfig {
     publicKey?: string;
     issuer: string;
     audience: string;
-  };
-  email: {
-    authServerUrl: string;
-    sendGridApiKey: string;
   };
 }

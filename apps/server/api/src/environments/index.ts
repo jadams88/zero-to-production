@@ -5,11 +5,11 @@ import {
   EnvironnementConfig,
   ServerConfig,
 } from '@ztp/data';
-import { envToNumber } from '@ztp/server/utils';
-import { devConfig, devAuthConfig } from './development';
-import { prodConfig, prodAuthConfig } from './production';
-import { testConfig, testAuthConfig } from './test';
+import { envToNumber, getEnvVariableOrWarn } from '@ztp/server/utils';
 import { ServerAuthConfig } from '@ztp/server/auth';
+import { devConfig, devAuthConfig } from './development.js';
+import { prodConfig, prodAuthConfig } from './production.js';
+import { testConfig, testAuthConfig } from './test.js';
 
 /**
  * Config values common across all environments environments
@@ -36,6 +36,7 @@ const globalConfig: GlobalServerConfig = {
     useCreateIndex: true,
     useFindAndModify: false,
   },
+  sendgridApiKey: getEnvVariableOrWarn('SENDGRID_API_KEY'),
 };
 
 /**

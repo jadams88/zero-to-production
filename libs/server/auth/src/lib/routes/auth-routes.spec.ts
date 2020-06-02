@@ -60,6 +60,7 @@ const config: AuthWithRefreshTokenConfig = {
   refresh: mockRefreshTokenConfig(),
   revoke: mockRevokeConfig(),
   email,
+  authServerUrl: `${URL}:${PORT}`,
 };
 
 const user: IUser = ({

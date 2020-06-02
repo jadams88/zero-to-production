@@ -1,12 +1,16 @@
 import { InjectionToken } from '@angular/core';
 import { HttpLink } from 'apollo-angular-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { ApolloLink, concat } from 'apollo-link';
+import { ApolloClientOptions } from 'apollo-client';
 
 export const GRAPHQL_URL = new InjectionToken<string>('GraphQLUrl');
 
 // Currently set cache to be ignored, change this as required
-export function createApollo(httpLink: HttpLink, uri: string) {
+export function createApollo(
+  httpLink: HttpLink,
+  uri: string
+): ApolloClientOptions<NormalizedCacheObject> {
   const cache = new InMemoryCache({
     dataIdFromObject: (o) => o.id,
     addTypename: true,

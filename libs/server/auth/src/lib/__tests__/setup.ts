@@ -74,9 +74,3 @@ export function mockRevokeConfig(): RevokeControllerConfig {
     RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
   };
 }
-
-// export function mockUserAvailableConfig(): LoginControllerConfig{
-//   return {
-//     User: (MockUserModel as unknown) as IUserModel,
-//   } as LoginContro
-// }

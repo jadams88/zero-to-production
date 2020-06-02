@@ -37,8 +37,4 @@ export const devAuthConfig: ServerAuthConfig = {
     issuer: getEnvVariableOrWarn('ISSUER'),
     audience,
   },
-  email: {
-    authServerUrl,
-    sendGridApiKey: getEnvVariableOrWarn('SENDGRID_API_KEY'),
-  },
 };

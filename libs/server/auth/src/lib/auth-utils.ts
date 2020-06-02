@@ -113,6 +113,7 @@ export function generateAuthModuleConfig(
     },
     revoke: { RefreshToken },
     email: email ? email : noOpEmailVerification,
+    authServerUrl: config.authServerUrl,
   };
 }
 

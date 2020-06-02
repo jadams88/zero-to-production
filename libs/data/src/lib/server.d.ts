@@ -9,6 +9,7 @@ export interface GlobalServerConfig {
   databaseOptions: ConnectionOptions;
   dbConnectionString?: string;
   production?: boolean;
+  sendgridApiKey?: string;
 }
 
 export type EnvironnementConfig =

@@ -20,6 +20,7 @@ export const config: ServerConfig = {
     bufferCommands: false, // Disable mongoose buffering
     bufferMaxEntries: 0, // and MongoDB driver buffering
   },
+  sendgridApiKey: getEnvVariableOrWarn('SENDGRID_API_KEY'),
 };
 
 export const authConfig: ServerAuthConfig = {
@@ -40,9 +41,5 @@ export const authConfig: ServerAuthConfig = {
     issuer: getEnvVariableOrWarn('ISSUER'),
     publicKey: getEnvVariableOrWarn('REFRESH_TOKEN_PUBLIC_KEY'),
     audience,
-  },
-  email: {
-    sendGridApiKey: getEnvVariableOrWarn('SENDGRID_API_KEY'),
-    authServerUrl,
   },
 };

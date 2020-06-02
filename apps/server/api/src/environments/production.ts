@@ -38,8 +38,4 @@ export const prodAuthConfig: ServerAuthConfig = {
     issuer: getEnvVariableOrWarn('ISSUER'),
     audience,
   },
-  email: {
-    sendGridApiKey: getEnvVariableOrWarn('SENDGRID_API_KEY'),
-    authServerUrl,
-  },
 };

@@ -7,11 +7,10 @@ import LambdaServer from './server';
 let handler: Handler;
 
 export async function createHandler(conn: Connection) {
+  // If a cached handler exists, uses that one
   if (handler) {
-    // console.log('=> using cached handler instance');
     return handler;
   }
-  // console.log('=> creating new handler');
   const koa = new Koa();
 
   setupGlobalMiddleware(koa);
@@ -19,6 +18,7 @@ export async function createHandler(conn: Connection) {
   koa.use(errorHandler);
 
   const app = new LambdaServer(koa);
+
   handler = serverless(app.initializeServer(conn), { basePath: '' });
   return handler;
 }
