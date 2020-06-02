@@ -4,21 +4,30 @@ import Boom from '@hapi/boom';
 import { signAccessToken, signRefreshToken } from './sign-tokens';
 import {
   LoginControllerConfig,
-  RegistrationControllerConfig,
   VerifyControllerConfig,
   AuthorizeControllerConfig,
   RefreshControllerConfig,
   RevokeControllerConfig,
+  BasicRegistrationControllerConfig,
+  RegistrationWithVerificationConftrollerConfig,
 } from './auth.interface';
 import { IUser } from '@ztp/data';
 import { isPasswordAllowed, userToJSON } from './auth-utils';
 import { verifyRefreshToken } from './authenticate';
 
-export function setupRegisterController({
-  User,
-  VerificationToken,
-  verifyEmail,
-}: RegistrationControllerConfig) {
+export function setupRegisterController(
+  config:
+    | BasicRegistrationControllerConfig
+    | RegistrationWithVerificationConftrollerConfig
+) {
+  // The 'registration' controller may either include email verification or not so
+  // the VerificationToken model may be undefined
+  const {
+    User,
+    VerificationToken,
+    verifyEmail,
+  } = config as RegistrationWithVerificationConftrollerConfig;
+
   return async (user: IUser) => {
     const password: string = (user as any).password;
     if (!password) Boom.badRequest('No password provided');
@@ -30,26 +39,29 @@ export function setupRegisterController({
     if (currentUser !== null)
       throw Boom.badRequest('Username is not available');
 
-    user.hashedPassword = await hash(password, 10);
+    const hashedPassword = await hash(password, 10);
 
-    // Generate the id
     const newUser = new User({
       ...user,
       isVerified: false,
       active: true,
+      hashedPassword,
     });
 
     const savedUser = await newUser.save();
 
-    const verificationToken = new VerificationToken({
-      userId: savedUser.id,
-      token: randomBytes(16).toString('hex'),
-    });
+    // Check the controller is set up to include email verification
+    if (VerificationToken) {
+      const verificationToken = new VerificationToken({
+        userId: savedUser.id,
+        token: randomBytes(16).toString('hex'),
+      });
 
-    await Promise.all([
-      verificationToken.save(),
-      verifyEmail(user.email, verificationToken.token),
-    ]);
+      await Promise.all([
+        verificationToken.save(),
+        verifyEmail(user.email, verificationToken.token),
+      ]);
+    }
 
     return userToJSON<IUser>(savedUser);
   };

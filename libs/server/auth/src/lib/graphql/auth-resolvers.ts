@@ -8,7 +8,7 @@ import {
 } from '../auth.controllers';
 import {
   LoginControllerConfig,
-  RegistrationControllerConfig,
+  RegistrationWithVerificationConftrollerConfig,
   LoginAndRegisterConfig,
 } from '../auth.interface';
 
@@ -28,7 +28,7 @@ export function getAuthResolvers(config: LoginAndRegisterConfig): IResolvers {
 }
 
 export function registerResolver(
-  config: RegistrationControllerConfig
+  config: RegistrationWithVerificationConftrollerConfig
 ): GraphQLFieldResolver<any, { input: IUser }, any> {
   const registerController = setupRegisterController(config);
   return function register(root, args, ctx, i) {

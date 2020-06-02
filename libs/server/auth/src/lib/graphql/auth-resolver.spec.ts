@@ -26,6 +26,7 @@ const config: LoginAndRegisterConfig = {
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),
   email,
+  authServerUrl: 'http://some-url.com',
 };
 
 const resolvers = getAuthResolvers(config);

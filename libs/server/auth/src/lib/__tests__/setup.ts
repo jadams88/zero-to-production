@@ -4,7 +4,7 @@ import {
   IVerificationTokenModel,
   IRefreshTokenModel,
   LoginControllerConfig,
-  RegistrationControllerConfig,
+  RegistrationWithVerificationConftrollerConfig,
   VerifyControllerConfig,
   AuthorizeControllerConfig,
   RefreshControllerConfig,
@@ -20,7 +20,7 @@ export const keyId = 'key-id';
 
 export function mockRegistrationConfig(
   email: jest.Mock<any, any> = jest.fn()
-): RegistrationControllerConfig {
+): RegistrationWithVerificationConftrollerConfig {
   return {
     User: (MockUserModel as unknown) as IUserModel,
     VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,

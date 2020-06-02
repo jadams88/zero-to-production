@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import { Document, Model } from 'mongoose';
 import { GraphQLFieldResolver } from 'graphql';
 import { IUserModel, IUserDocument } from '@ztp/server/core-data';
 
@@ -56,6 +56,17 @@ export interface JWKSGuardConfig {
 // -------------------------------------
 // Interfaces for each controller
 // -------------------------------------
+
+export interface BasicRegistrationControllerConfig {
+  User: IUserModel;
+}
+
+export interface RegistrationWithVerificationConftrollerConfig
+  extends BasicRegistrationControllerConfig {
+  VerificationToken: IVerificationTokenModel;
+  verifyEmail: VerifyEmail;
+}
+
 export interface LoginControllerConfig extends AccessTokenConfig {
   User: IUserModel;
 }
@@ -63,10 +74,6 @@ export interface LoginControllerConfig extends AccessTokenConfig {
 export interface VerifyControllerConfig {
   User: IUserModel;
   VerificationToken: IVerificationTokenModel;
-}
-
-export interface RegistrationControllerConfig extends VerifyControllerConfig {
-  verifyEmail: VerifyEmail;
 }
 
 export interface AuthorizeControllerConfig
@@ -122,14 +129,11 @@ export interface IRefreshToken {
   token: string;
 }
 
-export interface IRefreshTokenDocument
-  extends IRefreshToken,
-    mongoose.Document {
+export interface IRefreshTokenDocument extends IRefreshToken, Document {
   id: string;
 }
 
-export interface IRefreshTokenModel
-  extends mongoose.Model<IRefreshTokenDocument> {
+export interface IRefreshTokenModel extends Model<IRefreshTokenDocument> {
   findByTokenWithUser(token: string): Promise<IRefreshTokenDocument | null>;
 }
 
@@ -140,12 +144,12 @@ export interface IVerificationToken {
 
 export interface IVerificationTokenDocument
   extends IVerificationToken,
-    mongoose.Document {
+    Document {
   id: string;
 }
 
 export interface IVerificationTokenModel
-  extends mongoose.Model<IVerificationTokenDocument> {}
+  extends Model<IVerificationTokenDocument> {}
 
 // -------------------------------------
 // Interfaces for the auth environment config
