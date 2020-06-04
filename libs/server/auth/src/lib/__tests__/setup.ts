@@ -1,18 +1,21 @@
-import { IUserModel } from '@ztp/server/core-data';
 import { MockUserModel } from './user.mock';
 import {
-  IVerificationTokenModel,
-  IRefreshTokenModel,
+  Verify,
+  VerifyModel,
+  Refresh,
+  RefreshModel,
   LoginControllerConfig,
   RegistrationWithVerificationConftrollerConfig,
   VerifyControllerConfig,
   AuthorizeControllerConfig,
   RefreshControllerConfig,
   RevokeControllerConfig,
+  AuthUser,
+  UserModel,
 } from '../auth.interface';
-import { MockVerificationToken } from './verification.mock';
+import { MockVerifyModel } from './verification.mock';
 import { privateKey } from './rsa-keys';
-import { MockRefreshTokenModel } from './refresh-token.mock';
+import { MockRefreshModel } from './refresh-token.mock';
 
 export const issuer = 'some-issuer';
 export const audience = 'say-hello!!!';
@@ -20,24 +23,27 @@ export const keyId = 'key-id';
 
 export function mockRegistrationConfig(
   email: jest.Mock<any, any> = jest.fn()
-): RegistrationWithVerificationConftrollerConfig {
+): RegistrationWithVerificationConftrollerConfig<AuthUser, Verify> {
   return {
-    User: (MockUserModel as unknown) as IUserModel,
-    VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,
+    User: (MockUserModel as unknown) as UserModel<AuthUser>,
+    Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
     verifyEmail: email,
   };
 }
 
-export function mockVerificationConfig(): VerifyControllerConfig {
+export function mockVerificationConfig(): VerifyControllerConfig<
+  AuthUser,
+  Verify
+> {
   return {
-    User: (MockUserModel as unknown) as IUserModel,
-    VerificationToken: (MockVerificationToken as unknown) as IVerificationTokenModel,
+    User: (MockUserModel as unknown) as UserModel<AuthUser>,
+    Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
   };
 }
 
-export function mockLoginConfig(): LoginControllerConfig {
+export function mockLoginConfig(): LoginControllerConfig<AuthUser> {
   return {
-    User: (MockUserModel as unknown) as IUserModel,
+    User: (MockUserModel as unknown) as UserModel<AuthUser>,
     privateKey,
     expireTime: 100000,
     issuer,
@@ -46,31 +52,34 @@ export function mockLoginConfig(): LoginControllerConfig {
   };
 }
 
-export function mockAuthorizeConfig(): AuthorizeControllerConfig {
+export function mockAuthorizeConfig(): AuthorizeControllerConfig<
+  AuthUser,
+  Refresh
+> {
   return {
-    User: (MockUserModel as unknown) as IUserModel,
+    User: (MockUserModel as unknown) as UserModel<AuthUser>,
     privateKey,
     expireTime: 100000,
     issuer,
     audience,
     keyId,
-    RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
+    Refresh: (MockRefreshModel as unknown) as RefreshModel<Refresh>,
   };
 }
 
-export function mockRefreshTokenConfig(): RefreshControllerConfig {
+export function mockRefreshTokenConfig(): RefreshControllerConfig<Refresh> {
   return {
     privateKey,
     audience,
     keyId,
     expireTime: 100000,
     issuer,
-    RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
+    Refresh: (MockRefreshModel as unknown) as RefreshModel<Refresh>,
   };
 }
 
-export function mockRevokeConfig(): RevokeControllerConfig {
+export function mockRevokeConfig(): RevokeControllerConfig<Refresh> {
   return {
-    RefreshToken: (MockRefreshTokenModel as unknown) as IRefreshTokenModel,
+    Refresh: (MockRefreshModel as unknown) as RefreshModel<Refresh>,
   };
 }

@@ -3,11 +3,9 @@ import {
   createUserModel,
   createTodoModel,
   createTodoNoteModel,
-} from '@ztp/server/core-data';
-import {
   createRefreshTokenModel,
   createVerificationTokenModel,
-} from '@ztp/server/auth';
+} from '@ztp/server/core-data';
 
 /**
  * Initialize all mongoose schemas

@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 export abstract class BaseMockModel<T> {
   static _model: any | null;
   abstract _props: string[];
@@ -82,12 +80,12 @@ export abstract class BaseMockModel<T> {
     }, {} as any);
   }
 
-  async save() {
+  save() {
     if (!this._details.id) {
-      this._details.id = Types.ObjectId().toHexString();
+      this._details.id = 'unique-id-123';
     }
-    return this._details;
+    return Promise.resolve(this._details);
   }
 
-  abstract async remove(): Promise<null>;
+  abstract async remove(): Promise<this>;
 }

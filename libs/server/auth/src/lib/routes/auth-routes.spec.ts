@@ -3,7 +3,6 @@ import { Server } from 'http';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import superagent from 'superagent';
-import { AuthWithRefreshTokenConfig } from '../auth.interface';
 import { applyAuthRoutes } from './auth-routes';
 import {
   mockLoginConfig,
@@ -13,18 +12,23 @@ import {
   mockRefreshTokenConfig,
   mockRevokeConfig,
 } from '../__tests__/setup';
-import { IUser } from '@ztp/data';
 import { Types } from 'mongoose';
 import { hash } from 'bcryptjs';
 import {
   MockUserModel,
-  MockVerificationToken,
-  MockRefreshTokenModel,
+  MockRefreshModel,
   privateKey,
   audience,
   issuer,
+  MockVerifyModel,
 } from '../__tests__';
 import { signRefreshToken } from '../sign-tokens';
+import {
+  AuthUser,
+  AuthWithRefresh,
+  Refresh,
+  Verify,
+} from '../auth.interface.js';
 
 const URL = 'http://localhost';
 const PORT = 9999;
@@ -48,29 +52,26 @@ const setupTestServer = () => {
 
 const agentRequest = (path: string) => `${URL}:${PORT}${path}`;
 
-const email: jest.Mock<any, any> = jest.fn();
-
 const newId = () => Types.ObjectId().toHexString();
 
-const config: AuthWithRefreshTokenConfig = {
+const config: AuthWithRefresh<AuthUser, Verify, Refresh> = {
   login: mockLoginConfig(),
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),
   authorize: mockAuthorizeConfig(),
   refresh: mockRefreshTokenConfig(),
   revoke: mockRevokeConfig(),
-  email,
   authServerUrl: `${URL}:${PORT}`,
 };
 
-const user: IUser = ({
+const user = ({
   username: 'test user',
   givenName: 'test',
   surname: 'user',
   email: 'test@domain.com',
   dateOfBirth: '2019-01-01',
   password: 'SomE$2jDA',
-} as any) as IUser;
+} as any) as AuthUser;
 
 describe('Router - Auth', () => {
   let server: Server;
@@ -190,7 +191,7 @@ describe('Router - Auth', () => {
       };
 
       MockUserModel.userToRespondWith = unverifiedUser;
-      MockVerificationToken.tokenToRespondWith = verificationToken;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
 
       expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
 
@@ -200,7 +201,7 @@ describe('Router - Auth', () => {
 
       expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
 
-      MockVerificationToken.reset();
+      MockVerifyModel.reset();
       MockUserModel.reset();
     });
 
@@ -214,7 +215,7 @@ describe('Router - Auth', () => {
       };
 
       MockUserModel.userToRespondWith = null;
-      MockVerificationToken.tokenToRespondWith = verificationToken;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
 
       await expect(
         superagent.get(
@@ -222,7 +223,7 @@ describe('Router - Auth', () => {
         )
       ).rejects.toThrowError('Bad Request');
 
-      MockVerificationToken.reset();
+      MockVerifyModel.reset();
       MockUserModel.reset();
     });
 
@@ -242,7 +243,7 @@ describe('Router - Auth', () => {
       };
 
       MockUserModel.userToRespondWith = verifiedUser;
-      MockVerificationToken.tokenToRespondWith = verificationToken;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
 
       await expect(
         superagent.get(
@@ -250,7 +251,7 @@ describe('Router - Auth', () => {
         )
       ).rejects.toThrowError('Bad Request');
 
-      MockVerificationToken.reset();
+      MockVerifyModel.reset();
       MockUserModel.reset();
     });
 
@@ -265,7 +266,7 @@ describe('Router - Auth', () => {
       };
 
       MockUserModel.userToRespondWith = unverifiedUser;
-      MockVerificationToken.tokenToRespondWith = null;
+      MockVerifyModel.tokenToRespondWith = null;
 
       await expect(
         superagent.get(
@@ -273,7 +274,7 @@ describe('Router - Auth', () => {
         )
       ).rejects.toThrowError('Bad Request');
 
-      MockVerificationToken.reset();
+      MockVerifyModel.reset();
       MockUserModel.reset();
     });
 
@@ -292,7 +293,7 @@ describe('Router - Auth', () => {
       };
 
       MockUserModel.userToRespondWith = unverifiedUser;
-      MockVerificationToken.tokenToRespondWith = verificationToken;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
 
       await expect(
         superagent.get(
@@ -300,7 +301,7 @@ describe('Router - Auth', () => {
         )
       ).rejects.toThrowError('Bad Request');
 
-      MockVerificationToken.reset();
+      MockVerifyModel.reset();
       MockUserModel.reset();
     });
   });
@@ -332,7 +333,7 @@ describe('Router - Auth', () => {
       expect(response.body.refreshToken).toBeString();
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
 
     it('should throw unauthorized error if the credentials are incorrect', async () => {
@@ -372,7 +373,7 @@ describe('Router - Auth', () => {
       ).rejects.toThrowError('Unauthorized');
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
 
     it('should throw an unauthorized error if the user is not active', async () => {
@@ -392,7 +393,7 @@ describe('Router - Auth', () => {
       ).rejects.toThrowError('Unauthorized');
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
   });
 
@@ -415,11 +416,11 @@ describe('Router - Auth', () => {
           id: userWithId.id,
           username: userWithId.username,
           active: true,
-        } as IUser,
+        } as AuthUser,
         token: refreshTokenString,
       };
 
-      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+      MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
         username: userWithId.username,
@@ -433,7 +434,7 @@ describe('Router - Auth', () => {
       expect(response.body.token).toBeString();
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
 
     it('should throw a unauthorized error if invalid token provided', async () => {
@@ -454,11 +455,11 @@ describe('Router - Auth', () => {
           id: userWithId.id,
           username: userWithId.username,
           active: true,
-        } as IUser,
+        } as AuthUser,
         token: refreshTokenString,
       };
 
-      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+      MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
         username: userWithId.username,
@@ -470,7 +471,7 @@ describe('Router - Auth', () => {
       ).rejects.toThrowError('Unauthorized');
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
 
     it('should throw a unauthorized errors if invalid username provided', async () => {
@@ -491,11 +492,11 @@ describe('Router - Auth', () => {
           id: userWithId.id,
           username: userWithId.username,
           active: true,
-        } as IUser,
+        } as AuthUser,
         token: refreshTokenString,
       };
 
-      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+      MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
         username: 'wrong user',
@@ -507,7 +508,7 @@ describe('Router - Auth', () => {
       ).rejects.toThrowError('Unauthorized');
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
 
     it('should throw a unauthorized errors if the user is not active', async () => {
@@ -528,11 +529,11 @@ describe('Router - Auth', () => {
           id: userWithId.id,
           username: userWithId.username,
           active: false,
-        } as IUser,
+        } as AuthUser,
         token: refreshTokenString,
       };
 
-      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+      MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
         username: userWithId.username,
@@ -544,10 +545,10 @@ describe('Router - Auth', () => {
       ).rejects.toThrowError('Unauthorized');
 
       // check the 'remove' handler has been called
-      expect(MockRefreshTokenModel.currentSetModel).toBe(null);
+      expect(MockRefreshModel.currentSetModel).toBe(null);
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
     });
   });
 
@@ -569,11 +570,11 @@ describe('Router - Auth', () => {
           id: userWithId.id,
           username: userWithId.username,
           active: true,
-        } as IUser,
+        } as AuthUser,
         token: refreshTokenString,
       };
 
-      MockRefreshTokenModel.tokenToRespondWith = refreshToken;
+      MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
         refreshToken: refreshTokenString,
@@ -587,43 +588,43 @@ describe('Router - Auth', () => {
       expect(response.body.success).toBe(true);
 
       // check if remove was called
-      expect(MockRefreshTokenModel.currentSetModel).toBe(null);
+      expect(MockRefreshModel.currentSetModel).toBe(null);
 
       MockUserModel.reset();
-      MockRefreshTokenModel.reset();
+      MockRefreshModel.reset();
+    });
+  });
+
+  describe('/authorize/available', () => {
+    it('isAvailable should be true if a user with that username can not be found', async () => {
+      MockUserModel.userToRespondWith = null;
+
+      const response = await superagent.get(
+        agentRequest('/authorize/available?username=username')
+      );
+
+      expect(response.body).toBeDefined();
+      expect(response.body.isAvailable).toBe(true);
+
+      MockUserModel.reset();
     });
 
-    describe('/authorize/available', () => {
-      it('isAvailable should be true if a user with that username can not be found', async () => {
-        MockUserModel.userToRespondWith = null;
+    it('isAvailable should be false if a user with that username is found', async () => {
+      const takenUsername = 'takenUsername';
+      const takenUser = {
+        username: takenUsername,
+      } as AuthUser;
 
-        const response = await superagent.get(
-          agentRequest('/authorize/available?username=username')
-        );
+      MockUserModel.userToRespondWith = takenUser;
 
-        expect(response.body).toBeDefined();
-        expect(response.body.isAvailable).toBe(true);
+      const response = await superagent.get(
+        agentRequest(`/authorize/available?username=${takenUsername}`)
+      );
 
-        MockUserModel.reset();
-      });
+      expect(response.body).toBeDefined();
+      expect(response.body.isAvailable).toBe(false);
 
-      it('isAvailable should be false if a user with that username is found', async () => {
-        const takenUsername = 'takenUsername';
-        const user = {
-          username: takenUsername,
-        } as IUser;
-
-        MockUserModel.userToRespondWith = user;
-
-        const response = await superagent.get(
-          agentRequest(`/authorize/available?username=${takenUsername}`)
-        );
-
-        expect(response.body).toBeDefined();
-        expect(response.body.isAvailable).toBe(false);
-
-        MockUserModel.reset();
-      });
+      MockUserModel.reset();
     });
   });
 });

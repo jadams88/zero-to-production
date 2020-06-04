@@ -56,14 +56,6 @@
 
 - [ ] Create a Nativescript mobile app (see issues regarding monorepo support)
 
-### DevOps
-
-- [x] Cloud Functions, and make library's reusable
-
-### Schematics
-
-- [x] Firebase Functions schematic
-
 ### @uqt/ng-node
 
 - [] schematics for new project and library

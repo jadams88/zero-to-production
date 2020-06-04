@@ -1,11 +1,13 @@
 import Koa from 'koa';
 import { compose } from 'ramda';
 import { Connection } from 'mongoose';
-import { getUserModel } from '@ztp/server/core-data';
 import {
-  getAuthResolvers,
+  getUserModel,
   getVerificationTokenModel,
   getRefreshTokenModel,
+} from '@ztp/server/core-data';
+import {
+  getAuthResolvers,
   generateAuthModuleConfig,
   applyAuthRoutes,
   createAuthSchema,
@@ -23,17 +25,22 @@ const verifyEmail = compose(emailClient, createMessage);
  */
 export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
   const User = getUserModel(conn);
-  const VerificationToken = getVerificationTokenModel(conn);
-  const RefreshToken = getRefreshTokenModel(conn);
-  const moduleConfig = generateAuthModuleConfig(
-    User,
-    VerificationToken,
-    RefreshToken,
-    authConfig,
-    verifyEmail
-  );
 
-  app.use(applyAuthRoutes(moduleConfig));
+  // Basic AuthModule (no email verification)
+  const authModuleConfig = generateAuthModuleConfig(authConfig, User);
+
+  // ZTP_AFTER_CLONE -> uncomment the below import
+  // const VerificationToken = getVerificationTokenModel(conn);
+  // const RefreshToken = getRefreshTokenModel(conn);
+  // const authModuleConfig = generateAuthModuleConfig(
+  //   authConfig,
+  //   User,
+  //   VerificationToken,
+  //   verifyEmail,
+  //   RefreshToken
+  // );
+
+  app.use(applyAuthRoutes(authModuleConfig));
 }
 
 /**
@@ -41,17 +48,22 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
  */
 export function authResolvers(conn: Connection) {
   const User = getUserModel(conn);
-  const VerificationToken = getVerificationTokenModel(conn);
-  const RefreshToken = getRefreshTokenModel(conn);
-  const moduleConfig = generateAuthModuleConfig(
-    User,
-    VerificationToken,
-    RefreshToken,
-    authConfig,
-    verifyEmail
-  );
 
-  return getAuthResolvers(moduleConfig);
+  // Basic AuthModule (no email verification)
+  const authModuleConfig = generateAuthModuleConfig(authConfig, User);
+
+  // ZTP_AFTER_CLONE -> uncomment the below import
+  const VerificationToken = getVerificationTokenModel(conn);
+  // const RefreshToken = getRefreshTokenModel(conn);
+  // const authModuleConfig = generateAuthModuleConfig(
+  //   authConfig,
+  //   User,
+  //   VerificationToken,
+  //   verifyEmail,
+  //   RefreshToken
+  // );
+
+  return getAuthResolvers(authModuleConfig);
 }
 
 export function createAuthSchemaFromConnection(conn: Connection) {

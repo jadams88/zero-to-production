@@ -1,4 +1,4 @@
-export { MockRefreshTokenModel } from './refresh-token.mock';
+export { MockRefreshModel } from './refresh-token.mock';
 export {
   publicKey,
   privateKey,
@@ -7,4 +7,4 @@ export {
 } from './rsa-keys';
 export * from './setup';
 export { MockUserModel } from './user.mock';
-export { MockVerificationToken } from './verification.mock';
+export { MockVerifyModel } from './verification.mock';

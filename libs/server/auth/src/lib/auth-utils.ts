@@ -118,18 +118,18 @@ export function generateAuthGuardConfig<U extends AuthUser>(
 // }
 
 export function generateAuthModuleConfig<U extends AuthUser>(
-  User: UserModel<U>,
-  config: ServerAuthConfig
+  config: ServerAuthConfig,
+  User: UserModel<U>
 ): BasicAuthModule<U>;
 export function generateAuthModuleConfig<U extends AuthUser, V extends Verify>(
-  User: UserModel<U>,
   config: ServerAuthConfig,
+  User: UserModel<U>,
   Verify: VerifyModel<V>,
   emailClient: VerifyEmail
 ): AuthWithValidation<U, V>;
 export function generateAuthModuleConfig<U extends AuthUser, R extends Refresh>(
-  User: UserModel<U>,
   config: ServerAuthConfig,
+  User: UserModel<U>,
   Refresh: RefreshModel<R>
 ): BasicAuthWithRefresh<U, R>;
 export function generateAuthModuleConfig<
@@ -137,8 +137,8 @@ export function generateAuthModuleConfig<
   V extends Verify,
   R extends Refresh
 >(
-  User: UserModel<U>,
   config: ServerAuthConfig,
+  User: UserModel<U>,
   Verify: VerifyModel<V>,
   emailClient: VerifyEmail,
   Refresh: RefreshModel<R>
@@ -148,8 +148,8 @@ export function generateAuthModuleConfig<
   V extends Verify,
   R extends Refresh
 >(
-  User: UserModel<U>,
   config: ServerAuthConfig,
+  User: UserModel<U>,
   VerifyM?: VerifyModel<V>,
   emailClient?: VerifyEmail,
   RefreshM?: RefreshModel<R>

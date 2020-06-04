@@ -11,10 +11,7 @@ import { todoTypeDef, userTypeDef } from '@ztp/server/core-data';
 import { config } from '../environments/environment';
 import { authDirectives } from './auth/auth.guards';
 import { usersResolvers, todosResolvers } from './api';
-
-// ZTP_AFTER_CLONE -> delete the 'demo' import and uncomment the 'auth' input
-import { createAuthSchemaFromConnection } from './auth/demo.auth';
-// import { createAuthSchemaFromConnection } from './auth/auth'
+import { createAuthSchemaFromConnection } from './auth/auth';
 
 // A function that applies the middleware to the app.
 export function applyGraphQLEndpoint(app: Koa, conn: Connection) {

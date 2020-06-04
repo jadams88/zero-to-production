@@ -3,10 +3,7 @@ import Router from '@koa/router';
 import { Connection } from 'mongoose';
 import { applyRestEndpoints } from './rest';
 import { applyGraphQLEndpoint } from './graphql';
-// ZTP_AFTER_CLONE -> delete the below import
-import { applyAuthRoutes } from './auth/demo.auth';
-// ZTP_AFTER_CLONE -> uncomment the below import
-// import { applyAuthRoutes } from './auth/auth';
+import { applyLambdaAuthRoutes } from './auth/auth';
 
 /**
  * Crates a new API Server
@@ -25,7 +22,7 @@ export default class LambdaServer {
     /**
      * apply all authorization routes
      */
-    applyAuthRoutes(app, conn);
+    applyLambdaAuthRoutes(app, conn);
 
     applyGraphQLEndpoint(app, conn);
     applyRestEndpoints(app, conn);

@@ -1,4 +1,3 @@
-import Koa from 'koa';
 import Router from '@koa/router';
 // @ts-ignore
 import { pem2jwk } from 'pem-jwk';

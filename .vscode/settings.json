@@ -1,5 +1,3 @@
 {
-  "cSpell.words": ["Kubernetes", "Todos", "dyno"],
-  "javascript.preferences.importModuleSpecifierEnding": "js",
-  "typescript.preferences.importModuleSpecifierEnding": "js"
+  "cSpell.words": ["Kubernetes", "Todos", "dyno"]
 }

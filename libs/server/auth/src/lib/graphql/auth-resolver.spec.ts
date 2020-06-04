@@ -1,45 +1,40 @@
+import { hash } from 'bcryptjs';
 import 'jest-extended';
-import { IUser } from '@ztp/data';
 import { GraphQLSchema, graphql } from 'graphql';
 import { createAuthSchema } from './schema';
 import { getAuthResolvers } from './auth-resolvers';
-import { LoginAndRegisterConfig } from '../auth.interface';
 import {
   mockLoginConfig,
   mockRegistrationConfig,
   mockVerificationConfig,
 } from '../__tests__/setup';
-import { Types } from 'mongoose';
-import { hash } from 'bcryptjs';
 import { MockUserModel } from '../__tests__/user.mock';
+import { AuthUser, AuthWithValidation, Verify } from '../auth.interface';
 
-export const runQuery = (schema: GraphQLSchema) => {
+export const runQuery = (sc: GraphQLSchema) => {
   return async (query: string, variables: { [prop: string]: any }) => {
-    return graphql(schema, query, null, {}, variables);
+    return graphql(sc, query, null, {}, variables);
   };
 };
 
-const email: jest.Mock<any, any> = jest.fn();
-
-const config: LoginAndRegisterConfig = {
+const config: AuthWithValidation<AuthUser, Verify> = {
   login: mockLoginConfig(),
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),
-  email,
   authServerUrl: 'http://some-url.com',
 };
 
 const resolvers = getAuthResolvers(config);
 const schema = createAuthSchema(resolvers);
 
-const user: IUser = ({
+const user = ({
   username: 'test user',
   givenName: 'test',
   surname: 'user',
   email: 'test@domain.com',
   dateOfBirth: '2019-01-01',
   password: 'SomE$2jDA',
-} as any) as IUser;
+} as any) as AuthUser;
 
 describe(`GraphQL - Auth Queries`, () => {
   describe(`register(input: RegisterInput!): RegisterSuccess!`, () => {
@@ -125,7 +120,7 @@ describe(`GraphQL - Auth Queries`, () => {
     it('should return an access token if correct credentials are provided', async () => {
       const userWithId = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: 'some-id',
         active: true,
       };
 
@@ -187,7 +182,7 @@ describe(`GraphQL - Auth Queries`, () => {
     it('should throw unauthorized error if the credentials are incorrect', async () => {
       const userWithId = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: 'some-id',
         active: true,
       };
 
@@ -221,7 +216,7 @@ describe(`GraphQL - Auth Queries`, () => {
     it('should throw an unauthorized error if the user is not active', async () => {
       const userWithId = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: 'some-id',
         active: false,
       };
 
@@ -279,11 +274,11 @@ describe(`GraphQL - Auth Queries`, () => {
 
     it('isAvailable should be false if a user with that username is found', async () => {
       const takenUsername = 'takenUsername';
-      const user = {
+      const takenUser = {
         username: takenUsername,
-      } as IUser;
+      } as AuthUser;
 
-      MockUserModel.userToRespondWith = user;
+      MockUserModel.userToRespondWith = takenUser;
 
       const queryName = `userAvailable`;
       const result = await runQuery(schema)(

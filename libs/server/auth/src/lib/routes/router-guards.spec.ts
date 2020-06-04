@@ -10,14 +10,13 @@ import {
 } from './router-guards';
 import { signAccessToken } from '../sign-tokens';
 import { MockUserModel } from '../__tests__/user.mock';
-import { IUserDocument, IUserModel } from '@ztp/server/core-data';
 import {
   privateKey,
   publicKey,
   invalidPrivateKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
-import { IUser } from '@ztp/data';
+import { AuthUser, UserModel } from '../auth.interface';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();
@@ -41,7 +40,7 @@ describe('Router - Auth Guards', () => {
       keyId,
     })({
       id: '1',
-    } as IUser);
+    } as AuthUser);
     invalidJwt = signAccessToken({
       privateKey: invalidPrivateKey,
       expireTime,
@@ -50,7 +49,7 @@ describe('Router - Auth Guards', () => {
       audience,
     })({
       id: '1',
-    } as IUser);
+    } as AuthUser);
   });
 
   describe('authenticate', () => {
@@ -250,11 +249,13 @@ describe('Router - Auth Guards', () => {
       const mockUser = {
         id,
         active: true,
-      } as IUser;
+      } as AuthUser;
 
       MockUserModel.userToRespondWith = mockUser;
       await expect(
-        verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
+        verifyActiveUser({
+          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+        })(
           ({ user: { sub: id } } as unknown) as Koa.ParameterizedContext,
           nextSpy
         )
@@ -273,14 +274,16 @@ describe('Router - Auth Guards', () => {
       const mockUser = {
         id: newId(),
         active: true,
-      } as IUserDocument;
+      } as AuthUser;
 
-      const spy = jest.spyOn(MockUserModel, 'findById');
+      const spy = jest.spyOn(MockUserModel, 'findByUserId');
 
       MockUserModel.userToRespondWith = mockUser;
 
       await expect(
-        verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
+        verifyActiveUser({
+          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+        })(
           ({ user: { sub: wrongId } } as unknown) as Koa.ParameterizedContext,
           nextSpy
         )
@@ -298,13 +301,15 @@ describe('Router - Auth Guards', () => {
       const mockUser = {
         id,
         active: false,
-      } as IUserDocument;
+      } as AuthUser;
 
-      const spy = jest.spyOn(MockUserModel, 'findById');
+      const spy = jest.spyOn(MockUserModel, 'findByUserId');
 
       MockUserModel.userToRespondWith = mockUser;
       await expect(
-        verifyActiveUser({ User: (MockUserModel as unknown) as IUserModel })(
+        verifyActiveUser({
+          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+        })(
           ({ user: { sub: id } } as unknown) as Koa.ParameterizedContext,
           nextSpy
         )
