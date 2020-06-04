@@ -5,7 +5,7 @@ import {
   VerifyTokenJWKSConfig,
   VerifyTokenConfig,
   TResolver,
-  User,
+  AuthUser,
 } from '../auth.interface';
 import { isJWKS } from '../auth-utils';
 import {
@@ -15,7 +15,7 @@ import {
   retrievePublicKeyFromJWKS,
 } from '../authenticate';
 
-export function getGraphQLGuards<U extends User>(
+export function getGraphQLGuards<U extends AuthUser>(
   config: GuardConfig<U> | JWKSGuarConfig<U>
 ) {
   const { authenticate, verifyUser, authorize } = createGraphQLGuards(config);
@@ -31,7 +31,7 @@ export function getGraphQLGuards<U extends User>(
   };
 }
 
-export function createGraphQLGuards<U extends User>(
+export function createGraphQLGuards<U extends AuthUser>(
   config: GuardConfig<U> | JWKSGuarConfig<U>
 ) {
   // Check if using JWKS or if public key is provided
@@ -74,7 +74,7 @@ export function authenticatedJWKS(config: VerifyTokenJWKSConfig) {
  * Verify the user is a valid user in the database
  *
  */
-export function verifyActiveUser<U extends User>({
+export function verifyActiveUser<U extends AuthUser>({
   User,
 }: VerifyUserConfig<U>) {
   const activeUser = isActiveUser(User);

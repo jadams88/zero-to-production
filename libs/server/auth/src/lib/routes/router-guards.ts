@@ -11,10 +11,10 @@ import {
   VerifyTokenConfig,
   VerifyTokenJWKSConfig,
   VerifyUserConfig,
-  User,
+  AuthUser,
 } from '../auth.interface';
 
-export function getRestGuards<U extends User>(
+export function getRestGuards<U extends AuthUser>(
   config: GuardConfig<U> | JWKSGuarConfig<U>
 ) {
   // Check if using JWKS guards or if public key is provided
@@ -66,7 +66,7 @@ export function authenticateJWKS(config: VerifyTokenJWKSConfig) {
  * will contain the decoded token, and hence the 'sub' property will be the id
  *
  */
-export function verifyActiveUser<U extends User>({
+export function verifyActiveUser<U extends AuthUser>({
   User,
 }: VerifyUserConfig<U>) {
   const activeUser = isActiveUser(User);

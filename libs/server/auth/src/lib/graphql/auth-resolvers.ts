@@ -8,13 +8,13 @@ import {
 import {
   LoginControllerConfig,
   BasicAuthModule,
-  User,
+  AuthUser,
   BasicRegistrationControllerConfig,
 } from '../auth.interface';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 // email they receive
-export function getAuthResolvers<U extends User>(
+export function getAuthResolvers<U extends AuthUser>(
   config: BasicAuthModule<U>
 ): IResolvers {
   return {
@@ -28,9 +28,9 @@ export function getAuthResolvers<U extends User>(
   };
 }
 
-export function registerResolver<U extends User>(
+export function registerResolver<U extends AuthUser>(
   config: BasicRegistrationControllerConfig<U>
-): GraphQLFieldResolver<any, { input: User }, any> {
+): GraphQLFieldResolver<any, { input: AuthUser }, any> {
   const registerController = setupRegisterController(config);
   return function register(root, args, ctx, i) {
     return registerController(args.input);
@@ -42,7 +42,7 @@ export function registerResolver<U extends User>(
  *
  * @returns { Object } A User and signed JWT.
  */
-export function loginResolver<U extends User>(
+export function loginResolver<U extends AuthUser>(
   config: LoginControllerConfig<U>
 ): GraphQLFieldResolver<any, { username: string; password: string }, any> {
   const loginController = setupLoginController(config);
@@ -55,9 +55,9 @@ export function loginResolver<U extends User>(
   };
 }
 
-export function userAvailableResolver<U extends User>(
+export function userAvailableResolver<U extends AuthUser>(
   config: LoginControllerConfig<U>
-): GraphQLFieldResolver<any, { input: User }, any> {
+): GraphQLFieldResolver<any, { input: AuthUser }, any> {
   const userAvailableController = setupUserAvailableController(config);
   return (root, args, ctx, i) => {
     return userAvailableController(args.username);

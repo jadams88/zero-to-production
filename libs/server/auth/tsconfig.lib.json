@@ -6,10 +6,5 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "**/__tests__/*.ts"],
-  "include": ["**/*.ts"],
-  "references": [
-    { "path": "../../data/tsconfig.lib.json" },
-    { "path": "../core-data/tsconfig.lib.json" },
-    { "path": "../utils/tsconfig.lib.json" }
-  ]
+  "include": ["**/*.ts"]
 }

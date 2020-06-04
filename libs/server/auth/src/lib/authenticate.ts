@@ -6,7 +6,7 @@ import {
   RefreshTokenConfig,
   JWKSGuardConfig,
   UserModel,
-  User,
+  AuthUser,
 } from './auth.interface';
 import { createPublicPemFromPrivate } from './auth-utils';
 
@@ -26,7 +26,7 @@ export function verifyToken(
   }
 }
 
-export function isActiveUser<U extends User>(User: UserModel<U>) {
+export function isActiveUser<U extends AuthUser>(User: UserModel<U>) {
   return async (id: string | undefined) => {
     const user = await User.findByUserId(id);
     if (!user || !user.active) throw unauthorized(null, 'Bearer');

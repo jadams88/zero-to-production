@@ -1,9 +1,13 @@
 import { sign } from 'jsonwebtoken';
-import { AccessTokenConfig, RefreshTokenConfig, User } from './auth.interface';
+import {
+  AccessTokenConfig,
+  RefreshTokenConfig,
+  AuthUser,
+} from './auth.interface';
 
 // A function that returns a singed JWT
 export function signAccessToken(config: AccessTokenConfig) {
-  return (user: User) => {
+  return (user: AuthUser) => {
     return sign(
       {
         // Enter additional payload info here
@@ -22,7 +26,7 @@ export function signAccessToken(config: AccessTokenConfig) {
 }
 
 export function signRefreshToken(config: RefreshTokenConfig) {
-  return (user: User) => {
+  return (user: AuthUser) => {
     return sign(
       {
         // add whatever properties you desire here

@@ -10,46 +10,42 @@ import {
   RevokeControllerConfig,
   RegistrationWithVerificationConftrollerConfig,
   RegistrationConfig,
-  User,
-  RefreshToken,
-  VerificationToken,
+  AuthUser,
+  Refresh,
+  Verify,
   UserModel,
-  VerificationTokenModel,
+  VerifyModel,
   VerifyEmail,
   BasicRegistrationControllerConfig,
 } from './auth.interface';
 import { isPasswordAllowed, userToJSON } from './auth-utils';
 import { verifyRefreshToken } from './authenticate';
 
-export function setupRegisterController<U extends User>(
+export function setupRegisterController<U extends AuthUser>(
   config: BasicRegistrationControllerConfig<U>
-): (user: User) => Promise<User>;
-export function setupRegisterController<
-  U extends User,
-  V extends VerificationToken
->(
+): (user: AuthUser) => Promise<AuthUser>;
+export function setupRegisterController<U extends AuthUser, V extends Verify>(
   config: RegistrationWithVerificationConftrollerConfig<U, V>
-): (user: User) => Promise<User>;
+): (user: AuthUser) => Promise<AuthUser>;
 
-export function setupRegisterController<
-  U extends User,
-  V extends VerificationToken
->(config: RegistrationConfig<U, V>): (user: User) => Promise<User> {
+export function setupRegisterController<U extends AuthUser, V extends Verify>(
+  config: RegistrationConfig<U, V>
+): (user: AuthUser) => Promise<AuthUser> {
   // The 'registration' controller may either include email verification or not so
-  // the VerificationToken model may be undefined
+  // the Verify model may be undefined
   const {
     User,
-    VerificationToken,
+    Verify: Token,
     verifyEmail,
   } = config as RegistrationWithVerificationConftrollerConfig<U, V>;
 
   const basicReg = simpleRegistration(User);
 
-  if (!VerificationToken) {
+  if (!Token) {
     return basicReg;
   } else {
-    const sendEmailVerification = verifyUser(VerificationToken, verifyEmail);
-    return (user: User) => basicReg(user).then(sendEmailVerification);
+    const sendEmailVerification = verifyUser(Token, verifyEmail);
+    return (user: AuthUser) => basicReg(user).then(sendEmailVerification);
     // await sendEmailVerification(newUser);
   }
 
@@ -76,8 +72,8 @@ export function setupRegisterController<
   //   const savedUser = await newUser.save();
 
   //   // Check the controller is set up to include email verification
-  //   if (VerificationToken) {
-  //     const verificationToken = new VerificationToken({
+  //   if (Verify) {
+  //     const verificationToken = new Verify({
   //       userId: savedUser.id,
   //       token: randomBytes(16).toString('hex'),
   //     });
@@ -88,12 +84,12 @@ export function setupRegisterController<
   //     ]);
   //   }
 
-  //   return userToJSON<User>(savedUser);
+  //   return userToJSON<AuthUser>(savedUser);
   // };
 }
 
-export function simpleRegistration<U extends User>(User: UserModel<U>) {
-  return async (user: User) => {
+export function simpleRegistration<U extends AuthUser>(User: UserModel<U>) {
+  return async (user: AuthUser) => {
     const password: string = (user as any).password;
     if (!password) Boom.badRequest('No password provided');
 
@@ -115,15 +111,15 @@ export function simpleRegistration<U extends User>(User: UserModel<U>) {
 
     const savedUser = await newUser.save();
 
-    return userToJSON<User>(savedUser);
+    return userToJSON<AuthUser>(savedUser);
   };
 }
 
-export function verifyUser<V extends VerificationToken>(
-  VerificationToken: VerificationTokenModel<V>,
+export function verifyUser<V extends Verify>(
+  VerificationToken: VerifyModel<V>,
   verifyEmail: VerifyEmail
 ) {
-  return (user: User) => {
+  return (user: AuthUser) => {
     const verificationToken = new VerificationToken({
       userId: user.id,
       token: randomBytes(16).toString('hex'),
@@ -141,12 +137,12 @@ export function verifyUser<V extends VerificationToken>(
  *
  * @export
  * @param {IUserModel} User
- * @param {IVerificationTokenModel} VerificationToken
+ * @param {IVerifyModel} VerificationToken
  * @returns Verification Controller
  */
 export function setupVerifyController({
   User,
-  VerificationToken,
+  Verify: Token,
 }: VerifyControllerConfig<any, any>) {
   return async (email: string, token: string) => {
     /**
@@ -160,7 +156,7 @@ export function setupVerifyController({
     /**
      * Check the provided Token is valid
      */
-    const verificationToken = await VerificationToken.findByToken(token);
+    const verificationToken = await Token.findByToken(token);
     if (!verificationToken) throw Boom.badRequest('Token is not valid');
 
     /**
@@ -194,7 +190,7 @@ export function setupVerifyController({
  *   expireTime
  * }
  */
-export function setupLoginController<U extends User>(
+export function setupLoginController<U extends AuthUser>(
   config: LoginControllerConfig<U>
 ) {
   const { User } = config;
@@ -218,11 +214,10 @@ export function setupLoginController<U extends User>(
   };
 }
 
-export function setupAuthorizeController<
-  U extends User,
-  R extends RefreshToken
->(config: AuthorizeControllerConfig<U, R>) {
-  const { User, RefreshToken } = config;
+export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
+  config: AuthorizeControllerConfig<U, R>
+) {
+  const { User, Refresh: Token } = config;
   const createAccessToken = signAccessToken(config);
   const createRefreshToken = signRefreshToken(config);
 
@@ -238,7 +233,7 @@ export function setupAuthorizeController<
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
-    const token = new RefreshToken({
+    const token = new Token({
       user: user.id,
       token: refreshToken,
     });
@@ -254,10 +249,10 @@ export function setupAuthorizeController<
 }
 
 // a controller that receives a refresh token and returns an access token.
-export function setupRefreshAccessTokenController<R extends RefreshToken>(
+export function setupRefreshAccessTokenController<R extends Refresh>(
   config: RefreshControllerConfig<R>
 ) {
-  const { RefreshToken } = config;
+  const { Refresh: Token } = config;
   const verify = verifyRefreshToken(config);
   const createAccessToken = signAccessToken(config);
 
@@ -267,7 +262,7 @@ export function setupRefreshAccessTokenController<R extends RefreshToken>(
     // verify will throw a 401 if incorrect
     await verify(providedToken);
 
-    const savedToken = await RefreshToken.findByToken(providedToken);
+    const savedToken = await Token.findByToken(providedToken);
 
     // No token found
     if (savedToken === null) {
@@ -294,8 +289,8 @@ export function setupRefreshAccessTokenController<R extends RefreshToken>(
 }
 
 // a controller to revoke a refresh token
-export function setupRevokeRefreshTokenController<R extends RefreshToken>({
-  RefreshToken: Token,
+export function setupRevokeRefreshTokenController<R extends Refresh>({
+  Refresh: Token,
 }: RevokeControllerConfig<R>) {
   return async (token: string) => {
     const refreshToken = await Token.findByToken(token);
@@ -308,7 +303,7 @@ export function setupRevokeRefreshTokenController<R extends RefreshToken>({
   };
 }
 
-export function setupUserAvailableController<U extends User>(
+export function setupUserAvailableController<U extends AuthUser>(
   config: LoginControllerConfig<U>
 ) {
   const { User } = config;

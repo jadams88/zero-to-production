@@ -16,12 +16,12 @@ import {
   IncludeRefresh,
   ExcludeRefresh,
   UserModel,
-  User,
-  VerificationToken,
-  RefreshToken,
+  AuthUser,
+  Verify,
+  Refresh,
   BasicAuthModule,
-  VerificationTokenModel,
-  RefreshTokenModel,
+  VerifyModel,
+  RefreshModel,
   AuthWithValidation,
   BasicAuthWithRefresh,
   AuthWithRefresh,
@@ -42,7 +42,7 @@ export function userToJSON<T>(user: T): T {
   return omit(user, ['hashedPassword', 'password']);
 }
 
-export function generateAuthGuardConfig<U extends User>(
+export function generateAuthGuardConfig<U extends AuthUser>(
   production: boolean,
   authConfig: ServerAuthConfig,
   User: UserModel<U>
@@ -71,10 +71,10 @@ export function generateAuthGuardConfig<U extends User>(
 //   Promise.resolve(true);
 
 // export function generateAuthModuleConfig(
-//   User: IUserModel,
+//   AuthUser: IAuthUserModel,
 //   config: ServerAuthConfig,
-//   VerificationToken?: IVerificationTokenModel,
-//   RefreshToken?: IRefreshTokenModel,
+//   Verify?: IVerifyModel,
+//   Refresh?: IRefreshModel,
 //   email?: VerifyEmail
 // ): AuthModuleConfig {
 //   const { publicKey, privateKey } = config.accessToken;
@@ -95,70 +95,64 @@ export function generateAuthGuardConfig<U extends User>(
 //           keyId,
 //         }
 //       : undefined,
-//     login: { User, ...config.accessToken, keyId },
-//     register: { User, VerificationToken, ...config.accessToken },
-//     verify: { User, VerificationToken, ...config.accessToken },
+//     login: { AuthUser, ...config.accessToken, keyId },
+//     register: { AuthUser, Verify, ...config.accessToken },
+//     verify: { AuthUser, Verify, ...config.accessToken },
 //     authorize: {
-//       User,
-//       RefreshToken,
+//       AuthUser,
+//       Refresh,
 //       ...config.accessToken,
 //       ...config.refreshToken,
 //       keyId,
 //     },
 //     refresh: {
-//       RefreshToken,
+//       Refresh,
 //       ...config.accessToken,
 //       ...config.refreshToken,
 //       keyId,
 //     },
-//     revoke: { RefreshToken },
+//     revoke: { Refresh },
 //     email: email ? email : noOpEmailVerification,
 //     authServerUrl: config.authServerUrl,
 //   };
 // }
 
-export function generateAuthModuleConfig<U extends User>(
+export function generateAuthModuleConfig<U extends AuthUser>(
   User: UserModel<U>,
   config: ServerAuthConfig
 ): BasicAuthModule<U>;
-export function generateAuthModuleConfig<
-  U extends User,
-  V extends VerificationToken
->(
+export function generateAuthModuleConfig<U extends AuthUser, V extends Verify>(
   User: UserModel<U>,
   config: ServerAuthConfig,
-  VerificationToken: VerificationTokenModel<V>,
+  Verify: VerifyModel<V>,
   emailClient: VerifyEmail
 ): AuthWithValidation<U, V>;
-export function generateAuthModuleConfig<
-  U extends User,
-  R extends RefreshToken
->(
+export function generateAuthModuleConfig<U extends AuthUser, R extends Refresh>(
   User: UserModel<U>,
   config: ServerAuthConfig,
-  RefreshToken: RefreshTokenModel<R>
+  Refresh: RefreshModel<R>
 ): BasicAuthWithRefresh<U, R>;
 export function generateAuthModuleConfig<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 >(
   User: UserModel<U>,
   config: ServerAuthConfig,
-  VerificationToken: VerificationTokenModel<V>,
+  Verify: VerifyModel<V>,
   emailClient: VerifyEmail,
-  RefreshToken: RefreshTokenModel<R>
+  Refresh: RefreshModel<R>
 ): AuthWithRefresh<U, V, R>;
 export function generateAuthModuleConfig<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 >(
   User: UserModel<U>,
   config: ServerAuthConfig,
-  VerificationToken?: VerificationTokenModel<V>,
+  VerifyM?: VerifyModel<V>,
   emailClient?: VerifyEmail,
-  RefreshToken?: RefreshTokenModel<R>
+  RefreshM?: RefreshModel<R>
 ): any {
   const { publicKey, privateKey } = config.accessToken;
   const pubKey = publicKey ? publicKey : createPublicPemFromPrivate(privateKey);
@@ -185,9 +179,9 @@ export function generateAuthModuleConfig<
   };
 
   if (
-    VerificationToken === undefined &&
+    VerifyM === undefined &&
     emailClient === undefined &&
-    RefreshToken === undefined
+    RefreshM === undefined
   ) {
     const register: BasicRegistrationControllerConfig<U> = {
       User,
@@ -201,16 +195,16 @@ export function generateAuthModuleConfig<
     };
 
     return basic;
-  } else if (VerificationToken && emailClient && RefreshToken === undefined) {
+  } else if (VerifyM && emailClient && RefreshM === undefined) {
     const register: RegistrationWithVerificationConftrollerConfig<U, V> = {
       User,
-      VerificationToken,
+      Verify: VerifyM,
       verifyEmail: emailClient,
     };
 
     const verify: VerifyControllerConfig<U, V> = {
       User,
-      VerificationToken,
+      Verify: VerifyM,
     };
 
     const authWithValidation: AuthWithValidation<U, V> = {
@@ -222,31 +216,27 @@ export function generateAuthModuleConfig<
     };
 
     return authWithValidation;
-  } else if (
-    VerificationToken === undefined &&
-    emailClient === undefined &&
-    RefreshToken
-  ) {
+  } else if (VerifyM === undefined && emailClient === undefined && RefreshM) {
     const register: BasicRegistrationControllerConfig<U> = {
       User,
     };
 
     const authorize: AuthorizeControllerConfig<U, R> = {
       User,
-      RefreshToken,
+      Refresh: RefreshM,
       ...config.accessToken,
       ...config.refreshToken,
       keyId,
     };
     const refresh: RefreshControllerConfig<R> = {
-      RefreshToken,
+      Refresh: RefreshM,
       ...config.accessToken,
       ...config.refreshToken,
       keyId,
     };
 
     const revoke: RevokeControllerConfig<R> = {
-      RefreshToken,
+      Refresh: RefreshM,
     };
 
     const authWithRefresh: BasicAuthWithRefresh<U, R> = {
@@ -260,35 +250,35 @@ export function generateAuthModuleConfig<
     };
 
     return authWithRefresh;
-  } else if (VerificationToken && RefreshToken && emailClient) {
+  } else if (VerifyM && RefreshM && emailClient) {
     const register: RegistrationWithVerificationConftrollerConfig<U, V> = {
       User,
-      VerificationToken,
+      Verify: VerifyM,
       verifyEmail: emailClient,
     };
 
     const verify: VerifyControllerConfig<U, V> = {
       User,
-      VerificationToken,
+      Verify: VerifyM,
     };
 
     const authorize: AuthorizeControllerConfig<U, R> = {
       User,
-      RefreshToken,
+      Refresh: RefreshM,
       ...config.accessToken,
       ...config.refreshToken,
       keyId,
     };
 
     const refresh: RefreshControllerConfig<R> = {
-      RefreshToken,
+      Refresh: RefreshM,
       ...config.accessToken,
       ...config.refreshToken,
       keyId,
     };
 
     const revoke: RevokeControllerConfig<R> = {
-      RefreshToken,
+      Refresh: RefreshM,
     };
 
     const basic: AuthModuleConfig<U, V, R> = {
@@ -318,32 +308,29 @@ export function createEmailMessage(authServerUrl: string) {
   };
 }
 
-export function isJWKS<U extends User>(
+export function isJWKS<U extends AuthUser>(
   config: JWKSGuarConfig<U> | GuardConfig<U>
 ): config is JWKSGuarConfig<U> {
   return (config as GuardConfig<U>).publicKey === undefined;
 }
 
 export function includeRefresh<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 >(
   config: IncludeRefresh<U, V, R> | ExcludeRefresh<U, V>
 ): config is IncludeRefresh<U, V, R> {
   return (config as IncludeRefresh<U, V, R>).authorize !== undefined;
 }
 
-export function includeEmailVerification<
-  U extends User,
-  V extends VerificationToken
->(
+export function includeEmailVerification<U extends AuthUser, V extends Verify>(
   config:
     | BasicRegistrationControllerConfig<U>
     | RegistrationWithVerificationConftrollerConfig<U, V>
 ): config is RegistrationWithVerificationConftrollerConfig<U, V> {
   return (
-    (config as RegistrationWithVerificationConftrollerConfig<U, V>)
-      .VerificationToken !== undefined
+    (config as RegistrationWithVerificationConftrollerConfig<U, V>).Verify !==
+    undefined
   );
 }

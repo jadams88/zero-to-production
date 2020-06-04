@@ -5,31 +5,29 @@ export type TResolverFactory = (next: TResolver) => TResolver;
 export type VerifyEmail = (to: string, token: string) => Promise<any>;
 
 export type AuthModuleConfig<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 > =
   | BasicAuthModule<U>
   | AuthWithValidation<U, V>
   | BasicAuthWithRefresh<U, R>
   | AuthWithRefresh<U, V, R>;
 
-export interface BasicAuthModule<U extends User> {
+export interface BasicAuthModule<U extends AuthUser> {
   jwks?: JWKSRouteConfig;
   authServerUrl: string;
   login: LoginControllerConfig<U>;
   register: BasicRegistrationControllerConfig<U>;
 }
 
-export interface AuthWithValidation<
-  U extends User,
-  V extends VerificationToken
-> extends BasicAuthModule<U> {
+export interface AuthWithValidation<U extends AuthUser, V extends Verify>
+  extends BasicAuthModule<U> {
   register: RegistrationWithVerificationConftrollerConfig<U, V>;
   verify: VerifyControllerConfig<U, V>;
 }
 
-export interface BasicAuthWithRefresh<U extends User, R extends RefreshToken>
+export interface BasicAuthWithRefresh<U extends AuthUser, R extends Refresh>
   extends BasicAuthModule<U> {
   authorize: AuthorizeControllerConfig<U, R>;
   refresh: RefreshControllerConfig<R>;
@@ -37,9 +35,9 @@ export interface BasicAuthWithRefresh<U extends User, R extends RefreshToken>
 }
 
 export interface AuthWithRefresh<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 > extends AuthWithValidation<U, V> {
   authorize: AuthorizeControllerConfig<U, R>;
   refresh: RefreshControllerConfig<R>;
@@ -47,11 +45,11 @@ export interface AuthWithRefresh<
 }
 
 export type IncludeRefresh<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 > = BasicAuthWithRefresh<U, R> | AuthWithRefresh<U, V, R>;
-export type ExcludeRefresh<U extends User, V extends VerificationToken> =
+export type ExcludeRefresh<U extends AuthUser, V extends Verify> =
   | BasicAuthModule<U>
   | AuthWithValidation<U, V>;
 
@@ -86,61 +84,58 @@ export interface JWKSGuardConfig {
 // -------------------------------------
 // Interfaces for each controller
 // -------------------------------------
-export interface LoginControllerConfig<U extends User>
+export interface LoginControllerConfig<U extends AuthUser>
   extends AccessTokenConfig {
   User: UserModel<U>;
 }
 
-export interface BasicRegistrationControllerConfig<U extends User> {
+export interface BasicRegistrationControllerConfig<U extends AuthUser> {
   User: UserModel<U>;
 }
 
 export interface RegistrationWithVerificationConftrollerConfig<
-  U extends User,
-  V extends VerificationToken
+  U extends AuthUser,
+  V extends Verify
 > extends BasicRegistrationControllerConfig<U> {
-  VerificationToken: VerificationTokenModel<V>;
+  Verify: VerifyModel<V>;
   verifyEmail: VerifyEmail;
 }
 
-export type RegistrationConfig<U extends User, V extends VerificationToken> =
+export type RegistrationConfig<U extends AuthUser, V extends Verify> =
   | BasicRegistrationControllerConfig<U>
   | RegistrationWithVerificationConftrollerConfig<U, V>;
 
-export interface VerifyControllerConfig<
-  U extends User,
-  V extends VerificationToken
-> {
+export interface VerifyControllerConfig<U extends AuthUser, V extends Verify> {
   User: UserModel<U>;
-  VerificationToken: VerificationTokenModel<V>;
+  Verify: VerifyModel<V>;
 }
 
 export interface AuthorizeControllerConfig<
-  U extends User,
-  R extends RefreshToken
+  U extends AuthUser,
+  R extends Refresh
 > extends LoginControllerConfig<U>, RefreshTokenConfig {
-  RefreshToken: RefreshTokenModel<R>;
+  Refresh: RefreshModel<R>;
 }
 
-export interface RefreshControllerConfig<R extends RefreshToken>
+export interface RefreshControllerConfig<R extends Refresh>
   extends AccessTokenConfig,
     RefreshTokenConfig {
-  RefreshToken: RefreshTokenModel<R>;
+  Refresh: RefreshModel<R>;
 }
 
-export interface RevokeControllerConfig<R extends RefreshToken> {
-  RefreshToken: RefreshTokenModel<R>;
+export interface RevokeControllerConfig<R extends Refresh> {
+  Refresh: RefreshModel<R>;
 }
 
 // -------------------------------------
 // Interfaces for the Auth Guards
 // -------------------------------------
 
-export interface GuardConfig<U extends User>
+export interface GuardConfig<U extends AuthUser>
   extends VerifyTokenConfig,
     VerifyUserConfig<U> {}
 
-export interface JWKSGuarConfig<U extends User>
+export interface JWKSGuarConfig<U extends AuthUser>
   extends VerifyTokenJWKSConfig,
     VerifyUserConfig<U> {}
 
@@ -158,7 +153,7 @@ export interface VerifyTokenBaseConfig {
   audience: string;
 }
 
-export interface VerifyUserConfig<U extends User> {
+export interface VerifyUserConfig<U extends AuthUser> {
   User: UserModel<U>;
 }
 
@@ -183,7 +178,7 @@ export interface ServerAuthConfig {
   };
 }
 
-export interface UserModel<U extends User> {
+export interface UserModel<U extends AuthUser> {
   new (user: any): U;
   // NOTE -> TypeScript does not currently allow derived classes to override parent static methods
   // and have different call signatures, hence User.findById should no be declared here as the return
@@ -193,7 +188,7 @@ export interface UserModel<U extends User> {
   findByEmail(email: string): Promise<U | null>;
 }
 
-export interface User {
+export interface AuthUser {
   id: string | number;
   username: string;
   email: string;
@@ -203,26 +198,27 @@ export interface User {
   save(): Promise<this>;
 }
 
-export interface RefreshTokenModel<T extends RefreshToken> {
+export interface RefreshModel<T extends Refresh> {
   new (token: any): T;
   findByToken(token: string): Promise<T | null>;
 }
 
-export interface RefreshToken {
+export interface Refresh {
   id: string;
-  user: User;
+  user: AuthUser;
   token: string;
   save(): Promise<this>;
   remove(): Promise<this>;
 }
 
-export interface VerificationTokenModel<V extends VerificationToken> {
+export interface VerifyModel<V extends Verify> {
   new (token: any): V;
   findByToken(token: string): Promise<V | null>;
 }
 
-export interface VerificationToken {
-  userId: User | string;
+// Verification Token
+export interface Verify {
+  userId: AuthUser | string;
   token: string;
   save(): Promise<this>;
 }

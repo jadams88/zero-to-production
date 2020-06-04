@@ -18,9 +18,9 @@ import {
   RevokeControllerConfig,
   RegistrationConfig,
   BasicAuthModule,
-  User,
-  VerificationToken,
-  RefreshToken,
+  AuthUser,
+  Verify,
+  Refresh,
   AuthModuleConfig,
   AuthWithValidation,
   BasicAuthWithRefresh,
@@ -50,24 +50,24 @@ import { createJsonWebKeySetRoute } from './jwks';
 
 // export function applyAuthRoutes(config: AuthModuleConfig) {
 // export function applyAuthRoutes(config: AuthModuleConfig) {
-export function applyAuthRoutes<U extends User>(
+export function applyAuthRoutes<U extends AuthUser>(
   config: BasicAuthModule<U>
 ): Middleware;
-export function applyAuthRoutes<U extends User, V extends VerificationToken>(
+export function applyAuthRoutes<U extends AuthUser, V extends Verify>(
   config: AuthWithValidation<U, V>
 ): Middleware;
-export function applyAuthRoutes<U extends User, R extends RefreshToken>(
+export function applyAuthRoutes<U extends AuthUser, R extends Refresh>(
   config: BasicAuthWithRefresh<U, R>
 ): Middleware;
 export function applyAuthRoutes<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 >(config: AuthWithRefresh<U, V, R>): Middleware;
 export function applyAuthRoutes<
-  U extends User,
-  V extends VerificationToken,
-  R extends RefreshToken
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
 >(config: AuthModuleConfig<U, V, R>): Middleware {
   const {
     login,
@@ -92,7 +92,7 @@ export function applyAuthRoutes<
   if (includeRefresh(config)) {
     router.post('/authorize', authorizeRoute(authorize));
     router.post('/authorize/refresh', refreshTokenRoute(refresh));
-    router.post('/authorize/revoke', revokeRefreshTokenRoute(revoke));
+    router.post('/authorize/revoke', revokeRefreshRoute(revoke));
   }
 
   // Only crete the JWKS if the config is specified
@@ -103,7 +103,7 @@ export function applyAuthRoutes<
   return router.routes();
 }
 
-export function registerRoute<U extends User, V extends VerificationToken>(
+export function registerRoute<U extends AuthUser, V extends Verify>(
   config: RegistrationConfig<U, V>
 ) {
   const registerController = setupRegisterController<U>(config);
@@ -119,7 +119,9 @@ export function registerRoute<U extends User, V extends VerificationToken>(
  *
  * @returns A signed JWT.
  */
-export function loginRoute<U extends User>(config: LoginControllerConfig<U>) {
+export function loginRoute<U extends AuthUser>(
+  config: LoginControllerConfig<U>
+) {
   // Set up the controller with the config
   const loginController = setupLoginController(config);
 
@@ -130,7 +132,7 @@ export function loginRoute<U extends User>(config: LoginControllerConfig<U>) {
   };
 }
 
-export function verifyRoute<U extends User, V extends VerificationToken>(
+export function verifyRoute<U extends AuthUser, V extends Verify>(
   config: VerifyControllerConfig<U, V>
 ) {
   const verifyController = setupVerifyController(config);
@@ -141,7 +143,7 @@ export function verifyRoute<U extends User, V extends VerificationToken>(
   };
 }
 
-export function authorizeRoute<U extends User, R extends RefreshToken>(
+export function authorizeRoute<U extends AuthUser, R extends Refresh>(
   config: AuthorizeControllerConfig<U, R>
 ) {
   const authorizeController = setupAuthorizeController(config);
@@ -152,7 +154,7 @@ export function authorizeRoute<U extends User, R extends RefreshToken>(
   };
 }
 
-export function refreshTokenRoute<R extends RefreshToken>(
+export function refreshTokenRoute<R extends Refresh>(
   config: RefreshControllerConfig<R>
 ) {
   const refreshAccessTokenCtr = setupRefreshAccessTokenController(config);
@@ -170,7 +172,7 @@ export function refreshTokenRoute<R extends RefreshToken>(
   };
 }
 
-export function revokeRefreshTokenRoute<R extends RefreshToken>(
+export function revokeRefreshRoute<R extends Refresh>(
   config: RevokeControllerConfig<R>
 ) {
   const revokeTokenController = setupRevokeRefreshTokenController(config);
@@ -181,7 +183,7 @@ export function revokeRefreshTokenRoute<R extends RefreshToken>(
   };
 }
 
-export function userAvailableRoute<U extends User>(
+export function userAvailableRoute<U extends AuthUser>(
   config: LoginControllerConfig<U>
 ) {
   const userAvailableController = setupUserAvailableController(config);
