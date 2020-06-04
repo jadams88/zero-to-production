@@ -1,4 +1,3 @@
-export * from './lib/models';
 export * from './lib/graphql';
 export {
   isPasswordAllowed,
@@ -9,11 +8,7 @@ export {
 } from './lib/auth-utils';
 export {
   AuthModuleConfig,
-  IRefreshTokenModel,
-  IRefreshTokenDocument,
-  IVerificationToken,
-  IVerificationTokenDocument,
-  IVerificationTokenModel,
+  UserModel,
   ServerAuthConfig,
   JWKSGuarConfig,
   GuardConfig,

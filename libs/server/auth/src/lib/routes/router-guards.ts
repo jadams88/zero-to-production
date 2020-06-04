@@ -11,9 +11,12 @@ import {
   VerifyTokenConfig,
   VerifyTokenJWKSConfig,
   VerifyUserConfig,
+  User,
 } from '../auth.interface';
 
-export function getRestGuards(config: GuardConfig | JWKSGuarConfig) {
+export function getRestGuards<U extends User>(
+  config: GuardConfig<U> | JWKSGuarConfig<U>
+) {
   // Check if using JWKS guards or if public key is provided
   return {
     authenticate: isJWKS(config)
@@ -63,7 +66,9 @@ export function authenticateJWKS(config: VerifyTokenJWKSConfig) {
  * will contain the decoded token, and hence the 'sub' property will be the id
  *
  */
-export function verifyActiveUser({ User }: VerifyUserConfig) {
+export function verifyActiveUser<U extends User>({
+  User,
+}: VerifyUserConfig<U>) {
   const activeUser = isActiveUser(User);
   return async (ctx: koa.ParameterizedContext, next: () => Promise<any>) => {
     // Set the user on the ctx.user property

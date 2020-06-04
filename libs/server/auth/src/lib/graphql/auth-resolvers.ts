@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { IResolvers } from 'apollo-server-koa';
-import { IUser } from '@ztp/data';
 import {
   setupLoginController,
   setupRegisterController,
@@ -8,13 +7,16 @@ import {
 } from '../auth.controllers';
 import {
   LoginControllerConfig,
-  AuthModuleConfig,
-  RegistrationConfig,
+  BasicAuthModule,
+  User,
+  BasicRegistrationControllerConfig,
 } from '../auth.interface';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 // email they receive
-export function getAuthResolvers(config: AuthModuleConfig): IResolvers {
+export function getAuthResolvers<U extends User>(
+  config: BasicAuthModule<U>
+): IResolvers {
   return {
     Query: {
       userAvailable: userAvailableResolver(config.login),
@@ -26,9 +28,9 @@ export function getAuthResolvers(config: AuthModuleConfig): IResolvers {
   };
 }
 
-export function registerResolver(
-  config: RegistrationConfig
-): GraphQLFieldResolver<any, { input: IUser }, any> {
+export function registerResolver<U extends User>(
+  config: BasicRegistrationControllerConfig<U>
+): GraphQLFieldResolver<any, { input: User }, any> {
   const registerController = setupRegisterController(config);
   return function register(root, args, ctx, i) {
     return registerController(args.input);
@@ -40,8 +42,8 @@ export function registerResolver(
  *
  * @returns { Object } A User and signed JWT.
  */
-export function loginResolver(
-  config: LoginControllerConfig
+export function loginResolver<U extends User>(
+  config: LoginControllerConfig<U>
 ): GraphQLFieldResolver<any, { username: string; password: string }, any> {
   const loginController = setupLoginController(config);
 
@@ -53,9 +55,9 @@ export function loginResolver(
   };
 }
 
-export function userAvailableResolver(
-  config: LoginControllerConfig
-): GraphQLFieldResolver<any, { input: IUser }, any> {
+export function userAvailableResolver<U extends User>(
+  config: LoginControllerConfig<U>
+): GraphQLFieldResolver<any, { input: User }, any> {
   const userAvailableController = setupUserAvailableController(config);
   return (root, args, ctx, i) => {
     return userAvailableController(args.username);

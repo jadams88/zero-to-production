@@ -1,12 +1,13 @@
 import { verify, decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
-import { IUserModel } from '@ztp/server/core-data';
+import { koaJwtSecret } from 'jwks-rsa';
 import {
   VerifyTokenBaseConfig,
   RefreshTokenConfig,
   JWKSGuardConfig,
+  UserModel,
+  User,
 } from './auth.interface';
-import { koaJwtSecret } from 'jwks-rsa';
 import { createPublicPemFromPrivate } from './auth-utils';
 
 export function verifyToken(
@@ -25,9 +26,9 @@ export function verifyToken(
   }
 }
 
-export function isActiveUser(User: IUserModel) {
+export function isActiveUser<U extends User>(User: UserModel<U>) {
   return async (id: string | undefined) => {
-    const user = await User.findById(id);
+    const user = await User.findByUserId(id);
     if (!user || !user.active) throw unauthorized(null, 'Bearer');
     return user;
   };

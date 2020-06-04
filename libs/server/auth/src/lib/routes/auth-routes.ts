@@ -1,5 +1,5 @@
 import Koa from 'koa';
-import Router from '@koa/router';
+import Router, { Middleware } from '@koa/router';
 import Boom from '@hapi/boom';
 import {
   setupLoginController,
@@ -17,7 +17,14 @@ import {
   RefreshControllerConfig,
   RevokeControllerConfig,
   RegistrationConfig,
+  BasicAuthModule,
+  User,
+  VerificationToken,
+  RefreshToken,
   AuthModuleConfig,
+  AuthWithValidation,
+  BasicAuthWithRefresh,
+  AuthWithRefresh,
 } from '../auth.interface';
 import { includeEmailVerification, includeRefresh } from '../auth-utils';
 import { createJsonWebKeySetRoute } from './jwks';
@@ -38,23 +45,54 @@ import { createJsonWebKeySetRoute } from './jwks';
  * Option
  * JWKS Route at '/.well-known/jwks.json' that hosts the public key
  */
-export function applyAuthRoutes(config: AuthModuleConfig) {
+
+// export function applyAuthRoutes<U extends User>(config: BasicAuthModule<U>): Middleware;
+
+// export function applyAuthRoutes(config: AuthModuleConfig) {
+// export function applyAuthRoutes(config: AuthModuleConfig) {
+export function applyAuthRoutes<U extends User>(
+  config: BasicAuthModule<U>
+): Middleware;
+export function applyAuthRoutes<U extends User, V extends VerificationToken>(
+  config: AuthWithValidation<U, V>
+): Middleware;
+export function applyAuthRoutes<U extends User, R extends RefreshToken>(
+  config: BasicAuthWithRefresh<U, R>
+): Middleware;
+export function applyAuthRoutes<
+  U extends User,
+  V extends VerificationToken,
+  R extends RefreshToken
+>(config: AuthWithRefresh<U, V, R>): Middleware;
+export function applyAuthRoutes<
+  U extends User,
+  V extends VerificationToken,
+  R extends RefreshToken
+>(config: AuthModuleConfig<U, V, R>): Middleware {
+  const {
+    login,
+    register,
+    authorize,
+    refresh,
+    revoke,
+  } = config as AuthWithRefresh<U, V, R>;
+
   const router = new Router();
 
-  router.get('/authorize/available', userAvailable(config.login));
-  router.post('/authorize/login', login(config.login));
-  router.post('/authorize/register', register(config.register));
+  router.get('/authorize/available', userAvailableRoute(login));
+  router.post('/authorize/login', loginRoute(login));
+  router.post('/authorize/register', registerRoute(register));
 
-  if (includeEmailVerification(config.register)) {
+  if (includeEmailVerification(register)) {
     // registration route is using email verification
-    router.get('/authorize/verify', verify(config.register));
+    router.get('/authorize/verify', verifyRoute(register));
   }
 
   // Only if the config requires everything for refresh tokens as well
   if (includeRefresh(config)) {
-    router.post('/authorize', authorize(config.authorize));
-    router.post('/authorize/refresh', refreshAccessToken(config.refresh));
-    router.post('/authorize/revoke', revokeRefreshToken(config.revoke));
+    router.post('/authorize', authorizeRoute(authorize));
+    router.post('/authorize/refresh', refreshTokenRoute(refresh));
+    router.post('/authorize/revoke', revokeRefreshTokenRoute(revoke));
   }
 
   // Only crete the JWKS if the config is specified
@@ -65,8 +103,10 @@ export function applyAuthRoutes(config: AuthModuleConfig) {
   return router.routes();
 }
 
-export function register(config: RegistrationConfig) {
-  const registerController = setupRegisterController(config);
+export function registerRoute<U extends User, V extends VerificationToken>(
+  config: RegistrationConfig<U, V>
+) {
+  const registerController = setupRegisterController<U>(config);
 
   return async (ctx: Koa.ParameterizedContext) => {
     const user = (ctx.request as any).body;
@@ -79,7 +119,7 @@ export function register(config: RegistrationConfig) {
  *
  * @returns A signed JWT.
  */
-export function login(config: LoginControllerConfig) {
+export function loginRoute<U extends User>(config: LoginControllerConfig<U>) {
   // Set up the controller with the config
   const loginController = setupLoginController(config);
 
@@ -90,7 +130,9 @@ export function login(config: LoginControllerConfig) {
   };
 }
 
-export function verify(config: VerifyControllerConfig) {
+export function verifyRoute<U extends User, V extends VerificationToken>(
+  config: VerifyControllerConfig<U, V>
+) {
   const verifyController = setupVerifyController(config);
   return async (ctx: Koa.ParameterizedContext) => {
     const email = ctx.query.email;
@@ -99,7 +141,9 @@ export function verify(config: VerifyControllerConfig) {
   };
 }
 
-export function authorize(config: AuthorizeControllerConfig) {
+export function authorizeRoute<U extends User, R extends RefreshToken>(
+  config: AuthorizeControllerConfig<U, R>
+) {
   const authorizeController = setupAuthorizeController(config);
   return async (ctx: Koa.ParameterizedContext) => {
     const { username, password } = restUsernameAndPasswordCheck(ctx);
@@ -108,7 +152,9 @@ export function authorize(config: AuthorizeControllerConfig) {
   };
 }
 
-export function refreshAccessToken(config: RefreshControllerConfig) {
+export function refreshTokenRoute<R extends RefreshToken>(
+  config: RefreshControllerConfig<R>
+) {
   const refreshAccessTokenCtr = setupRefreshAccessTokenController(config);
 
   return async (ctx: Koa.ParameterizedContext) => {
@@ -124,7 +170,9 @@ export function refreshAccessToken(config: RefreshControllerConfig) {
   };
 }
 
-export function revokeRefreshToken(config: RevokeControllerConfig) {
+export function revokeRefreshTokenRoute<R extends RefreshToken>(
+  config: RevokeControllerConfig<R>
+) {
   const revokeTokenController = setupRevokeRefreshTokenController(config);
   return async (ctx: Koa.ParameterizedContext) => {
     const token: string = (ctx.request as any).body.refreshToken;
@@ -133,7 +181,9 @@ export function revokeRefreshToken(config: RevokeControllerConfig) {
   };
 }
 
-export function userAvailable(config: LoginControllerConfig) {
+export function userAvailableRoute<U extends User>(
+  config: LoginControllerConfig<U>
+) {
   const userAvailableController = setupUserAvailableController(config);
   return async (ctx: Koa.ParameterizedContext) => {
     const username: string | undefined = ctx.query.username;

@@ -11,14 +11,26 @@ import { config, authConfig } from '../../environments';
 import { User } from '../api/users';
 import { VerificationToken, RefreshToken } from './models';
 import { configureSendgrid } from '@ztp/server/utils';
-
-// Basic AuthModule (no email verification)
-const authModuleConfig = generateAuthModuleConfig({ User, config: authConfig });
+import {
+  IUserDocument,
+  IVerificationTokenDocument,
+  IRefreshTokenModel,
+  IRefreshTokenDocument,
+  IVerificationToken,
+} from '@ztp/server/core-data';
 
 // ZTP_AFTER_CLONE -> uncomment the below import
-// const emailClient = configureSendgrid(config.sendgridApiKey);
-// const createMessage = createEmailMessage(authConfig.authServerUrl);
-// const verifyEmail = compose(emailClient, createMessage);
+const emailClient = configureSendgrid(config.sendgridApiKey);
+const createMessage = createEmailMessage(authConfig.authServerUrl);
+const verifyEmail = compose(emailClient, createMessage);
+// Basic AuthModule (no email verification)
+const authModuleConfig = generateAuthModuleConfig(
+  User,
+  authConfig,
+  VerificationToken,
+  verifyEmail,
+  RefreshToken
+);
 
 // const authModuleConfig = generateAuthModuleConfig({
 //   User,

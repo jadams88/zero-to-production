@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import Router from '@koa/router';
-import { authenticateRest } from './auth/auth.guards';
+import { authenticateRest } from './auth/auth-guards';
 import { usersRouter, todosRouter } from './api';
 
 export function applyRestEndpoints(app: Koa) {

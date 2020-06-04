@@ -8,7 +8,7 @@ import {
   verificationTokenSchema,
   IVerificationTokenDocument,
   IVerificationTokenModel,
-} from '@ztp/server/auth';
+} from '@ztp/server/core-data';
 
 export const RefreshToken = model<IRefreshTokenDocument, IRefreshTokenModel>(
   refreshTokenDbKey,

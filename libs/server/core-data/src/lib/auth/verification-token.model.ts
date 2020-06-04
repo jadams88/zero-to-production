@@ -1,11 +1,13 @@
-import { Schema, Connection } from 'mongoose';
+import { Schema, Connection, Model, Document } from 'mongoose';
 import { defaultSchemaOptions } from '@ztp/server/utils';
-import {
-  IVerificationToken,
-  IVerificationTokenDocument,
-  IVerificationTokenModel,
-} from '../auth.interface';
+import { IUser } from '@ztp/data';
+import { IUserDocument } from '../users/user.js';
 
+export interface IVerificationToken {
+  id: string;
+  userId: IUser;
+  token: string;
+}
 export const verificationTokenDbKey = 'verificationToken';
 
 export const verificationTokenSchema = new Schema<IVerificationToken>(
@@ -23,6 +25,29 @@ export const verificationTokenSchema = new Schema<IVerificationToken>(
     ...defaultSchemaOptions,
   }
 );
+
+export interface IVerificationTokenDocument extends Document {
+  id: string;
+  userId: IUserDocument;
+  token: string;
+}
+
+export interface IVerificationTokenModel
+  extends Model<IVerificationTokenDocument> {
+  findByToken(token: string): Promise<IVerificationTokenDocument | null>;
+}
+
+export class VerificationTokenClass extends Model {
+  static findByToken(
+    token: string
+  ): Promise<IVerificationTokenDocument | null> {
+    return this.findOne({
+      token,
+    }).exec();
+  }
+}
+
+verificationTokenSchema.loadClass(VerificationTokenClass);
 
 export function createVerificationTokenModel(
   con: Connection

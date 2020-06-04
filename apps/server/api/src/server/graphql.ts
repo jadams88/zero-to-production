@@ -10,11 +10,8 @@ import {
 import { todoTypeDef, userTypeDef } from '@ztp/server/core-data';
 import { config } from '../environments';
 import { userResolvers, todosResolvers, User, Todo } from './api';
-import { authDirectives } from './auth/auth.guards';
-
-// ZTP_AFTER_CLONE -> delete the 'demo' import and uncomment the 'auth' input
-import { authSchema } from './auth/demo.auth';
-// import { authSchema } from './auth/auth';
+import { authDirectives } from './auth/auth-guards';
+import { authSchema } from './auth/auth';
 
 const typeDefs = createTypeDefs(userTypeDef, todoTypeDef);
 const resolvers = createResolvers(userResolvers, todosResolvers);

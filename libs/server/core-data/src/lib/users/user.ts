@@ -1,4 +1,4 @@
-import { Connection, Schema, Document, Model, Mongoose } from 'mongoose';
+import { Connection, Schema, Document, Model } from 'mongoose';
 import { IUser } from '@ztp/data';
 import { defaultSchemaOptions } from '@ztp/server/utils';
 export { userTypeDef } from './user.type';
@@ -51,18 +51,28 @@ export const userSchema = new Schema<IUser>(
   }
 );
 
-/**
- * This function is only used for the auth function and hence, must return the hashed password
- *
- * @param username The username to search by.
- */
 export class UserClass extends Model {
+  /**
+   * This function is only used for the auth function and hence, must return the hashed password
+   *
+   * @param username The username to search by.
+   */
   static findByUsername(username: string): Promise<IUserDocument | null> {
     return this.findOne({
       username,
     })
       .select('+hashedPassword')
       .exec();
+  }
+
+  static findByEmail(email: string): Promise<IUserDocument | null> {
+    return this.findOne({
+      email,
+    }).exec();
+  }
+
+  static findByUserId(id: string | undefined): Promise<IUserDocument | null> {
+    return super.findById(id).exec();
   }
 }
 
@@ -80,10 +90,8 @@ export interface IUserDocument extends IUser, Document {
   id: string;
 }
 
-export interface IFindByUsername<T> {
-  findByUsername(name: string): Promise<T | null>;
+export interface IUserModel extends Model<IUserDocument> {
+  findByUsername(username: string): Promise<IUserDocument | null>;
+  findByEmail(username: string): Promise<IUserDocument | null>;
+  findByUserId(id: string | undefined): Promise<IUserDocument | null>;
 }
-
-export interface IUserModel
-  extends Model<IUserDocument>,
-    IFindByUsername<IUserDocument> {}

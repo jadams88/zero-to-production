@@ -7,7 +7,11 @@ import {
 import { config, authConfig } from '../../environments';
 import { User } from '../api/users';
 
-const guardConfig = generateAuthGuardConfig(config, authConfig, User);
+const guardConfig = generateAuthGuardConfig(
+  config.production,
+  authConfig,
+  User
+);
 
 /**
  * Guards for use in Routes
