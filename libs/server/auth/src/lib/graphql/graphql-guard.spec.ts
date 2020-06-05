@@ -6,8 +6,9 @@ import {
   authenticated,
   authenticatedJWKS,
   verifyActiveUser,
+  TResolver,
 } from './graphql-guards';
-import { signAccessToken } from '../core/sign-tokens';
+import { signAccessToken } from '../core/tokens';
 import { MockUserModel } from '../__tests__/user.mock';
 import {
   privateKey,
@@ -15,7 +16,7 @@ import {
   publicKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
-import { TResolver, AuthUser, UserModel } from '../types';
+import { AuthUser, UserModel } from '../types';
 
 export function newId() {
   return Math.random().toString();
@@ -116,7 +117,7 @@ describe('GraphQL - Auth Guards', () => {
 
       await expect(
         authenticatedJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
@@ -138,7 +139,7 @@ describe('GraphQL - Auth Guards', () => {
 
       await expect(
         authenticatedJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
@@ -155,7 +156,7 @@ describe('GraphQL - Auth Guards', () => {
 
       await expect(
         authenticatedJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
@@ -177,7 +178,7 @@ describe('GraphQL - Auth Guards', () => {
 
       await expect(
         authenticatedJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
@@ -199,7 +200,7 @@ describe('GraphQL - Auth Guards', () => {
 
       await expect(
         authenticatedJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer: 'some-wrong-issuer',
           audience,
@@ -221,7 +222,7 @@ describe('GraphQL - Auth Guards', () => {
 
       await expect(
         authenticatedJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience: 'wrong-audience',

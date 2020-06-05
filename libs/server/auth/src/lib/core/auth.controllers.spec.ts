@@ -10,7 +10,7 @@ import {
   setupRevokeRefreshTokenController,
   setupUserAvailableController,
 } from './auth.controllers';
-import { signRefreshToken } from './sign-tokens';
+import { signRefreshToken } from './tokens';
 import {
   mockRegistrationConfig,
   audience,

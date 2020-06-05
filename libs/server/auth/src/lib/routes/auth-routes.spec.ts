@@ -19,7 +19,7 @@ import {
   mockRefreshTokenConfig,
   mockRevokeConfig,
 } from '../__tests__';
-import { signRefreshToken } from '../core/sign-tokens';
+import { signRefreshToken } from '../core/tokens';
 import type { AuthUser, AuthWithRefresh, Refresh, Verify } from '../types';
 
 const URL = 'http://localhost';

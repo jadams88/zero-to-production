@@ -2,8 +2,8 @@ import { createPublicKey, createHash } from 'crypto';
 // @ts-ignore
 import omit from 'lodash.omit';
 import {
-  JWKSGuarConfig,
-  GuardConfig,
+  VerifyToken,
+  VerifyTokenJWKS,
   ServerAuthConfig,
   VerifyEmail,
   BasicRegistrationControllerConfig,
@@ -26,9 +26,11 @@ import {
   BasicAuthWithRefresh,
   AuthWithRefresh,
   LoginControllerConfig,
+  AuthGuard,
+  ActiveUserGuard,
 } from '../types';
 
-export function passwordValidator(password: string): boolean {
+export function isPasswordAllowed(password: string): boolean {
   return (
     !!password &&
     password.length > 8 &&
@@ -43,27 +45,32 @@ export function stripPasswordFields<T>(user: T): T {
 }
 
 export function generateAuthGuardConfig<U extends AuthUser>(
-  production: boolean,
   authConfig: ServerAuthConfig,
-  User: UserModel<U>
-): GuardConfig<U> | JWKSGuarConfig<U> {
+  User: UserModel<U>,
+  production: boolean = false
+): AuthGuard<U> {
+  const activeUser: ActiveUserGuard<U> = { User };
+  let auth: VerifyToken | VerifyTokenJWKS;
+
   if (authConfig.accessToken.publicKey) {
     // The public key is provide, so do not need a JWKS
-    return {
-      User,
+    auth = {
       issuer: authConfig.accessToken.issuer,
       audience: authConfig.accessToken.audience,
       publicKey: authConfig.accessToken.publicKey,
-    };
+    } as VerifyToken;
   } else {
-    return {
-      User,
-      production,
+    auth = {
+      allowHttp: production,
       authServerUrl: authConfig.authServerUrl,
       issuer: authConfig.accessToken.issuer,
       audience: authConfig.accessToken.audience,
-    };
+    } as VerifyTokenJWKS;
   }
+  return {
+    authenticate: auth,
+    activeUser,
+  };
 }
 
 export function generateAuthModuleConfig<U extends AuthUser>(
@@ -114,6 +121,19 @@ export function generateAuthModuleConfig<
   // key as the keyId
   const keyId = createHash('md5').update(pubKey).digest('hex');
 
+  // if (config.jwksRoute) {
+  //   moduleConfig.jwks = {
+  //     publicKey: pubKey,
+  //     keyId,
+  //   };
+  // }
+
+  // moduleConfig.login = {
+  //   User,
+  //   ...config.accessToken,
+  //   keyId,
+  // };
+
   const jwks = config.jwksRoute
     ? {
         publicKey: pubKey,
@@ -127,23 +147,22 @@ export function generateAuthModuleConfig<
     keyId,
   };
 
+  const baseConfig: AuthModuleConfig<U, V, R> = {
+    authServerUrl: config.authServerUrl,
+    login,
+    jwks,
+  } as AuthModuleConfig<U, V, R>;
+
   if (
     VerifyM === undefined &&
     emailClient === undefined &&
     RefreshM === undefined
   ) {
-    const register: BasicRegistrationControllerConfig<U> = {
+    const register = {
       User,
     };
 
-    const basic: BasicAuthModule<U> = {
-      jwks,
-      login,
-      register,
-      authServerUrl: config.authServerUrl,
-    };
-
-    return basic;
+    return { ...baseConfig, register } as BasicAuthModule<U>;
   } else if (VerifyM && emailClient && RefreshM === undefined) {
     const register: RegistrationWithVerificationConftrollerConfig<U, V> = {
       User,
@@ -163,6 +182,7 @@ export function generateAuthModuleConfig<
       authServerUrl: config.authServerUrl,
       verify,
     };
+    // const configWithVal;
 
     return authWithValidation;
   } else if (VerifyM === undefined && emailClient === undefined && RefreshM) {
@@ -257,10 +277,10 @@ export function createEmailMessage(authServerUrl: string) {
   };
 }
 
-export function isJWKS<U extends AuthUser>(
-  config: JWKSGuarConfig<U> | GuardConfig<U>
-): config is JWKSGuarConfig<U> {
-  return (config as GuardConfig<U>).publicKey === undefined;
+export function isJWKS(
+  config: VerifyToken | VerifyTokenJWKS
+): config is VerifyToken {
+  return (config as VerifyTokenJWKS).authServerUrl === undefined;
 }
 
 export function includeRefresh<

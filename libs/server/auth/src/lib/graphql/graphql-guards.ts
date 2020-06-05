@@ -1,47 +1,45 @@
+import { GraphQLFieldResolver } from 'graphql';
 import {
-  GuardConfig,
-  JWKSGuarConfig,
-  VerifyUserConfig,
-  VerifyTokenJWKSConfig,
-  VerifyTokenConfig,
-  TResolver,
+  VerifyTokenJWKS,
+  VerifyToken,
   AuthUser,
+  AuthGuard,
+  ActiveUserGuard,
 } from '../types';
 import { isJWKS } from '../core/auth-utils';
 import {
-  verifyToken,
   isActiveUser,
   verifyUserRole,
   retrievePublicKeyFromJWKS,
 } from '../core/authenticate';
+import { verifyToken } from '../core';
 
-export function getGraphQLGuards<U extends AuthUser>(
-  config: GuardConfig<U> | JWKSGuarConfig<U>
-) {
+export type TResolver = GraphQLFieldResolver<any, any, any>;
+// export type TResolverFactory = (next: TResolver) => TResolver;
+
+export function getGraphQLGuards<U extends AuthUser>(config: AuthGuard<U>) {
   const { authenticate, verifyUser, authorize } = createGraphQLGuards(config);
 
   return {
     authenticate,
-    verifyUser(next: TResolver) {
-      return authenticate(verifyUser(next));
-    },
-    authorize(role: string, next: TResolver) {
-      return authenticate(verifyUser(authorize(role, next)));
-    },
+    verifyUser: (next: TResolver) => authenticate(verifyUser(next)),
+    authorize: (role: string, next: TResolver) =>
+      authenticate(verifyUser(authorize(role, next))),
   };
 }
 
-export function createGraphQLGuards<U extends AuthUser>(
-  config: GuardConfig<U> | JWKSGuarConfig<U>
-) {
+export function createGraphQLGuards<U extends AuthUser>({
+  authenticate: auth,
+  activeUser,
+}: AuthGuard<U>) {
   // Check if using JWKS or if public key is provided
-  const authenticate = isJWKS(config)
-    ? authenticatedJWKS(config)
-    : authenticated(config);
+  const authenticate = isJWKS(auth)
+    ? authenticated(auth)
+    : authenticatedJWKS(auth);
 
   return {
     authenticate,
-    verifyUser: verifyActiveUser(config),
+    verifyUser: verifyActiveUser(activeUser),
     authorize: authorized,
   };
 }
@@ -49,9 +47,9 @@ export function createGraphQLGuards<U extends AuthUser>(
 /**
  * verify the token signature
  */
-export function authenticated(config: VerifyTokenConfig) {
+export function authenticated(config: VerifyToken) {
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {
-    ctx.user = verifyToken(ctx.token, config.publicKey, config);
+    ctx.user = verifyToken(ctx.token, config);
     return await next(root, args, ctx, info);
   };
 }
@@ -59,12 +57,12 @@ export function authenticated(config: VerifyTokenConfig) {
 /**
  * Verify the token signature
  */
-export function authenticatedJWKS(config: VerifyTokenJWKSConfig) {
+export function authenticatedJWKS(config: VerifyTokenJWKS) {
   const getPublicKey = retrievePublicKeyFromJWKS(config);
 
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {
     const publicKey = await getPublicKey(ctx.token);
-    ctx.user = verifyToken(ctx.token, publicKey, config);
+    ctx.user = verifyToken(ctx.token, { ...config, publicKey });
 
     return await next(root, args, ctx, info);
   };
@@ -76,7 +74,7 @@ export function authenticatedJWKS(config: VerifyTokenJWKSConfig) {
  */
 export function verifyActiveUser<U extends AuthUser>({
   User,
-}: VerifyUserConfig<U>) {
+}: ActiveUserGuard<U>) {
   const activeUser = isActiveUser(User);
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {
     ctx.user = await activeUser(ctx.user.sub);

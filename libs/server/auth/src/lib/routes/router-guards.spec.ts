@@ -8,7 +8,7 @@ import {
   verifyActiveUser,
   authenticateJWKS,
 } from './router-guards';
-import { signAccessToken } from '../core/sign-tokens';
+import { signAccessToken } from '../core/tokens';
 import { MockUserModel } from '../__tests__/user.mock';
 import {
   privateKey,
@@ -129,11 +129,11 @@ describe('Router - Auth Guards', () => {
 
       await expect(
         authenticateJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
-        })({ request: { token: jwt }, state: {} }, nextSpy)
+        })({ request: { token: jwt }, state: {} } as any, nextSpy)
       ).resolves.not.toThrowError();
 
       expect(nextSpy).toHaveBeenCalled();
@@ -149,11 +149,11 @@ describe('Router - Auth Guards', () => {
 
       await expect(
         authenticateJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
-        })({ request: {}, state: {} }, nextSpy)
+        })({ request: {}, state: {} } as any, nextSpy)
       ).rejects.toThrowError('Unauthorized');
 
       expect(nextSpy).not.toHaveBeenCalled();
@@ -169,11 +169,11 @@ describe('Router - Auth Guards', () => {
 
       await expect(
         authenticateJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
-        })({ request: { token: jwt }, state: {} }, nextSpy)
+        })({ request: { token: jwt }, state: {} } as any, nextSpy)
       ).rejects.toThrowError('Unauthorized');
 
       expect(nextSpy).not.toHaveBeenCalled();
@@ -189,11 +189,11 @@ describe('Router - Auth Guards', () => {
 
       await expect(
         authenticateJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience,
-        })({ request: { token: jwt }, state: {} }, nextSpy)
+        })({ request: { token: jwt }, state: {} } as any, nextSpy)
       ).rejects.toThrowError('Unauthorized');
 
       expect(nextSpy).not.toHaveBeenCalled();
@@ -209,11 +209,11 @@ describe('Router - Auth Guards', () => {
 
       await expect(
         authenticateJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer: 'some-wrong-issuer',
           audience,
-        })({ request: { token: jwt }, state: {} }, nextSpy)
+        })({ request: { token: jwt }, state: {} } as any, nextSpy)
       ).rejects.toThrowError('Unauthorized');
 
       expect(nextSpy).not.toHaveBeenCalled();
@@ -229,11 +229,11 @@ describe('Router - Auth Guards', () => {
 
       await expect(
         authenticateJWKS({
-          production: false,
+          allowHttp: true,
           authServerUrl: 'http://some-url',
           issuer,
           audience: 'wrong-audience',
-        })({ request: { token: jwt }, state: {} }, nextSpy)
+        })({ request: { token: jwt }, state: {} } as any, nextSpy)
       ).rejects.toThrowError('Unauthorized');
 
       expect(nextSpy).not.toHaveBeenCalled();

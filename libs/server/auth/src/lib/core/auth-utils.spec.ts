@@ -1,7 +1,7 @@
-import { passwordValidator, stripPasswordFields } from './auth-utils';
+import { isPasswordAllowed, stripPasswordFields } from './auth-utils';
 
 describe('Authentication Utils', () => {
-  describe('passwordValidator', () => {
+  describe('isPasswordAllowed', () => {
     const allowedPasswords = ['adf#jf3@#FD!'];
     const disallowedPasswords = [
       '',
@@ -14,12 +14,12 @@ describe('Authentication Utils', () => {
 
     allowedPasswords.forEach((pwd) => {
       it(`${pwd} should be allowed`, () => {
-        expect(passwordValidator(pwd)).toBe(true);
+        expect(isPasswordAllowed(pwd)).toBe(true);
       });
     });
     disallowedPasswords.forEach((pwd) => {
       it(`${pwd} should not be allowed`, () => {
-        expect(passwordValidator(pwd)).toBe(false);
+        expect(isPasswordAllowed(pwd)).toBe(false);
       });
     });
   });

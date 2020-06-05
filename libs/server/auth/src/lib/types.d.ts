@@ -1,7 +1,3 @@
-import { GraphQLFieldResolver } from 'graphql';
-
-export type TResolver = GraphQLFieldResolver<any, any, any>;
-export type TResolverFactory = (next: TResolver) => TResolver;
 export type VerifyEmail = (to: string, token: string) => Promise<any>;
 export type PasswordValidator = (password: string) => boolean;
 
@@ -54,39 +50,20 @@ export type ExcludeRefresh<U extends AuthUser, V extends Verify> =
   | BasicAuthModule<U>
   | AuthWithValidation<U, V>;
 
-// -------------------------------------
-// For signing and validation access and refresh tokens
-// -------------------------------------
-
-export interface AccessTokenConfig {
-  privateKey: string;
-  expireTime: number;
-  issuer: string;
-  audience: string;
-  keyId: string;
-}
-
-export interface RefreshTokenConfig {
-  privateKey: string;
-  audience: string;
-  issuer: string;
-}
+// // -------------------------------------
+// // For signing and validation access and refresh tokens
+// // -------------------------------------
 
 export interface JWKSRouteConfig {
   publicKey: string;
   keyId: string;
 }
 
-export interface JWKSGuardConfig {
-  authServerUrl: string;
-  production: boolean;
-}
-
 // -------------------------------------
 // Interfaces for each controller
 // -------------------------------------
 export interface LoginControllerConfig<U extends AuthUser>
-  extends AccessTokenConfig {
+  extends SignAccessToken {
   User: UserModel<U>;
 }
 
@@ -115,13 +92,13 @@ export interface VerifyControllerConfig<U extends AuthUser, V extends Verify> {
 export interface AuthorizeControllerConfig<
   U extends AuthUser,
   R extends Refresh
-> extends LoginControllerConfig<U>, RefreshTokenConfig {
+> extends LoginControllerConfig<U>, SignRefreshToken {
   Refresh: RefreshModel<R>;
 }
 
 export interface RefreshControllerConfig<R extends Refresh>
-  extends AccessTokenConfig,
-    RefreshTokenConfig {
+  extends SignAccessToken,
+    SignRefreshToken {
   Refresh: RefreshModel<R>;
 }
 
@@ -130,33 +107,48 @@ export interface RevokeControllerConfig<R extends Refresh> {
 }
 
 // -------------------------------------
-// Interfaces for the Auth Guards
+// Interfaces for the Signing tokens & Auth Guards
 // -------------------------------------
-
-export interface GuardConfig<U extends AuthUser>
-  extends VerifyTokenConfig,
-    VerifyUserConfig<U> {}
-
-export interface JWKSGuarConfig<U extends AuthUser>
-  extends VerifyTokenJWKSConfig,
-    VerifyUserConfig<U> {}
-
-export interface VerifyTokenJWKSConfig extends VerifyTokenBaseConfig {
-  authServerUrl: string;
-  production: boolean;
+export interface SignAccessToken {
+  privateKey: string;
+  expireTime: number;
+  issuer: string;
+  audience: string;
+  keyId: string;
 }
 
-export interface VerifyTokenConfig extends VerifyTokenBaseConfig {
+export interface VerifyToken {
+  issuer: string;
+  audience: string;
   publicKey: string;
 }
 
-export interface VerifyTokenBaseConfig {
+export interface VerifyTokenJWKS {
   issuer: string;
   audience: string;
+  authServerUrl: string;
+  allowHttp?: boolean;
 }
 
-export interface VerifyUserConfig<U extends AuthUser> {
+export interface SignRefreshToken {
+  audience: string;
+  issuer: string;
+  privateKey: string;
+}
+
+export interface VerifyRefreshToken {
+  audience: string;
+  issuer: string;
+  publicKey: string;
+}
+
+export interface ActiveUserGuard<U extends AuthUser> {
   User: UserModel<U>;
+}
+
+export interface AuthGuard<U extends AuthUser> {
+  authenticate: VerifyToken | VerifyTokenJWKS;
+  activeUser: ActiveUserGuard<U>;
 }
 
 // -------------------------------------

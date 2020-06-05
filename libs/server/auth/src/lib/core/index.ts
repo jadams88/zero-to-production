@@ -1,10 +1,6 @@
-export {
-  verifyRefreshToken,
-  verifyToken,
-  verifyUserRole,
-} from './authenticate';
+export { verifyRefreshToken, verifyUserRole } from './authenticate';
 
-export { signAccessToken, signRefreshToken } from './sign-tokens';
+export { signAccessToken, signRefreshToken, verifyToken } from './tokens';
 
 export {
   setupAuthorizeController,
@@ -21,7 +17,7 @@ export {
   includeEmailVerification,
   includeRefresh,
   isJWKS,
-  passwordValidator,
+  isPasswordAllowed,
   generateAuthGuardConfig,
   generateAuthModuleConfig,
   createEmailMessage,

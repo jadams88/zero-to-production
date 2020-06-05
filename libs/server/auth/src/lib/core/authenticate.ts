@@ -1,30 +1,31 @@
-import { verify, decode } from 'jsonwebtoken';
+import { decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
 import { koaJwtSecret } from 'jwks-rsa';
-import { createPublicPemFromPrivate } from './auth-utils';
+// import { createPublicPemFromPrivate } from './auth-utils';
 import {
-  VerifyTokenBaseConfig,
-  RefreshTokenConfig,
-  JWKSGuardConfig,
+  //   VerifyToken,
+  //   SignRefreshToken,
+  VerifyTokenJWKS,
   UserModel,
   AuthUser,
+  VerifyToken,
+  VerifyRefreshToken,
+  // VerifyRefreshToken,
 } from '../types';
+import { verifyToken } from './tokens';
+// import { verifyToken } from './tokens';
 
-export function verifyToken(
-  token: string,
-  publicKey: string,
-  config: VerifyTokenBaseConfig
-) {
-  try {
-    return verify(token, publicKey, {
-      algorithms: ['RS256'],
-      issuer: config.issuer,
-      audience: config.audience,
-    });
-  } catch (err) {
-    throw unauthorized(null, 'Bearer');
-  }
-}
+// export function verifyToken(token: string, config: VerifyToken) {
+//   try {
+//     return verify(token, config.publicKey, {
+//       algorithms: ['RS256'],
+//       issuer: config.issuer,
+//       audience: config.audience,
+//     });
+//   } catch (err) {
+//     throw unauthorized(null, 'Bearer');
+//   }
+// }
 
 export function isActiveUser<U extends AuthUser>(User: UserModel<U>) {
   return async (id: string | undefined) => {
@@ -46,15 +47,20 @@ export function verifyUserRole(requiredRole: string) {
   };
 }
 
-export function verifyRefreshToken(config: RefreshTokenConfig) {
+export function verifyRefreshToken(config: VerifyRefreshToken) {
   // Create a public key from the private key
-  const publicKey = createPublicPemFromPrivate(config.privateKey);
+  // if (!config.publicKey) {
+  // config.publicKey = createPublicPemFromPrivate(config.privateKey);
+  // }
 
-  return (token: string) => verifyToken(token, publicKey, config);
+  return (token: string) => verifyToken(token, config);
 }
 
-export function retrievePublicKeyFromJWKS(config: JWKSGuardConfig) {
-  const jwksUri = `${config.authServerUrl}/.well-known/jwks.json`;
+export function retrievePublicKeyFromJWKS({
+  authServerUrl,
+  allowHttp = false,
+}: VerifyTokenJWKS) {
+  const jwksUri = `${authServerUrl}/.well-known/jwks.json`;
 
   const jwtSecret = koaJwtSecret({
     cache: true,
@@ -62,7 +68,7 @@ export function retrievePublicKeyFromJWKS(config: JWKSGuardConfig) {
     // cacheMaxAge: ms('10h'), // Default value,
     rateLimit: true,
     // jwksRequestsPerMinute: 10, // Default value
-    strictSsl: config.production, // strict SSL in production
+    strictSsl: !allowHttp, // strict SSL in production
     jwksUri,
   });
 

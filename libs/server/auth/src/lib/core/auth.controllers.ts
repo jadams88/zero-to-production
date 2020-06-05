@@ -1,8 +1,12 @@
 import { randomBytes } from 'crypto';
 import { compare, hash } from 'bcryptjs';
 import Boom from '@hapi/boom';
-import { signAccessToken, signRefreshToken } from './sign-tokens';
-import { passwordValidator, stripPasswordFields } from './auth-utils';
+import { signAccessToken, signRefreshToken } from './tokens';
+import {
+  isPasswordAllowed,
+  stripPasswordFields,
+  createPublicPemFromPrivate,
+} from './auth-utils';
 import { verifyRefreshToken } from './authenticate';
 import type {
   LoginControllerConfig,
@@ -39,7 +43,7 @@ export function setupRegisterController<U extends AuthUser, V extends Verify>(
     User,
     Verify: Token,
     verifyEmail,
-    validatePassword = passwordValidator,
+    validatePassword = isPasswordAllowed,
   } = config as RegistrationWithVerificationConftrollerConfig<U, V>;
 
   const basicReg = simpleRegistration(User, validatePassword);
@@ -259,7 +263,9 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
   config: RefreshControllerConfig<R>
 ) {
   const { Refresh: Token } = config;
-  const verify = verifyRefreshToken(config);
+
+  const publicKey = createPublicPemFromPrivate(config.privateKey);
+  const verify = verifyRefreshToken({ ...config, publicKey });
   const createAccessToken = signAccessToken(config);
 
   return async (username: string, providedToken: string) => {

@@ -1,28 +1,33 @@
-import koa from 'koa';
+import { ParameterizedContext } from 'koa';
 import { isJWKS } from '../core/auth-utils';
+import { isActiveUser, retrievePublicKeyFromJWKS } from '../core/authenticate';
 import {
-  verifyToken,
-  isActiveUser,
-  retrievePublicKeyFromJWKS,
-} from '../core/authenticate';
-import {
-  JWKSGuarConfig,
-  GuardConfig,
-  VerifyTokenConfig,
-  VerifyTokenJWKSConfig,
-  VerifyUserConfig,
+  AuthGuard,
+  VerifyToken,
+  VerifyTokenJWKS,
+  ActiveUserGuard,
   AuthUser,
 } from '../types';
+import { verifyToken } from '../core/tokens';
 
-export function getRestGuards<U extends AuthUser>(
-  config: GuardConfig<U> | JWKSGuarConfig<U>
-) {
+export type RouterGuard = (
+  ctx: ParameterizedContext,
+  next: () => Promise<any>
+) => Promise<any>;
+
+export interface RouterGuards {
+  authenticate: RouterGuard;
+  verifyActive: RouterGuard;
+}
+
+export function getRestGuards<U extends AuthUser>({
+  authenticate: auth,
+  activeUser,
+}: AuthGuard<U>): RouterGuards {
   // Check if using JWKS guards or if public key is provided
   return {
-    authenticate: isJWKS(config)
-      ? authenticateJWKS(config)
-      : authenticate(config),
-    verifyUser: verifyActiveUser(config),
+    authenticate: isJWKS(auth) ? authenticate(auth) : authenticateJWKS(auth),
+    verifyActive: verifyActiveUser(activeUser),
   };
 }
 
@@ -31,13 +36,13 @@ export function getRestGuards<U extends AuthUser>(
  * and add it to ctx.request.token. Note this is not decoded
  */
 
-export function authenticate(config: VerifyTokenConfig) {
+export function authenticate(config: VerifyToken) {
   return async (ctx: any, next: () => Promise<any>) => {
     /**
      * the encoded token is set at ctx.request.token if the verification
      * passes, replace the encoded token with the decoded token note that the verify function operates synchronously
      */
-    ctx.user = verifyToken(ctx.request.token, config.publicKey, config);
+    ctx.user = verifyToken(ctx.request.token, config);
     return next();
   };
 }
@@ -47,13 +52,16 @@ export function authenticate(config: VerifyTokenConfig) {
  *
  * Returns the payload decoded if the signature is valid and optional expiration, audience, or issuer are valid. If not, it will throw the error.
  */
-export function authenticateJWKS(config: VerifyTokenJWKSConfig) {
+export function authenticateJWKS(config: VerifyTokenJWKS) {
   const getPublicKey = retrievePublicKeyFromJWKS(config);
 
-  return async (ctx: any, next: () => Promise<any>) => {
-    const publicKey = await getPublicKey(ctx.request.token);
+  return async (ctx: ParameterizedContext, next: () => Promise<any>) => {
+    const publicKey = await getPublicKey((ctx.request as any).token);
 
-    ctx.user = verifyToken(ctx.request.token, publicKey, config);
+    ctx.user = verifyToken((ctx.request as any).token, {
+      ...config,
+      publicKey,
+    });
     return next();
   };
 }
@@ -68,9 +76,9 @@ export function authenticateJWKS(config: VerifyTokenJWKSConfig) {
  */
 export function verifyActiveUser<U extends AuthUser>({
   User,
-}: VerifyUserConfig<U>) {
+}: ActiveUserGuard<U>) {
   const activeUser = isActiveUser(User);
-  return async (ctx: koa.ParameterizedContext, next: () => Promise<any>) => {
+  return async (ctx: ParameterizedContext, next: () => Promise<any>) => {
     // Set the user on the ctx.user property
     ctx.user = await activeUser(ctx.user.sub);
     return next();
