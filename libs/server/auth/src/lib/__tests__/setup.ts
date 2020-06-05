@@ -1,4 +1,7 @@
 import { MockUserModel } from './user.mock';
+import { MockVerifyModel } from './verification.mock';
+import { privateKey } from './rsa-keys';
+import { MockRefreshModel } from './refresh-token.mock';
 import {
   Verify,
   VerifyModel,
@@ -12,10 +15,7 @@ import {
   RevokeControllerConfig,
   AuthUser,
   UserModel,
-} from '../auth.interface';
-import { MockVerifyModel } from './verification.mock';
-import { privateKey } from './rsa-keys';
-import { MockRefreshModel } from './refresh-token.mock';
+} from '../types';
 
 export const issuer = 'some-issuer';
 export const audience = 'say-hello!!!';

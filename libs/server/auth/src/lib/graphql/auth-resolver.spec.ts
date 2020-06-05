@@ -9,7 +9,7 @@ import {
   mockVerificationConfig,
 } from '../__tests__/setup';
 import { MockUserModel } from '../__tests__/user.mock';
-import { AuthUser, AuthWithValidation, Verify } from '../auth.interface';
+import { AuthUser, AuthWithValidation, Verify } from '../types';
 
 export const runQuery = (sc: GraphQLSchema) => {
   return async (query: string, variables: { [prop: string]: any }) => {

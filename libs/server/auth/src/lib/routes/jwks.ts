@@ -1,7 +1,7 @@
 import Router from '@koa/router';
 // @ts-ignore
 import { pem2jwk } from 'pem-jwk';
-import { JWKSRouteConfig } from '../auth.interface';
+import { JWKSRouteConfig } from '../types';
 
 // https://auth0.com/docs/jwks
 // https://YOUR_DOMAIN/.well-known/jwks.json

@@ -1,5 +1,5 @@
-import { Refresh } from '../auth.interface';
 import { BaseMockModel } from './base-mock';
+import { Refresh } from '../types';
 
 export class MockRefreshModel extends BaseMockModel<Refresh> {
   _props = ['id', 'user', 'token'];

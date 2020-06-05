@@ -4,7 +4,7 @@ import {
   ValidationErrors,
   FormGroup,
 } from '@angular/forms';
-// import { isPasswordAllowed } from '@ztp/server/auth';
+// import { passwordValidator } from '@ztp/server/auth';
 
 // TODO -> Move to shared
 export function isPasswordAllowed(password: string): boolean {
@@ -16,7 +16,7 @@ export function isPasswordAllowed(password: string): boolean {
   );
 }
 
-// A wrapper around the isPasswordAllowed method to create a form validator
+// A wrapper around the passwordValidator method to create a form validator
 export function passwordValidator(control: AbstractControl) {
   const allowed = isPasswordAllowed(control.value);
   return allowed ? null : { doesNotMeetRequirements: true };

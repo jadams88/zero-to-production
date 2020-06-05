@@ -2,7 +2,9 @@ import { randomBytes } from 'crypto';
 import { compare, hash } from 'bcryptjs';
 import Boom from '@hapi/boom';
 import { signAccessToken, signRefreshToken } from './sign-tokens';
-import {
+import { passwordValidator, stripPasswordFields } from './auth-utils';
+import { verifyRefreshToken } from './authenticate';
+import type {
   LoginControllerConfig,
   VerifyControllerConfig,
   AuthorizeControllerConfig,
@@ -17,9 +19,8 @@ import {
   VerifyModel,
   VerifyEmail,
   BasicRegistrationControllerConfig,
-} from './auth.interface';
-import { isPasswordAllowed, userToJSON } from './auth-utils';
-import { verifyRefreshToken } from './authenticate';
+  PasswordValidator,
+} from '../types';
 
 export function setupRegisterController<U extends AuthUser>(
   config: BasicRegistrationControllerConfig<U>
@@ -32,14 +33,16 @@ export function setupRegisterController<U extends AuthUser, V extends Verify>(
   config: RegistrationConfig<U, V>
 ): (user: AuthUser) => Promise<AuthUser> {
   // The 'registration' controller may either include email verification or not so
-  // the Verify model may be undefined
+  // the Verify model may be undefined. Additionally a password validator may be passed in,
+  // defaults to one in the utils
   const {
     User,
     Verify: Token,
     verifyEmail,
+    validatePassword = passwordValidator,
   } = config as RegistrationWithVerificationConftrollerConfig<U, V>;
 
-  const basicReg = simpleRegistration(User);
+  const basicReg = simpleRegistration(User, validatePassword);
 
   if (!Token) {
     return basicReg;
@@ -53,7 +56,7 @@ export function setupRegisterController<U extends AuthUser, V extends Verify>(
   //   const password: string = (user as any).password;
   //   if (!password) Boom.badRequest('No password provided');
 
-  //   if (!isPasswordAllowed(password))
+  //   if (!passwordValidator(password))
   //     throw Boom.badRequest('Password does not meet requirements');
 
   //   const currentUser = await User.findByUsername(user.username);
@@ -84,16 +87,19 @@ export function setupRegisterController<U extends AuthUser, V extends Verify>(
   //     ]);
   //   }
 
-  //   return userToJSON<AuthUser>(savedUser);
+  //   return stripPasswordFields<AuthUser>(savedUser);
   // };
 }
 
-export function simpleRegistration<U extends AuthUser>(User: UserModel<U>) {
+export function simpleRegistration<U extends AuthUser>(
+  User: UserModel<U>,
+  passwordValidator: PasswordValidator
+) {
   return async (user: AuthUser) => {
     const password: string = (user as any).password;
     if (!password) Boom.badRequest('No password provided');
 
-    if (!isPasswordAllowed(password))
+    if (!passwordValidator(password))
       throw Boom.badRequest('Password does not meet requirements');
 
     const currentUser = await User.findByUsername(user.username);
@@ -111,7 +117,7 @@ export function simpleRegistration<U extends AuthUser>(User: UserModel<U>) {
 
     const savedUser = await newUser.save();
 
-    return userToJSON<AuthUser>(savedUser);
+    return stripPasswordFields<AuthUser>(savedUser);
   };
 }
 

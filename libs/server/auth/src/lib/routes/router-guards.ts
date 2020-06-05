@@ -1,10 +1,10 @@
 import koa from 'koa';
-import { isJWKS } from '../auth-utils';
+import { isJWKS } from '../core/auth-utils';
 import {
   verifyToken,
   isActiveUser,
   retrievePublicKeyFromJWKS,
-} from '../authenticate';
+} from '../core/authenticate';
 import {
   JWKSGuarConfig,
   GuardConfig,
@@ -12,7 +12,7 @@ import {
   VerifyTokenJWKSConfig,
   VerifyUserConfig,
   AuthUser,
-} from '../auth.interface';
+} from '../types';
 
 export function getRestGuards<U extends AuthUser>(
   config: GuardConfig<U> | JWKSGuarConfig<U>

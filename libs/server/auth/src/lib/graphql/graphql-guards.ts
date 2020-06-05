@@ -6,14 +6,14 @@ import {
   VerifyTokenConfig,
   TResolver,
   AuthUser,
-} from '../auth.interface';
-import { isJWKS } from '../auth-utils';
+} from '../types';
+import { isJWKS } from '../core/auth-utils';
 import {
   verifyToken,
   isActiveUser,
   verifyUserRole,
   retrievePublicKeyFromJWKS,
-} from '../authenticate';
+} from '../core/authenticate';
 
 export function getGraphQLGuards<U extends AuthUser>(
   config: GuardConfig<U> | JWKSGuarConfig<U>

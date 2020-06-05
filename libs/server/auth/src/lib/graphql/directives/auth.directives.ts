@@ -1,9 +1,9 @@
 import { SchemaDirectiveVisitor } from 'apollo-server-koa';
-import { JWKSGuarConfig, GuardConfig, AuthUser } from '../../auth.interface';
 import { createGraphQLGuards } from '../graphql-guards';
 import { createAuthenticateDirective } from './authenticated.directive';
 import { createActiveUserDirective } from './active-user.directive';
 import { AuthDirectiveName } from './utils';
+import { JWKSGuarConfig, GuardConfig, AuthUser } from '../../types';
 
 /**
  * The AuthDirective use the auth guards. These functions just wrap the resolvers and call them if they don't throw.

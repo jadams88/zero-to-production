@@ -1,9 +1,5 @@
 import { sign } from 'jsonwebtoken';
-import {
-  AccessTokenConfig,
-  RefreshTokenConfig,
-  AuthUser,
-} from './auth.interface';
+import { AccessTokenConfig, RefreshTokenConfig, AuthUser } from '../types';
 
 // A function that returns a singed JWT
 export function signAccessToken(config: AccessTokenConfig) {

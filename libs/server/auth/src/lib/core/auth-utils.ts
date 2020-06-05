@@ -26,9 +26,9 @@ import {
   BasicAuthWithRefresh,
   AuthWithRefresh,
   LoginControllerConfig,
-} from './auth.interface';
+} from '../types';
 
-export function isPasswordAllowed(password: string): boolean {
+export function passwordValidator(password: string): boolean {
   return (
     !!password &&
     password.length > 8 &&
@@ -38,7 +38,7 @@ export function isPasswordAllowed(password: string): boolean {
   );
 }
 
-export function userToJSON<T>(user: T): T {
+export function stripPasswordFields<T>(user: T): T {
   return omit(user, ['hashedPassword', 'password']);
 }
 
@@ -65,57 +65,6 @@ export function generateAuthGuardConfig<U extends AuthUser>(
     };
   }
 }
-
-// A no-op placeholder function for if no email verification is provided
-// export const noOpEmailVerification: VerifyEmail = async (to, token) =>
-//   Promise.resolve(true);
-
-// export function generateAuthModuleConfig(
-//   AuthUser: IAuthUserModel,
-//   config: ServerAuthConfig,
-//   Verify?: IVerifyModel,
-//   Refresh?: IRefreshModel,
-//   email?: VerifyEmail
-// ): AuthModuleConfig {
-//   const { publicKey, privateKey } = config.accessToken;
-//   const pubKey = publicKey ? publicKey : createPublicPemFromPrivate(privateKey);
-
-//   // The KeyId is used to retrieve the appropriate public key from a JWKS.
-//   // There structure of the key is unspecified (https://tools.ietf.org/html/rfc7517#section-4.5)
-//   // It is common practice to generate a UUID or similar as the key, however this
-//   // will not work in a scenario such as a cloud functions (lambda) or in K8s
-//   // where they can be any number of containers. So create a hash from public
-//   // key as the keyId
-//   const keyId = createHash('md5').update(pubKey).digest('hex');
-
-//   return {
-//     jwks: config.jwksRoute
-//       ? {
-//           publicKey: pubKey,
-//           keyId,
-//         }
-//       : undefined,
-//     login: { AuthUser, ...config.accessToken, keyId },
-//     register: { AuthUser, Verify, ...config.accessToken },
-//     verify: { AuthUser, Verify, ...config.accessToken },
-//     authorize: {
-//       AuthUser,
-//       Refresh,
-//       ...config.accessToken,
-//       ...config.refreshToken,
-//       keyId,
-//     },
-//     refresh: {
-//       Refresh,
-//       ...config.accessToken,
-//       ...config.refreshToken,
-//       keyId,
-//     },
-//     revoke: { Refresh },
-//     email: email ? email : noOpEmailVerification,
-//     authServerUrl: config.authServerUrl,
-//   };
-// }
 
 export function generateAuthModuleConfig<U extends AuthUser>(
   config: ServerAuthConfig,

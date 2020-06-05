@@ -9,7 +9,7 @@ import {
   setupRevokeRefreshTokenController,
   setupVerifyController,
   setupUserAvailableController,
-} from '../auth.controllers';
+} from '../core/auth.controllers';
 import {
   VerifyControllerConfig,
   LoginControllerConfig,
@@ -25,8 +25,8 @@ import {
   AuthWithValidation,
   BasicAuthWithRefresh,
   AuthWithRefresh,
-} from '../auth.interface';
-import { includeEmailVerification, includeRefresh } from '../auth-utils';
+} from '../types';
+import { includeEmailVerification, includeRefresh } from '../core/auth-utils';
 import { createJsonWebKeySetRoute } from './jwks';
 
 /**

@@ -1,5 +1,5 @@
 import { BaseMockModel } from './base-mock';
-import { AuthUser, UserModel } from '../auth.interface';
+import { AuthUser, UserModel } from '../types';
 
 /**
  * A mock user to test the auth routes

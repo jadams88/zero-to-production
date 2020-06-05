@@ -1,5 +1,5 @@
 import { BaseMockModel } from './base-mock';
-import { Verify } from '../auth.interface';
+import { Verify } from '../types';
 
 /**
  * A mock VerificationToken to test the auth routes

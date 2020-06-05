@@ -2,10 +2,5 @@
   "extends": "./tsconfig.lib.json",
   "compilerOptions": {
     "noImplicitAny": false
-  },
-  "references": [
-    { "path": "../../data/tsconfig.docker.json" },
-    { "path": "../core-data/tsconfig.docker.json" },
-    { "path": "../utils/tsconfig.docker.json" }
-  ]
+  }
 }

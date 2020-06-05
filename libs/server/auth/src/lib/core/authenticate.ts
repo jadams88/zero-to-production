@@ -1,14 +1,14 @@
 import { verify, decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
 import { koaJwtSecret } from 'jwks-rsa';
+import { createPublicPemFromPrivate } from './auth-utils';
 import {
   VerifyTokenBaseConfig,
   RefreshTokenConfig,
   JWKSGuardConfig,
   UserModel,
   AuthUser,
-} from './auth.interface';
-import { createPublicPemFromPrivate } from './auth-utils';
+} from '../types';
 
 export function verifyToken(
   token: string,

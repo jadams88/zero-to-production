@@ -3,6 +3,7 @@ import { GraphQLFieldResolver } from 'graphql';
 export type TResolver = GraphQLFieldResolver<any, any, any>;
 export type TResolverFactory = (next: TResolver) => TResolver;
 export type VerifyEmail = (to: string, token: string) => Promise<any>;
+export type PasswordValidator = (password: string) => boolean;
 
 export type AuthModuleConfig<
   U extends AuthUser,
@@ -91,6 +92,7 @@ export interface LoginControllerConfig<U extends AuthUser>
 
 export interface BasicRegistrationControllerConfig<U extends AuthUser> {
   User: UserModel<U>;
+  validatePassword?: PasswordValidator;
 }
 
 export interface RegistrationWithVerificationConftrollerConfig<

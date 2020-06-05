@@ -1,7 +1,7 @@
-import { isPasswordAllowed, userToJSON } from './auth-utils';
+import { passwordValidator, stripPasswordFields } from './auth-utils';
 
 describe('Authentication Utils', () => {
-  describe('isPasswordAllowed', () => {
+  describe('passwordValidator', () => {
     const allowedPasswords = ['adf#jf3@#FD!'];
     const disallowedPasswords = [
       '',
@@ -14,17 +14,17 @@ describe('Authentication Utils', () => {
 
     allowedPasswords.forEach((pwd) => {
       it(`${pwd} should be allowed`, () => {
-        expect(isPasswordAllowed(pwd)).toBe(true);
+        expect(passwordValidator(pwd)).toBe(true);
       });
     });
     disallowedPasswords.forEach((pwd) => {
       it(`${pwd} should not be allowed`, () => {
-        expect(isPasswordAllowed(pwd)).toBe(false);
+        expect(passwordValidator(pwd)).toBe(false);
       });
     });
   });
 
-  describe('userToJson', () => {
+  describe('stripPasswordFields', () => {
     it('should exclude secure properties', () => {
       const safeUser = {
         id: 'abd123',
@@ -41,7 +41,7 @@ describe('Authentication Utils', () => {
         hashedPassword: 'some really long hash',
       };
 
-      const filteredUser = userToJSON(user);
+      const filteredUser = stripPasswordFields(user);
 
       expect(filteredUser.id).toEqual(user.id);
       expect(filteredUser.username).toBeDefined();

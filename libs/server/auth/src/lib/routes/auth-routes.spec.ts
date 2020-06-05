@@ -3,17 +3,8 @@ import { Server } from 'http';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import superagent from 'superagent';
-import { applyAuthRoutes } from './auth-routes';
-import {
-  mockLoginConfig,
-  mockVerificationConfig,
-  mockRegistrationConfig,
-  mockAuthorizeConfig,
-  mockRefreshTokenConfig,
-  mockRevokeConfig,
-} from '../__tests__/setup';
-import { Types } from 'mongoose';
 import { hash } from 'bcryptjs';
+import { applyAuthRoutes } from './auth-routes';
 import {
   MockUserModel,
   MockRefreshModel,
@@ -21,14 +12,15 @@ import {
   audience,
   issuer,
   MockVerifyModel,
+  mockLoginConfig,
+  mockVerificationConfig,
+  mockRegistrationConfig,
+  mockAuthorizeConfig,
+  mockRefreshTokenConfig,
+  mockRevokeConfig,
 } from '../__tests__';
-import { signRefreshToken } from '../sign-tokens';
-import {
-  AuthUser,
-  AuthWithRefresh,
-  Refresh,
-  Verify,
-} from '../auth.interface.js';
+import { signRefreshToken } from '../core/sign-tokens';
+import type { AuthUser, AuthWithRefresh, Refresh, Verify } from '../types';
 
 const URL = 'http://localhost';
 const PORT = 9999;
@@ -52,7 +44,7 @@ const setupTestServer = () => {
 
 const agentRequest = (path: string) => `${URL}:${PORT}${path}`;
 
-const newId = () => Types.ObjectId().toHexString();
+const newId = () => (Math.random() * 100).toString();
 
 const config: AuthWithRefresh<AuthUser, Verify, Refresh> = {
   login: mockLoginConfig(),
@@ -118,7 +110,7 @@ describe('Router - Auth', () => {
     it('should return an access token if correct credentials are provided', async () => {
       const userWithId = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: newId(),
         active: true,
       };
 
@@ -140,7 +132,7 @@ describe('Router - Auth', () => {
     it('should throw unauthorized error if the user is not found', async () => {
       const userWithId = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: newId(),
         active: true,
       };
 
@@ -158,7 +150,7 @@ describe('Router - Auth', () => {
     it('should throw an unauthorized error if the user is not active', async () => {
       const userWithId = {
         ...user,
-        id: Types.ObjectId().toHexString(),
+        id: newId(),
         active: false,
       };
 

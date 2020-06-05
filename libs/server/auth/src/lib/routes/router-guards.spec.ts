@@ -8,7 +8,7 @@ import {
   verifyActiveUser,
   authenticateJWKS,
 } from './router-guards';
-import { signAccessToken } from '../sign-tokens';
+import { signAccessToken } from '../core/sign-tokens';
 import { MockUserModel } from '../__tests__/user.mock';
 import {
   privateKey,
@@ -16,7 +16,7 @@ import {
   invalidPrivateKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
-import { AuthUser, UserModel } from '../auth.interface';
+import type { AuthUser, UserModel } from '../types';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();

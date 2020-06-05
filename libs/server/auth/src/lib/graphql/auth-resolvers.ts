@@ -4,13 +4,13 @@ import {
   setupLoginController,
   setupRegisterController,
   setupUserAvailableController,
-} from '../auth.controllers';
+} from '../core/auth.controllers';
 import {
   LoginControllerConfig,
   BasicAuthModule,
   AuthUser,
   BasicRegistrationControllerConfig,
-} from '../auth.interface';
+} from '../types';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
 // email they receive

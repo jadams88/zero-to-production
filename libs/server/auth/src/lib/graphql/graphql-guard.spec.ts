@@ -7,7 +7,7 @@ import {
   authenticatedJWKS,
   verifyActiveUser,
 } from './graphql-guards';
-import { signAccessToken } from '../sign-tokens';
+import { signAccessToken } from '../core/sign-tokens';
 import { MockUserModel } from '../__tests__/user.mock';
 import {
   privateKey,
@@ -15,7 +15,7 @@ import {
   publicKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
-import { TResolver, AuthUser, UserModel } from '../auth.interface';
+import { TResolver, AuthUser, UserModel } from '../types';
 
 export function newId() {
   return Math.random().toString();
