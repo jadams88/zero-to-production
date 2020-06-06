@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { ServerConfig } from '@ztp/data';
 import { envToNumber, getEnvVariableOrWarn } from '@ztp/server/utils';
-import { ServerAuthConfig } from '@ztp/server/auth';
+import { AuthEnv } from '@ztp/server/auth';
 
 const audience = getEnvVariableOrWarn('AUDIENCE');
 const authServerUrl = getEnvVariableOrWarn('AUTH_SERVER_URL');
@@ -23,7 +23,7 @@ export const config: ServerConfig = {
   sendgridApiKey: getEnvVariableOrWarn('SENDGRID_API_KEY'),
 };
 
-export const authConfig: ServerAuthConfig = {
+export const authConfig: AuthEnv = {
   jwksRoute: false,
   authServerUrl,
   accessToken: {

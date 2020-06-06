@@ -1,10 +1,5 @@
 import { sign, verify } from 'jsonwebtoken';
-import {
-  SignAccessToken,
-  SignRefreshToken,
-  AuthUser,
-  VerifyToken,
-} from '../types';
+import { SignAccessToken, SignRefresh, AuthUser, VerifyToken } from '../types';
 import { unauthorized } from '@hapi/boom';
 
 // A function that returns a singed JWT
@@ -27,7 +22,7 @@ export function signAccessToken(config: SignAccessToken) {
   };
 }
 
-export function signRefreshToken(config: SignRefreshToken) {
+export function signRefreshToken(config: SignRefresh) {
   return (user: AuthUser) => {
     return sign(
       {

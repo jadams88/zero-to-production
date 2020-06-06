@@ -1,7 +1,7 @@
 import Router from '@koa/router';
 // @ts-ignore
 import { pem2jwk } from 'pem-jwk';
-import { JWKSRouteConfig } from '../types';
+import { JWKSRoute } from '../types';
 
 // https://auth0.com/docs/jwks
 // https://YOUR_DOMAIN/.well-known/jwks.json
@@ -9,7 +9,7 @@ import { JWKSRouteConfig } from '../types';
 const END_POINT = '/.well-known/jwks.json';
 
 export function createJsonWebKeySetRoute(
-  { publicKey, keyId }: JWKSRouteConfig,
+  { publicKey, keyId }: JWKSRoute,
   router: Router
 ) {
   const jwk: object = pem2jwk(publicKey, {

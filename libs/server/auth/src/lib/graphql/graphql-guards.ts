@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import {
-  VerifyTokenJWKS,
+  VerifyJWKS,
   VerifyToken,
   AuthUser,
   AuthGuard,
@@ -57,7 +57,7 @@ export function authenticated(config: VerifyToken) {
 /**
  * Verify the token signature
  */
-export function authenticatedJWKS(config: VerifyTokenJWKS) {
+export function authenticatedJWKS(config: VerifyJWKS) {
   const getPublicKey = retrievePublicKeyFromJWKS(config);
 
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {

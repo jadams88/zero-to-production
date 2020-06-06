@@ -1,4 +1,4 @@
-export { verifyRefreshToken, verifyUserRole } from './authenticate';
+export { VerifyRefresh, verifyUserRole } from './authenticate';
 
 export { signAccessToken, signRefreshToken, verifyToken } from './tokens';
 
@@ -18,9 +18,9 @@ export {
   includeRefresh,
   isJWKS,
   isPasswordAllowed,
-  generateAuthGuardConfig,
-  generateAuthModuleConfig,
   createEmailMessage,
   createPublicPemFromPrivate,
   stripPasswordFields,
 } from './auth-utils';
+
+export { generateAuthGuardConfig, generateAuthModuleConfig } from './config';

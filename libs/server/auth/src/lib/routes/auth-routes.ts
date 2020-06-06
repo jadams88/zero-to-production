@@ -11,11 +11,11 @@ import {
   setupUserAvailableController,
 } from '../core/auth.controllers';
 import {
-  VerifyControllerConfig,
-  LoginControllerConfig,
-  AuthorizeControllerConfig,
-  RefreshControllerConfig,
-  RevokeControllerConfig,
+  VerifyController,
+  LoginController,
+  AuthorizeController,
+  RefreshController,
+  RevokeController,
   RegistrationConfig,
   BasicAuthModule,
   AuthUser,
@@ -23,8 +23,8 @@ import {
   Refresh,
   AuthModuleConfig,
   AuthWithValidation,
-  BasicAuthWithRefresh,
-  AuthWithRefresh,
+  BasicAuthAndRefresh,
+  CompleteAuth,
 } from '../types';
 import { includeEmailVerification, includeRefresh } from '../core/auth-utils';
 import { createJsonWebKeySetRoute } from './jwks';
@@ -57,13 +57,13 @@ export function applyAuthRoutes<U extends AuthUser, V extends Verify>(
   config: AuthWithValidation<U, V>
 ): Middleware;
 export function applyAuthRoutes<U extends AuthUser, R extends Refresh>(
-  config: BasicAuthWithRefresh<U, R>
+  config: BasicAuthAndRefresh<U, R>
 ): Middleware;
 export function applyAuthRoutes<
   U extends AuthUser,
   V extends Verify,
   R extends Refresh
->(config: AuthWithRefresh<U, V, R>): Middleware;
+>(config: CompleteAuth<U, V, R>): Middleware;
 export function applyAuthRoutes<
   U extends AuthUser,
   V extends Verify,
@@ -75,7 +75,7 @@ export function applyAuthRoutes<
     authorize,
     refresh,
     revoke,
-  } = config as AuthWithRefresh<U, V, R>;
+  } = config as CompleteAuth<U, V, R>;
 
   const router = new Router();
 
@@ -119,9 +119,7 @@ export function registerRoute<U extends AuthUser, V extends Verify>(
  *
  * @returns A signed JWT.
  */
-export function loginRoute<U extends AuthUser>(
-  config: LoginControllerConfig<U>
-) {
+export function loginRoute<U extends AuthUser>(config: LoginController<U>) {
   // Set up the controller with the config
   const loginController = setupLoginController(config);
 
@@ -133,7 +131,7 @@ export function loginRoute<U extends AuthUser>(
 }
 
 export function verifyRoute<U extends AuthUser, V extends Verify>(
-  config: VerifyControllerConfig<U, V>
+  config: VerifyController<U, V>
 ) {
   const verifyController = setupVerifyController(config);
   return async (ctx: Koa.ParameterizedContext) => {
@@ -144,7 +142,7 @@ export function verifyRoute<U extends AuthUser, V extends Verify>(
 }
 
 export function authorizeRoute<U extends AuthUser, R extends Refresh>(
-  config: AuthorizeControllerConfig<U, R>
+  config: AuthorizeController<U, R>
 ) {
   const authorizeController = setupAuthorizeController(config);
   return async (ctx: Koa.ParameterizedContext) => {
@@ -155,7 +153,7 @@ export function authorizeRoute<U extends AuthUser, R extends Refresh>(
 }
 
 export function refreshTokenRoute<R extends Refresh>(
-  config: RefreshControllerConfig<R>
+  config: RefreshController<R>
 ) {
   const refreshAccessTokenCtr = setupRefreshAccessTokenController(config);
 
@@ -173,7 +171,7 @@ export function refreshTokenRoute<R extends Refresh>(
 }
 
 export function revokeRefreshRoute<R extends Refresh>(
-  config: RevokeControllerConfig<R>
+  config: RevokeController<R>
 ) {
   const revokeTokenController = setupRevokeRefreshTokenController(config);
   return async (ctx: Koa.ParameterizedContext) => {
@@ -184,7 +182,7 @@ export function revokeRefreshRoute<R extends Refresh>(
 }
 
 export function userAvailableRoute<U extends AuthUser>(
-  config: LoginControllerConfig<U>
+  config: LoginController<U>
 ) {
   const userAvailableController = setupUserAvailableController(config);
   return async (ctx: Koa.ParameterizedContext) => {

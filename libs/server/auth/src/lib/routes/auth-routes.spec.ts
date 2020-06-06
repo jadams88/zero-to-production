@@ -20,7 +20,7 @@ import {
   mockRevokeConfig,
 } from '../__tests__';
 import { signRefreshToken } from '../core/tokens';
-import type { AuthUser, AuthWithRefresh, Refresh, Verify } from '../types';
+import type { AuthUser, CompleteAuth, Refresh, Verify } from '../types';
 
 const URL = 'http://localhost';
 const PORT = 9999;
@@ -46,7 +46,7 @@ const agentRequest = (path: string) => `${URL}:${PORT}${path}`;
 
 const newId = () => (Math.random() * 100).toString();
 
-const config: AuthWithRefresh<AuthUser, Verify, Refresh> = {
+const config: CompleteAuth<AuthUser, Verify, Refresh> = {
   login: mockLoginConfig(),
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),

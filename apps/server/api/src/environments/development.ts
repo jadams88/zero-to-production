@@ -2,7 +2,7 @@
 
 import { getEnvVariableOrWarn, envToNumber } from '@ztp/server/utils';
 import { DevServerConfig } from '@ztp/data';
-import { ServerAuthConfig } from '@ztp/server/auth';
+import { AuthEnv } from '@ztp/server/auth';
 
 const audience = process.env.AUDIENCE || `http://localhost:${process.env.PORT}`;
 const authServerUrl =
@@ -21,7 +21,7 @@ export const devConfig: DevServerConfig = {
   },
 };
 
-export const devAuthConfig: ServerAuthConfig = {
+export const devAuthConfig: AuthEnv = {
   jwksRoute: true,
   authServerUrl,
   accessToken: {

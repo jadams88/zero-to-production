@@ -4,13 +4,13 @@ import { koaJwtSecret } from 'jwks-rsa';
 // import { createPublicPemFromPrivate } from './auth-utils';
 import {
   //   VerifyToken,
-  //   SignRefreshToken,
-  VerifyTokenJWKS,
+  //   SignRefresh,
+  VerifyJWKS,
   UserModel,
   AuthUser,
   VerifyToken,
-  VerifyRefreshToken,
-  // VerifyRefreshToken,
+  VerifyRefresh,
+  // VerifyRefresh,
 } from '../types';
 import { verifyToken } from './tokens';
 // import { verifyToken } from './tokens';
@@ -47,7 +47,7 @@ export function verifyUserRole(requiredRole: string) {
   };
 }
 
-export function verifyRefreshToken(config: VerifyRefreshToken) {
+export function VerifyRefresh(config: VerifyRefresh) {
   // Create a public key from the private key
   // if (!config.publicKey) {
   // config.publicKey = createPublicPemFromPrivate(config.privateKey);
@@ -59,7 +59,7 @@ export function verifyRefreshToken(config: VerifyRefreshToken) {
 export function retrievePublicKeyFromJWKS({
   authServerUrl,
   allowHttp = false,
-}: VerifyTokenJWKS) {
+}: VerifyJWKS) {
   const jwksUri = `${authServerUrl}/.well-known/jwks.json`;
 
   const jwtSecret = koaJwtSecret({

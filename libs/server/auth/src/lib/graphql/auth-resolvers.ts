@@ -6,10 +6,10 @@ import {
   setupUserAvailableController,
 } from '../core/auth.controllers';
 import {
-  LoginControllerConfig,
+  LoginController,
   BasicAuthModule,
   AuthUser,
-  BasicRegistrationControllerConfig,
+  BasicRegistrationController,
 } from '../types';
 
 // Verify can not be done via GraphQL because it will be a hyperlink in the
@@ -29,7 +29,7 @@ export function getAuthResolvers<U extends AuthUser>(
 }
 
 export function registerResolver<U extends AuthUser>(
-  config: BasicRegistrationControllerConfig<U>
+  config: BasicRegistrationController<U>
 ): GraphQLFieldResolver<any, { input: AuthUser }, any> {
   const registerController = setupRegisterController(config);
   return function register(root, args, ctx, i) {
@@ -43,7 +43,7 @@ export function registerResolver<U extends AuthUser>(
  * @returns { Object } A User and signed JWT.
  */
 export function loginResolver<U extends AuthUser>(
-  config: LoginControllerConfig<U>
+  config: LoginController<U>
 ): GraphQLFieldResolver<any, { username: string; password: string }, any> {
   const loginController = setupLoginController(config);
 
@@ -56,7 +56,7 @@ export function loginResolver<U extends AuthUser>(
 }
 
 export function userAvailableResolver<U extends AuthUser>(
-  config: LoginControllerConfig<U>
+  config: LoginController<U>
 ): GraphQLFieldResolver<any, { input: AuthUser }, any> {
   const userAvailableController = setupUserAvailableController(config);
   return (root, args, ctx, i) => {

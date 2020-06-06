@@ -7,14 +7,14 @@ import {
   stripPasswordFields,
   createPublicPemFromPrivate,
 } from './auth-utils';
-import { verifyRefreshToken } from './authenticate';
+import { VerifyRefresh } from './authenticate';
 import type {
-  LoginControllerConfig,
-  VerifyControllerConfig,
-  AuthorizeControllerConfig,
-  RefreshControllerConfig,
-  RevokeControllerConfig,
-  RegistrationWithVerificationConftrollerConfig,
+  LoginController,
+  VerifyController,
+  AuthorizeController,
+  RefreshController,
+  RevokeController,
+  RegistrationWithVerificationController,
   RegistrationConfig,
   AuthUser,
   Refresh,
@@ -22,15 +22,15 @@ import type {
   UserModel,
   VerifyModel,
   VerifyEmail,
-  BasicRegistrationControllerConfig,
+  BasicRegistrationController,
   PasswordValidator,
 } from '../types';
 
 export function setupRegisterController<U extends AuthUser>(
-  config: BasicRegistrationControllerConfig<U>
+  config: BasicRegistrationController<U>
 ): (user: AuthUser) => Promise<AuthUser>;
 export function setupRegisterController<U extends AuthUser, V extends Verify>(
-  config: RegistrationWithVerificationConftrollerConfig<U, V>
+  config: RegistrationWithVerificationController<U, V>
 ): (user: AuthUser) => Promise<AuthUser>;
 
 export function setupRegisterController<U extends AuthUser, V extends Verify>(
@@ -44,7 +44,7 @@ export function setupRegisterController<U extends AuthUser, V extends Verify>(
     Verify: Token,
     verifyEmail,
     validatePassword = isPasswordAllowed,
-  } = config as RegistrationWithVerificationConftrollerConfig<U, V>;
+  } = config as RegistrationWithVerificationController<U, V>;
 
   const basicReg = simpleRegistration(User, validatePassword);
 
@@ -153,7 +153,7 @@ export function verifyUser<V extends Verify>(
 export function setupVerifyController({
   User,
   Verify: Token,
-}: VerifyControllerConfig<any, any>) {
+}: VerifyController<any, any>) {
   return async (email: string, token: string) => {
     /**
      * Check the user exists and is not already registered
@@ -201,7 +201,7 @@ export function setupVerifyController({
  * }
  */
 export function setupLoginController<U extends AuthUser>(
-  config: LoginControllerConfig<U>
+  config: LoginController<U>
 ) {
   const { User } = config;
   const accessToken = signAccessToken(config);
@@ -225,7 +225,7 @@ export function setupLoginController<U extends AuthUser>(
 }
 
 export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
-  config: AuthorizeControllerConfig<U, R>
+  config: AuthorizeController<U, R>
 ) {
   const { User, Refresh: Token } = config;
   const createAccessToken = signAccessToken(config);
@@ -260,12 +260,12 @@ export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
 
 // a controller that receives a refresh token and returns an access token.
 export function setupRefreshAccessTokenController<R extends Refresh>(
-  config: RefreshControllerConfig<R>
+  config: RefreshController<R>
 ) {
   const { Refresh: Token } = config;
 
   const publicKey = createPublicPemFromPrivate(config.privateKey);
-  const verify = verifyRefreshToken({ ...config, publicKey });
+  const verify = VerifyRefresh({ ...config, publicKey });
   const createAccessToken = signAccessToken(config);
 
   return async (username: string, providedToken: string) => {
@@ -303,7 +303,7 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
 // a controller to revoke a refresh token
 export function setupRevokeRefreshTokenController<R extends Refresh>({
   Refresh: Token,
-}: RevokeControllerConfig<R>) {
+}: RevokeController<R>) {
   return async (token: string) => {
     const refreshToken = await Token.findByToken(token);
 
@@ -316,7 +316,7 @@ export function setupRevokeRefreshTokenController<R extends Refresh>({
 }
 
 export function setupUserAvailableController<U extends AuthUser>(
-  config: LoginControllerConfig<U>
+  config: LoginController<U>
 ) {
   const { User } = config;
 

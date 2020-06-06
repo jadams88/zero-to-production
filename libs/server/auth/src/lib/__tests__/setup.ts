@@ -7,12 +7,12 @@ import {
   VerifyModel,
   Refresh,
   RefreshModel,
-  LoginControllerConfig,
-  RegistrationWithVerificationConftrollerConfig,
-  VerifyControllerConfig,
-  AuthorizeControllerConfig,
-  RefreshControllerConfig,
-  RevokeControllerConfig,
+  LoginController,
+  RegistrationWithVerificationController,
+  VerifyController,
+  AuthorizeController,
+  RefreshController,
+  RevokeController,
   AuthUser,
   UserModel,
 } from '../types';
@@ -23,7 +23,7 @@ export const keyId = 'key-id';
 
 export function mockRegistrationConfig(
   email: jest.Mock<any, any> = jest.fn()
-): RegistrationWithVerificationConftrollerConfig<AuthUser, Verify> {
+): RegistrationWithVerificationController<AuthUser, Verify> {
   return {
     User: (MockUserModel as unknown) as UserModel<AuthUser>,
     Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
@@ -31,17 +31,14 @@ export function mockRegistrationConfig(
   };
 }
 
-export function mockVerificationConfig(): VerifyControllerConfig<
-  AuthUser,
-  Verify
-> {
+export function mockVerificationConfig(): VerifyController<AuthUser, Verify> {
   return {
     User: (MockUserModel as unknown) as UserModel<AuthUser>,
     Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
   };
 }
 
-export function mockLoginConfig(): LoginControllerConfig<AuthUser> {
+export function mockLoginConfig(): LoginController<AuthUser> {
   return {
     User: (MockUserModel as unknown) as UserModel<AuthUser>,
     privateKey,
@@ -52,10 +49,7 @@ export function mockLoginConfig(): LoginControllerConfig<AuthUser> {
   };
 }
 
-export function mockAuthorizeConfig(): AuthorizeControllerConfig<
-  AuthUser,
-  Refresh
-> {
+export function mockAuthorizeConfig(): AuthorizeController<AuthUser, Refresh> {
   return {
     User: (MockUserModel as unknown) as UserModel<AuthUser>,
     privateKey,
@@ -67,7 +61,7 @@ export function mockAuthorizeConfig(): AuthorizeControllerConfig<
   };
 }
 
-export function mockRefreshTokenConfig(): RefreshControllerConfig<Refresh> {
+export function mockRefreshTokenConfig(): RefreshController<Refresh> {
   return {
     privateKey,
     audience,
@@ -78,7 +72,7 @@ export function mockRefreshTokenConfig(): RefreshControllerConfig<Refresh> {
   };
 }
 
-export function mockRevokeConfig(): RevokeControllerConfig<Refresh> {
+export function mockRevokeConfig(): RevokeController<Refresh> {
   return {
     Refresh: (MockRefreshModel as unknown) as RefreshModel<Refresh>,
   };

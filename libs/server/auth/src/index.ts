@@ -1,7 +1,6 @@
 export * from './lib/graphql';
 export {
-  passwordValidator,
-  generateAuthAuthGuard,
+  isPasswordAllowed,
   generateAuthModuleConfig,
   createPublicPemFromPrivate,
   createEmailMessage,
@@ -9,10 +8,9 @@ export {
 export {
   AuthModuleConfig,
   UserModel,
-  ServerAuthConfig,
-  AuthGuardJWKS,
+  AuthEnv,
   AuthGuard,
-  JWKSRouteConfig,
+  JWKSRoute,
 } from './lib/types';
 export { getRestGuards } from './lib/routes/router-guards';
 export { applyAuthRoutes } from './lib/routes/auth-routes';

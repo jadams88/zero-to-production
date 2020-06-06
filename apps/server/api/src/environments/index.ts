@@ -6,7 +6,7 @@ import {
   ServerConfig,
 } from '@ztp/data';
 import { envToNumber, getEnvVariableOrWarn } from '@ztp/server/utils';
-import { ServerAuthConfig } from '@ztp/server/auth';
+import { AuthEnv } from '@ztp/server/auth';
 import { devConfig, devAuthConfig } from './development.js';
 import { prodConfig, prodAuthConfig } from './production.js';
 import { testConfig, testAuthConfig } from './test.js';
@@ -45,7 +45,7 @@ const globalConfig: GlobalServerConfig = {
  * TODO -> Top level await when ts is updated to 3.8
  */
 let environmentSettings: EnvironnementConfig;
-export let authConfig: ServerAuthConfig;
+export let authConfig: AuthEnv;
 switch (process.env.NODE_ENV) {
   case 'prod':
   case 'production':

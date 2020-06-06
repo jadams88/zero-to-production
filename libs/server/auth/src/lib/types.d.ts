@@ -1,6 +1,10 @@
 export type VerifyEmail = (to: string, token: string) => Promise<any>;
 export type PasswordValidator = (password: string) => boolean;
 
+// -------------------------------------
+// Interfaces for each type of
+// auth configuration
+// -------------------------------------
 export type AuthModuleConfig<
   U extends AuthUser,
   V extends Verify,
@@ -8,101 +12,95 @@ export type AuthModuleConfig<
 > =
   | BasicAuthModule<U>
   | AuthWithValidation<U, V>
-  | BasicAuthWithRefresh<U, R>
-  | AuthWithRefresh<U, V, R>;
+  | BasicAuthAndRefresh<U, R>
+  | CompleteAuth<U, V, R>;
 
 export interface BasicAuthModule<U extends AuthUser> {
-  jwks?: JWKSRouteConfig;
+  jwks?: JWKSRoute;
   authServerUrl: string;
-  login: LoginControllerConfig<U>;
-  register: BasicRegistrationControllerConfig<U>;
+  login: LoginController<U>;
+  register: BasicRegistrationController<U>;
 }
 
 export interface AuthWithValidation<U extends AuthUser, V extends Verify>
   extends BasicAuthModule<U> {
-  register: RegistrationWithVerificationConftrollerConfig<U, V>;
-  verify: VerifyControllerConfig<U, V>;
+  register: RegistrationWithVerificationController<U, V>;
+  verify: VerifyController<U, V>;
 }
 
-export interface BasicAuthWithRefresh<U extends AuthUser, R extends Refresh>
+export interface BasicAuthAndRefresh<U extends AuthUser, R extends Refresh>
   extends BasicAuthModule<U> {
-  authorize: AuthorizeControllerConfig<U, R>;
-  refresh: RefreshControllerConfig<R>;
-  revoke: RevokeControllerConfig<R>;
+  authorize: AuthorizeController<U, R>;
+  refresh: RefreshController<R>;
+  revoke: RevokeController<R>;
 }
 
-export interface AuthWithRefresh<
+export interface CompleteAuth<
   U extends AuthUser,
   V extends Verify,
   R extends Refresh
 > extends AuthWithValidation<U, V> {
-  authorize: AuthorizeControllerConfig<U, R>;
-  refresh: RefreshControllerConfig<R>;
-  revoke: RevokeControllerConfig<R>;
+  authorize: AuthorizeController<U, R>;
+  refresh: RefreshController<R>;
+  revoke: RevokeController<R>;
 }
 
-export type IncludeRefresh<
+export type WithRefresh<
   U extends AuthUser,
   V extends Verify,
   R extends Refresh
-> = BasicAuthWithRefresh<U, R> | AuthWithRefresh<U, V, R>;
-export type ExcludeRefresh<U extends AuthUser, V extends Verify> =
+> = BasicAuthAndRefresh<U, R> | CompleteAuth<U, V, R>;
+export type WithoutRefresh<U extends AuthUser, V extends Verify> =
   | BasicAuthModule<U>
   | AuthWithValidation<U, V>;
-
-// // -------------------------------------
-// // For signing and validation access and refresh tokens
-// // -------------------------------------
-
-export interface JWKSRouteConfig {
-  publicKey: string;
-  keyId: string;
-}
 
 // -------------------------------------
 // Interfaces for each controller
 // -------------------------------------
-export interface LoginControllerConfig<U extends AuthUser>
-  extends SignAccessToken {
+export interface JWKSRoute {
+  publicKey: string;
+  keyId: string;
+}
+
+export interface LoginController<U extends AuthUser> extends SignAccessToken {
   User: UserModel<U>;
 }
 
-export interface BasicRegistrationControllerConfig<U extends AuthUser> {
+export interface BasicRegistrationController<U extends AuthUser> {
   User: UserModel<U>;
   validatePassword?: PasswordValidator;
 }
 
-export interface RegistrationWithVerificationConftrollerConfig<
+export interface RegistrationWithVerificationController<
   U extends AuthUser,
   V extends Verify
-> extends BasicRegistrationControllerConfig<U> {
+> extends BasicRegistrationController<U> {
   Verify: VerifyModel<V>;
   verifyEmail: VerifyEmail;
 }
 
 export type RegistrationConfig<U extends AuthUser, V extends Verify> =
-  | BasicRegistrationControllerConfig<U>
-  | RegistrationWithVerificationConftrollerConfig<U, V>;
+  | BasicRegistrationController<U>
+  | RegistrationWithVerificationController<U, V>;
 
-export interface VerifyControllerConfig<U extends AuthUser, V extends Verify> {
+export interface VerifyController<U extends AuthUser, V extends Verify> {
   User: UserModel<U>;
   Verify: VerifyModel<V>;
 }
 
-export interface AuthorizeControllerConfig<
-  U extends AuthUser,
-  R extends Refresh
-> extends LoginControllerConfig<U>, SignRefreshToken {
+export interface AuthorizeController<U extends AuthUser, R extends Refresh>
+  extends LoginController<U>,
+    SignRefresh {
   Refresh: RefreshModel<R>;
 }
 
-export interface RefreshControllerConfig<R extends Refresh>
+export interface RefreshController<R extends Refresh>
   extends SignAccessToken,
-    SignRefreshToken {
+    SignRefresh {
   Refresh: RefreshModel<R>;
 }
 
-export interface RevokeControllerConfig<R extends Refresh> {
+export interface RevokeController<R extends Refresh> {
   Refresh: RefreshModel<R>;
 }
 
@@ -123,20 +121,20 @@ export interface VerifyToken {
   publicKey: string;
 }
 
-export interface VerifyTokenJWKS {
+export interface VerifyJWKS {
   issuer: string;
   audience: string;
   authServerUrl: string;
   allowHttp?: boolean;
 }
 
-export interface SignRefreshToken {
+export interface SignRefresh {
   audience: string;
   issuer: string;
   privateKey: string;
 }
 
-export interface VerifyRefreshToken {
+export interface VerifyRefresh {
   audience: string;
   issuer: string;
   publicKey: string;
@@ -147,14 +145,14 @@ export interface ActiveUserGuard<U extends AuthUser> {
 }
 
 export interface AuthGuard<U extends AuthUser> {
-  authenticate: VerifyToken | VerifyTokenJWKS;
+  authenticate: VerifyToken | VerifyJWKS;
   activeUser: ActiveUserGuard<U>;
 }
 
 // -------------------------------------
-// Interfaces for the auth environment config
+// Interfaces for the auth environment variables
 // -------------------------------------
-export interface ServerAuthConfig {
+export interface AuthEnv {
   authServerUrl: string;
   jwksRoute?: boolean;
   accessToken: {
@@ -164,7 +162,7 @@ export interface ServerAuthConfig {
     issuer: string;
     audience: string;
   };
-  refreshToken: {
+  refreshToken?: {
     privateKey: string;
     publicKey?: string;
     issuer: string;
@@ -172,6 +170,16 @@ export interface ServerAuthConfig {
   };
 }
 
+/**
+ * Interfaces for each of the model.
+ *
+ * An interface to define the constructor functions (class's with static methods)
+ * and an instance interface.
+ *
+ * Any model used in this library must satisfy the interfaces
+ */
+
+// User Model
 export interface UserModel<U extends AuthUser> {
   new (user: any): U;
   // NOTE -> TypeScript does not currently allow derived classes to override parent static methods
@@ -182,6 +190,7 @@ export interface UserModel<U extends AuthUser> {
   findByEmail(email: string): Promise<U | null>;
 }
 
+// User
 export interface AuthUser {
   id: string | number;
   username: string;
@@ -192,11 +201,12 @@ export interface AuthUser {
   save(): Promise<this>;
 }
 
+// Refresh Token Model
 export interface RefreshModel<T extends Refresh> {
   new (token: any): T;
   findByToken(token: string): Promise<T | null>;
 }
-
+// Refresh Token
 export interface Refresh {
   id: string;
   user: AuthUser;
@@ -205,6 +215,7 @@ export interface Refresh {
   remove(): Promise<this>;
 }
 
+// Verification Token Model -  Used for email verification
 export interface VerifyModel<V extends Verify> {
   new (token: any): V;
   findByToken(token: string): Promise<V | null>;
