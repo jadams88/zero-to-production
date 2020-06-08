@@ -17,7 +17,7 @@ export type RouterGuard = (
 
 export interface RouterGuards {
   authenticate: RouterGuard;
-  verifyActive: RouterGuard;
+  verifyUser: RouterGuard;
 }
 
 export function getRestGuards<U extends AuthUser>({
@@ -27,7 +27,7 @@ export function getRestGuards<U extends AuthUser>({
   // Check if using JWKS guards or if public key is provided
   return {
     authenticate: isJWKS(auth) ? authenticate(auth) : authenticateJWKS(auth),
-    verifyActive: verifyActiveUser(activeUser),
+    verifyUser: verifyActiveUser(activeUser),
   };
 }
 

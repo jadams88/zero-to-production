@@ -4,14 +4,10 @@ import {
   generateAuthGuardConfig,
   createAuthDirectives,
 } from '@ztp/server/auth';
-import { config, authConfig } from '../../environments';
+import { authConfig } from '../../environments';
 import { User } from '../api/users';
 
-const guardConfig = generateAuthGuardConfig(
-  config.production,
-  authConfig,
-  User
-);
+const guardConfig = generateAuthGuardConfig(authConfig, User);
 
 /**
  * Guards for use in Routes

@@ -4,6 +4,7 @@ export {
   generateAuthModuleConfig,
   createPublicPemFromPrivate,
   createEmailMessage,
+  generateAuthGuardConfig,
 } from './lib/core';
 export {
   AuthModuleConfig,

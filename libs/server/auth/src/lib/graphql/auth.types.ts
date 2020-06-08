@@ -28,8 +28,13 @@ export const authTypeDef = gql`
     isAvailable: Boolean!
   }
 
+  type VerifyUser {
+    message: String!
+  }
+
   type Query {
     userAvailable(username: String!): UserAvailable!
+    verify(email: String!, token: String!): VerifyUser!
   }
 
   type Mutation {
