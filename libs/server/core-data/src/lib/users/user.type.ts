@@ -8,6 +8,7 @@ export const userTypeDef = gql`
     username: String!
     email: String!
     dateOfBirth: String!
+    isVerified: Boolean!
   }
 
   input UpdatedUserInput {

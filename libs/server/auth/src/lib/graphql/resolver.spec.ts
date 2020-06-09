@@ -1,15 +1,23 @@
 import { hash } from 'bcryptjs';
 import 'jest-extended';
 import { GraphQLSchema, graphql } from 'graphql';
+import { ApolloServer } from 'apollo-server-koa';
+import superagent from 'superagent';
 import { createAuthSchema } from './schema';
-import { getAuthResolvers } from './auth-resolvers';
 import {
   mockLoginConfig,
   mockRegistrationConfig,
   mockVerificationConfig,
-} from '../__tests__/setup';
-import { MockUserModel } from '../__tests__/user.mock';
+  MockVerifyModel,
+  MockUserModel,
+  setupTestServer,
+} from '../__tests__';
 import { AuthUser, AuthWithValidation, Verify } from '../types';
+import { Server } from 'http';
+import { graphQLVerifyUrl } from './utils';
+
+const URL = 'http://localhost';
+const PORT = 9999;
 
 export const runQuery = (sc: GraphQLSchema) => {
   return async (query: string, variables: { [prop: string]: any }) => {
@@ -24,8 +32,7 @@ const config: AuthWithValidation<AuthUser, Verify> = {
   authServerUrl: 'http://some-url.com',
 };
 
-const resolvers = getAuthResolvers(config);
-const schema = createAuthSchema(resolvers);
+const schema = createAuthSchema(config);
 
 const user = ({
   username: 'test user',
@@ -244,6 +251,254 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
       expect((result.errors as any)[0].message).toBe('Unauthorized');
 
+      MockUserModel.reset();
+    });
+  });
+
+  describe('verify(email: String!, token: String!): VerifyUser!', () => {
+    it('should verify a users email', async () => {
+      const userId = '1';
+      const token = 'SOME_TOKEN';
+
+      const unverifiedUser = {
+        id: userId,
+        ...user,
+        isVerified: false,
+      };
+
+      const verificationToken = {
+        token,
+        userId,
+      };
+
+      MockUserModel.userToRespondWith = unverifiedUser;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
+
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
+
+      const queryName = `verify`;
+      const result = await runQuery(schema)(
+        `
+        query Verify($email: String!, $token: String!) {
+          ${queryName}(email: $email, token: $token) {
+            message
+          }
+        }
+        `,
+        {
+          email: user.email,
+          token,
+        }
+      );
+
+      expect(result.errors).not.toBeDefined();
+      expect(result.data).toBeDefined();
+
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
+
+      MockVerifyModel.reset();
+      MockUserModel.reset();
+    });
+
+    it('should throw if a user cannot be found', async () => {
+      const userId = '1';
+      const token = 'SOME_TOKEN';
+
+      const verificationToken = {
+        token,
+        userId,
+      };
+
+      MockUserModel.userToRespondWith = null;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
+
+      const queryName = `verify`;
+      const result = await runQuery(schema)(
+        `
+        query Verify($email: String!, $token: String!) {
+          ${queryName}(email: $email, token: $token) {
+            message
+          }
+        }
+        `,
+        {
+          email: user.email,
+          token,
+        }
+      );
+
+      expect(result.data).toBe(null);
+      expect(result.errors).toBeDefined();
+
+      MockVerifyModel.reset();
+      MockUserModel.reset();
+    });
+
+    it('should throw if the user is already valid', async () => {
+      const userId = '1';
+      const token = 'SOME_TOKEN';
+
+      const verifiedUser = {
+        id: userId,
+        ...user,
+        isVerified: true,
+      };
+
+      const verificationToken = {
+        token,
+        userId,
+      };
+
+      MockUserModel.userToRespondWith = verifiedUser;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
+
+      const queryName = `verify`;
+      const result = await runQuery(schema)(
+        `
+        query Verify($email: String!, $token: String!) {
+          ${queryName}(email: $email, token: $token) {
+            message
+          }
+        }
+        `,
+        {
+          email: user.email,
+          token,
+        }
+      );
+
+      expect(result.data).toBe(null);
+      expect(result.errors).toBeDefined();
+
+      MockVerifyModel.reset();
+      MockUserModel.reset();
+    });
+
+    it('should throw if the token is not valid', async () => {
+      const userId = '1';
+      const token = 'SOME_TOKEN';
+
+      const unverifiedUser = {
+        id: userId,
+        ...user,
+        isVerified: false,
+      };
+
+      MockUserModel.userToRespondWith = unverifiedUser;
+      MockVerifyModel.tokenToRespondWith = null;
+
+      const queryName = `verify`;
+      const result = await runQuery(schema)(
+        `
+        query Verify($email: String!, $token: String!) {
+          ${queryName}(email: $email, token: $token) {
+            message
+          }
+        }
+        `,
+        {
+          email: user.email,
+          token,
+        }
+      );
+
+      expect(result.data).toBe(null);
+      expect(result.errors).toBeDefined();
+
+      MockVerifyModel.reset();
+      MockUserModel.reset();
+    });
+
+    it('should throw if the token does not belong to the user', async () => {
+      const token = 'SOME-TOKEN';
+
+      const unverifiedUser = {
+        id: '1',
+        ...user,
+        isVerified: false,
+      };
+
+      const verificationToken = {
+        token,
+        userId: '2',
+      };
+
+      MockUserModel.userToRespondWith = unverifiedUser;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
+
+      const queryName = `verify`;
+      const result = await runQuery(schema)(
+        `
+        query Verify($email: String!, $token: String!) {
+          ${queryName}(email: $email, token: $token) {
+            message
+          }
+        }
+        `,
+        {
+          email: user.email,
+          token,
+        }
+      );
+
+      expect(result.data).toBe(null);
+      expect(result.errors).toBeDefined();
+
+      MockVerifyModel.reset();
+      MockUserModel.reset();
+    });
+  });
+
+  describe('verify - GET Request', () => {
+    let server: Server;
+
+    beforeAll(async () => {
+      const app = setupTestServer();
+
+      const apollo = new ApolloServer({
+        schema,
+        playground: false,
+        tracing: false,
+        debug: false,
+        uploads: false,
+      });
+
+      apollo.applyMiddleware({ app });
+
+      server = app.listen(PORT);
+    });
+
+    afterAll(async () => {
+      server.close();
+    });
+
+    it('should verify a users email', async () => {
+      const userId = '1';
+      const token = 'SOME_TOKEN';
+
+      const unverifiedUser = {
+        id: userId,
+        ...user,
+        isVerified: false,
+      };
+
+      const verificationToken = {
+        token,
+        userId,
+      };
+
+      MockUserModel.userToRespondWith = unverifiedUser;
+      MockVerifyModel.tokenToRespondWith = verificationToken;
+
+      const urlQuery = graphQLVerifyUrl(`${URL}:${PORT}`)(user.email, token);
+
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
+
+      const response = await superagent.get(urlQuery);
+
+      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
+
+      MockVerifyModel.reset();
       MockUserModel.reset();
     });
   });

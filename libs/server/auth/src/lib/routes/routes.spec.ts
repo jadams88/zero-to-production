@@ -1,10 +1,8 @@
 import 'jest-extended';
 import { Server } from 'http';
-import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
 import superagent from 'superagent';
 import { hash } from 'bcryptjs';
-import { applyAuthRoutes } from './auth-routes';
+import { applyAuthRoutes } from './routes';
 import {
   MockUserModel,
   MockRefreshModel,
@@ -18,6 +16,9 @@ import {
   mockAuthorizeConfig,
   mockRefreshTokenConfig,
   mockRevokeConfig,
+  request,
+  setupTestServer,
+  newId,
 } from '../__tests__';
 import { signRefreshToken } from '../core/tokens';
 import type { AuthUser, CompleteAuth, Refresh, Verify } from '../types';
@@ -25,26 +26,7 @@ import type { AuthUser, CompleteAuth, Refresh, Verify } from '../types';
 const URL = 'http://localhost';
 const PORT = 9999;
 
-const setupTestServer = () => {
-  const app = new Koa();
-  app.use(bodyParser());
-  app.use(async (ctx, next) => {
-    try {
-      await next();
-    } catch (e) {
-      if (e.isBoom) {
-        // Is A Boom
-        ctx.status = e.output.statusCode;
-        ctx.body = e.output.payload;
-      }
-    }
-  });
-  return app;
-};
-
-const agentRequest = (path: string) => `${URL}:${PORT}${path}`;
-
-const newId = () => (Math.random() * 100).toString();
+const agentRequest = request(URL, PORT);
 
 const config: CompleteAuth<AuthUser, Verify, Refresh> = {
   login: mockLoginConfig(),
@@ -71,7 +53,7 @@ describe('Router - Auth', () => {
   beforeAll(async () => {
     const app = setupTestServer();
     app.use(applyAuthRoutes(config));
-    server = app.listen(9999);
+    server = app.listen(PORT);
   });
 
   afterAll(async () => {

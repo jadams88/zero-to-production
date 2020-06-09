@@ -9,7 +9,7 @@ import {
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
   setupUserAvailableController,
-} from './auth.controllers';
+} from './controllers';
 import { signRefreshToken } from './tokens';
 import {
   mockRegistrationConfig,

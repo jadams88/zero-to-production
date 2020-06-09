@@ -7,18 +7,23 @@ import {
   getRefreshTokenModel,
 } from '@ztp/server/core-data';
 import {
-  getAuthResolvers,
   generateAuthModuleConfig,
   applyAuthRoutes,
   createAuthSchema,
   createEmailMessage,
+  restVerifyUrl,
 } from '@ztp/server/auth';
 import { config, authConfig } from '../../environments/environment';
 import { configureSendgrid } from '@ztp/server/utils';
 
-const emailClient = configureSendgrid(config.sendgridApiKey);
-const createMessage = createEmailMessage(authConfig.authServerUrl);
-const verifyEmail = compose(emailClient, createMessage);
+// const verifyUrl = restVerifyUrl(authConfig.authServerUrl);
+// uncomment the below to change to a GraphQL verify url
+// const verifyUrl = graphQLVerifyUrl(authConfig.authServerUrl);
+
+// const verifyEmail = compose(
+// configureSendgrid(config.sendgridApiKey),
+// createEmailMessage(verifyUrl)
+// );
 
 /**
  * Applies all required auth routes
@@ -29,7 +34,7 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
   // Basic AuthModule (no email verification)
   const authModuleConfig = generateAuthModuleConfig(authConfig, User);
 
-  // ZTP_AFTER_CLONE -> uncomment the below import
+  // ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
   // const VerificationToken = getVerificationTokenModel(conn);
   // const RefreshToken = getRefreshTokenModel(conn);
   // const authModuleConfig = generateAuthModuleConfig(
@@ -46,14 +51,14 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
 /**
  * Auth Resolvers
  */
-export function authResolvers(conn: Connection) {
+export function authSchema(conn: Connection) {
   const User = getUserModel(conn);
 
   // Basic AuthModule (no email verification)
   const authModuleConfig = generateAuthModuleConfig(authConfig, User);
 
-  // ZTP_AFTER_CLONE -> uncomment the below import
-  const VerificationToken = getVerificationTokenModel(conn);
+  // ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
+  // const VerificationToken = getVerificationTokenModel(conn);
   // const RefreshToken = getRefreshTokenModel(conn);
   // const authModuleConfig = generateAuthModuleConfig(
   //   authConfig,
@@ -63,10 +68,5 @@ export function authResolvers(conn: Connection) {
   //   RefreshToken
   // );
 
-  return getAuthResolvers(authModuleConfig);
-}
-
-export function createAuthSchemaFromConnection(conn: Connection) {
-  const resolvers = authResolvers(conn);
-  return createAuthSchema(resolvers);
+  return createAuthSchema(authModuleConfig);
 }

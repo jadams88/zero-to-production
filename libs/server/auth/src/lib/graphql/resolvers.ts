@@ -1,11 +1,11 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { IResolvers } from 'apollo-server-koa';
 import {
   setupLoginController,
   setupRegisterController,
   setupUserAvailableController,
   setupVerifyController,
-} from '../core/auth.controllers';
+  includeEmailVerification,
+} from '../core';
 import {
   LoginController,
   BasicAuthModule,
@@ -15,18 +15,31 @@ import {
   Verify,
   AuthWithValidation,
 } from '../types';
-import { includeEmailVerification } from '../core/auth-utils';
+import { IResolvers } from 'apollo-server-koa';
 
-// graphql?query=query{verify(email:"one",token:"two"){message}}
+export type TResolver = GraphQLFieldResolver<any, any, any>;
 
-// Verify can not be done via GraphQL because it will be a hyperlink in the
-// email they receive
+export interface SimpleAuthResolvers extends IResolvers {
+  Query: { userAvailable: TResolver };
+  Mutation: { register: TResolver; login: TResolver };
+}
+
+export interface AuthWithVerify extends SimpleAuthResolvers {
+  Query: { userAvailable: TResolver; verify: TResolver };
+}
+
+export function getAuthResolvers<U extends AuthUser>(
+  config: BasicAuthModule<U>
+): SimpleAuthResolvers;
+export function getAuthResolvers<U extends AuthUser, V extends Verify>(
+  config: AuthWithValidation<U, V>
+): AuthWithVerify;
 export function getAuthResolvers<U extends AuthUser, V extends Verify>(
   config: BasicAuthModule<U> | AuthWithValidation<U, V>
-): IResolvers {
+): SimpleAuthResolvers | AuthWithVerify {
   const { login, register, verify } = config as AuthWithValidation<U, V>;
 
-  const resolvers: IResolvers = {
+  const resolvers: SimpleAuthResolvers = {
     Query: {
       userAvailable: userAvailableResolver(login),
     },
@@ -36,25 +49,14 @@ export function getAuthResolvers<U extends AuthUser, V extends Verify>(
     },
   };
 
+  // registration resolver if using email verification
   if (includeEmailVerification(register)) {
-    // registration route is using email verification
-
-    // const ve = verifyResolver(verify);
-    // const a = {
-    //   ...resolvers,
-    //   ...{ Query: { verify: ve } },
-    // };
-
-    // console.log(resolvers);
-    const r = { ...resolvers };
-    (r.Query as any).verify = verifyResolver(verify);
-    console.log(r);
-    return r;
-    // resolvers.Query.verify = verify;
-
-    // return resolvers;
+    // Although the verify resolver is technically a 'mutation' operation,
+    // it is a 'Query' operation so that it can be sent in an email link
+    (resolvers as AuthWithVerify).Query.verify = verifyResolver(verify);
+    return resolvers as AuthWithVerify;
   } else {
-    return resolvers;
+    return resolvers as SimpleAuthResolvers;
   }
 }
 
@@ -100,7 +102,6 @@ export function verifyResolver<U extends AuthUser, V extends Verify>(
   const verifyController = setupVerifyController(config);
 
   return function verify(root, args, ctx, i): Promise<{ message: string }> {
-    console.log('HERERE');
     const email: string = args.email;
     const token: string = args.token;
 

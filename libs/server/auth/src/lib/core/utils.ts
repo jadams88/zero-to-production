@@ -33,13 +33,15 @@ export function createPublicPemFromPrivate(privateKey: string) {
   return publicKey.export({ format: 'pem', type: 'spki' }) as string;
 }
 
-export function createEmailMessage(authServerUrl: string) {
-  return (to: string, token: string) => {
+export function createEmailMessage(
+  creatLink: (email: string, token: string) => string
+) {
+  return (email: string, token: string) => {
     return {
-      to,
+      to: email,
       from: 'register@zero-to-production.com',
       subject: 'Verify Your Email',
-      text: `Click on the link to verify your email ${authServerUrl}/authorize/verify?token=${token}&email=${to}`,
+      text: `Click on the link to verify your email ${creatLink(email, token)}`,
     };
   };
 }

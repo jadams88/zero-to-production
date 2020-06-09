@@ -1,5 +1,3 @@
-export { VerifyRefresh, verifyUserRole } from './authenticate';
-
 export { signAccessToken, signRefreshToken, verifyToken } from './tokens';
 
 export {
@@ -11,7 +9,7 @@ export {
   setupUserAvailableController,
   setupVerifyController,
   simpleRegistration,
-} from './auth.controllers';
+} from './controllers';
 
 export {
   includeEmailVerification,
@@ -21,6 +19,13 @@ export {
   createEmailMessage,
   createPublicPemFromPrivate,
   stripPasswordFields,
-} from './auth-utils';
+} from './utils';
 
 export { generateAuthGuardConfig, generateAuthModuleConfig } from './config';
+
+export {
+  retrievePublicKeyFromJWKS,
+  isActiveUser,
+  verifyRefresh,
+  verifyUserRole,
+} from './authenticate';

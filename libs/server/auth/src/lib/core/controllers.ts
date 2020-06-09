@@ -6,8 +6,8 @@ import {
   isPasswordAllowed,
   stripPasswordFields,
   createPublicPemFromPrivate,
-} from './auth-utils';
-import { VerifyRefresh } from './authenticate';
+} from './utils';
+import { verifyRefresh } from './authenticate';
 import type {
   LoginController,
   VerifyController,
@@ -175,7 +175,6 @@ export function setupVerifyController({
     if (verificationToken.userId.toString() !== user.id.toString())
       throw Boom.badRequest('Token does not match email address');
 
-    // user.set({ isVerified: true });
     user.isVerified = true;
     /**
      * Update the user status to valid, and remove the token from the db.
@@ -265,7 +264,7 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
   const { Refresh: Token } = config;
 
   const publicKey = createPublicPemFromPrivate(config.privateKey);
-  const verify = VerifyRefresh({ ...config, publicKey });
+  const verify = verifyRefresh({ ...config, publicKey });
   const createAccessToken = signAccessToken(config);
 
   return async (username: string, providedToken: string) => {

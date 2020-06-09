@@ -1,21 +1,20 @@
 import { GraphQLFieldResolver } from 'graphql';
 import {
+  isActiveUser,
+  verifyUserRole,
+  retrievePublicKeyFromJWKS,
+  isJWKS,
+  verifyToken,
+} from '../core';
+import {
   VerifyJWKS,
   VerifyToken,
   AuthUser,
   AuthGuard,
   ActiveUserGuard,
 } from '../types';
-import { isJWKS } from '../core/auth-utils';
-import {
-  isActiveUser,
-  verifyUserRole,
-  retrievePublicKeyFromJWKS,
-} from '../core/authenticate';
-import { verifyToken } from '../core';
 
 export type TResolver = GraphQLFieldResolver<any, any, any>;
-// export type TResolverFactory = (next: TResolver) => TResolver;
 
 export function getGraphQLGuards<U extends AuthUser>(config: AuthGuard<U>) {
   const { authenticate, verifyUser, authorize } = createGraphQLGuards(config);

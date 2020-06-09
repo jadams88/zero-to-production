@@ -1,4 +1,11 @@
-export * from './lib/graphql';
+export type {
+  AuthModuleConfig,
+  UserModel,
+  AuthEnv,
+  AuthGuard,
+  JWKSRoute,
+} from './lib/types';
+
 export {
   isPasswordAllowed,
   generateAuthModuleConfig,
@@ -6,12 +13,6 @@ export {
   createEmailMessage,
   generateAuthGuardConfig,
 } from './lib/core';
-export {
-  AuthModuleConfig,
-  UserModel,
-  AuthEnv,
-  AuthGuard,
-  JWKSRoute,
-} from './lib/types';
-export { getRestGuards } from './lib/routes/router-guards';
-export { applyAuthRoutes } from './lib/routes/auth-routes';
+
+export * from './lib/routes';
+export * from './lib/graphql';

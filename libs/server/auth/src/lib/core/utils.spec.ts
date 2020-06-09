@@ -1,4 +1,4 @@
-import { isPasswordAllowed, stripPasswordFields } from './auth-utils';
+import { isPasswordAllowed, stripPasswordFields } from './utils';
 
 describe('Authentication Utils', () => {
   describe('isPasswordAllowed', () => {

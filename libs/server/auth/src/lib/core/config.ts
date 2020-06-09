@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import { createPublicPemFromPrivate } from './auth-utils';
+import { createPublicPemFromPrivate } from './utils';
 import {
   AuthEnv,
   VerifyEmail,

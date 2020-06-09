@@ -1,6 +1,10 @@
 import { ParameterizedContext } from 'koa';
-import { isJWKS } from '../core/auth-utils';
-import { isActiveUser, retrievePublicKeyFromJWKS } from '../core/authenticate';
+import {
+  isJWKS,
+  isActiveUser,
+  retrievePublicKeyFromJWKS,
+  verifyToken,
+} from '../core';
 import {
   AuthGuard,
   VerifyToken,
@@ -8,7 +12,6 @@ import {
   ActiveUserGuard,
   AuthUser,
 } from '../types';
-import { verifyToken } from '../core/tokens';
 
 export type RouterGuard = (
   ctx: ParameterizedContext,

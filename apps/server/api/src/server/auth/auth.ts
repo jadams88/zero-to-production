@@ -4,31 +4,35 @@ import {
   applyAuthRoutes,
   generateAuthModuleConfig,
   createAuthSchema,
-  getAuthResolvers,
   createEmailMessage,
+  graphQLVerifyUrl,
+  restVerifyUrl,
 } from '@ztp/server/auth';
 import { config, authConfig } from '../../environments';
 import { User } from '../api/users';
 import { VerificationToken, RefreshToken } from './models';
 import { configureSendgrid } from '@ztp/server/utils';
 
-import gql from 'graphql-tag';
-
 // Basic AuthModule (no email verification)
-// const authModuleConfig = generateAuthModuleConfig(authConfig, User);
+const authModuleConfig = generateAuthModuleConfig(authConfig, User);
 
-// ZTP_AFTER_CLONE -> uncomment the below import
-const emailClient = configureSendgrid(config.sendgridApiKey);
-const createMessage = createEmailMessage(authConfig.authServerUrl);
-const verifyEmail = compose(emailClient, createMessage);
+// ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
+// const verifyUrl = restVerifyUrl(authConfig.authServerUrl);
+// // uncomment the below to change to a GraphQL verify url
+// // const verifyUrl = graphQLVerifyUrl(authConfig.authServerUrl);
 
-const authModuleConfig = generateAuthModuleConfig(
-  authConfig,
-  User,
-  VerificationToken,
-  verifyEmail
-  // RefreshToken
-);
+// const verifyEmail = compose(
+//   configureSendgrid(config.sendgridApiKey),
+//   createEmailMessage(verifyUrl)
+// );
+
+// const authModuleConfig = generateAuthModuleConfig(
+//   authConfig,
+//   User,
+//   VerificationToken,
+//   verifyEmail,
+//   RefreshToken
+// );
 
 /**
  * Applies all required auth routes
@@ -37,9 +41,7 @@ export function applyApiAuthRoutes(app: Koa) {
   app.use(applyAuthRoutes(authModuleConfig));
 }
 
-const resolvers = getAuthResolvers(authModuleConfig);
-
 /**
  * Auth Schema: all queries and mutation do NOT require to be authorized
  */
-export const authSchema = createAuthSchema(resolvers);
+export const authSchema = createAuthSchema(authModuleConfig);

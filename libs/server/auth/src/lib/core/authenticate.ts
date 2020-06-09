@@ -1,31 +1,8 @@
 import { decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
 import { koaJwtSecret } from 'jwks-rsa';
-// import { createPublicPemFromPrivate } from './auth-utils';
-import {
-  //   VerifyToken,
-  //   SignRefresh,
-  VerifyJWKS,
-  UserModel,
-  AuthUser,
-  VerifyToken,
-  VerifyRefresh,
-  // VerifyRefresh,
-} from '../types';
+import { VerifyJWKS, UserModel, AuthUser, VerifyRefresh } from '../types';
 import { verifyToken } from './tokens';
-// import { verifyToken } from './tokens';
-
-// export function verifyToken(token: string, config: VerifyToken) {
-//   try {
-//     return verify(token, config.publicKey, {
-//       algorithms: ['RS256'],
-//       issuer: config.issuer,
-//       audience: config.audience,
-//     });
-//   } catch (err) {
-//     throw unauthorized(null, 'Bearer');
-//   }
-// }
 
 export function isActiveUser<U extends AuthUser>(User: UserModel<U>) {
   return async (id: string | undefined) => {
@@ -47,14 +24,8 @@ export function verifyUserRole(requiredRole: string) {
   };
 }
 
-export function VerifyRefresh(config: VerifyRefresh) {
-  // Create a public key from the private key
-  // if (!config.publicKey) {
-  // config.publicKey = createPublicPemFromPrivate(config.privateKey);
-  // }
-
-  return (token: string) => verifyToken(token, config);
-}
+export const verifyRefresh = (config: VerifyRefresh) => (token: string) =>
+  verifyToken(token, config);
 
 export function retrievePublicKeyFromJWKS({
   authServerUrl,
