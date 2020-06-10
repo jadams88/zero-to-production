@@ -1,10 +1,10 @@
 import { BaseMockModel } from './base-mock';
-import { AuthUser, UserModel } from '../types';
+import { AuthUser, AuthUserModel } from '../types';
 
 /**
  * A mock user to test the auth routes
  */
-export class MockUserModel extends BaseMockModel<AuthUser> {
+export class MockAuthUserModel extends BaseMockModel<AuthUser> {
   _props = [
     'id',
     'username',
@@ -65,7 +65,7 @@ export class MockUserModel extends BaseMockModel<AuthUser> {
 
   async remove() {
     this._details = undefined as any;
-    MockUserModel.userToRespondWith = null;
+    MockAuthUserModel.userToRespondWith = null;
     return this;
   }
 }

@@ -17,9 +17,9 @@ import { configureSendgrid } from '@ztp/server/utils';
 const authModuleConfig = generateAuthModuleConfig(authConfig, User);
 
 // ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
-// const verifyUrl = restVerifyUrl(authConfig.authServerUrl);
+// const verifyUrl = restVerifyUrl(authConfig.authServerHost);
 // // uncomment the below to change to a GraphQL verify url
-// // const verifyUrl = graphQLVerifyUrl(authConfig.authServerUrl);
+// // const verifyUrl = graphQLVerifyUrl(authConfig.authServerHost);
 
 // const verifyEmail = compose(
 //   configureSendgrid(config.sendgridApiKey),

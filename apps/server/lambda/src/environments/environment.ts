@@ -4,7 +4,7 @@ import { envToNumber, getEnvVariableOrWarn } from '@ztp/server/utils';
 import { AuthEnv } from '@ztp/server/auth';
 
 const audience = process.env.AUDIENCE || `http://localhost:${process.env.PORT}`;
-const authServerUrl =
+const authServerHost =
   process.env.AUTH_SERVER_URL || `http://localhost:${process.env.PORT}`;
 
 export const config: ServerConfig = {
@@ -27,7 +27,7 @@ export const config: ServerConfig = {
 
 export const authConfig: AuthEnv = {
   jwksRoute: false,
-  authServerUrl,
+  authServerHost,
   accessToken: {
     privateKey: getEnvVariableOrWarn('ACCESS_TOKEN_PRIVATE_KEY'),
     publicKey: getEnvVariableOrWarn('ACCESS_TOKEN_PUBLIC_KEY'),

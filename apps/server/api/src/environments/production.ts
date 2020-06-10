@@ -5,7 +5,7 @@ import { ProductionServerConfig } from '@ztp/data';
 import { AuthEnv } from '@ztp/server/auth';
 
 const audience = getEnvVariableOrWarn('AUDIENCE');
-const authServerUrl = getEnvVariableOrWarn('AUTH_SERVER_URL');
+const authServerHost = getEnvVariableOrWarn('AUTH_SERVER_URL');
 
 /**
  * Production environment settings
@@ -21,7 +21,7 @@ export const prodConfig: ProductionServerConfig = {
 
 export const prodAuthConfig: AuthEnv = {
   jwksRoute: true,
-  authServerUrl,
+  authServerHost,
   accessToken: {
     privateKey: getEnvVariableOrWarn('ACCESS_TOKEN_PRIVATE_KEY'),
     publicKey: getEnvVariableOrWarn('ACCESS_TOKEN_PUBLIC_KEY'),

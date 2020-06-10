@@ -6,7 +6,7 @@ import {
   generateAuthGuardConfig,
   createAuthDirectives,
 } from '@ztp/server/auth';
-import { config, authConfig } from '../../environments/environment';
+import { authConfig } from '../../environments/environment';
 
 /**
  * Guards for use in Routes

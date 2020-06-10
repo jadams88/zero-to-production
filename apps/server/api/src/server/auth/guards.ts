@@ -13,16 +13,16 @@ const guardConfig = generateAuthGuardConfig(authConfig, User);
  * Guards for use in Routes
  */
 export const {
-  authenticate: authenticateRest,
-  verifyUser: authenticateUserRest,
+  authenticate: routeAuthGuard,
+  verifyIsActive: routeIsActiveGuard,
 } = getRestGuards(guardConfig);
 
 /**
- * Guards to user with GraphQL
+ * Guards to user with GraphQL Resolvers
  */
 export const {
-  authenticate: authenticateGraphQL,
-  verifyUser: authenticateUserGraphQL,
+  authenticate: resolverAuthGuard,
+  verifyIsActive: resolverIsActiveGuard,
 } = getGraphQLGuards(guardConfig);
 
 export const authDirectives = createAuthDirectives(guardConfig);

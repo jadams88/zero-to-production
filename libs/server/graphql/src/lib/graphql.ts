@@ -1,4 +1,6 @@
 /* istanbul ignore file */
+import type { Context } from 'koa';
+import { GraphQLSchema } from 'graphql';
 import {
   ApolloServer,
   makeExecutableSchema,
@@ -8,7 +10,6 @@ import {
   mergeSchemas,
 } from 'apollo-server-koa';
 import { ILoaders } from './data-loader';
-import { GraphQLSchema } from 'graphql';
 import { FormatDateDirective } from './directives';
 
 export function createSchema({
@@ -49,11 +50,11 @@ export function createApollo({
   const schema = mergeSchemas({ schemas });
   return new ApolloServer({
     schema,
-    context: async ({ ctx, connection }) => {
+    // https://www.apollographql.com/docs/apollo-server/data/subscriptions/
+    context: async ({ ctx, connection }: { ctx: Context; connection: any }) => {
       // if the connection exists, it is a subscription
       if (connection) {
         return {
-          // create an empty state object to store temporary data in the resolvers
           state: {},
           // Add any necessary data loaders here if wanted
           loaders: loaders ? loaders() : undefined,
@@ -67,7 +68,7 @@ export function createApollo({
           // Add any necessary data loaders here if wanted
           loaders: loaders ? loaders() : undefined,
           // Add the JWT as the token property
-          token: ctx.request.token,
+          token: (ctx.request as any).token,
         };
       }
     },

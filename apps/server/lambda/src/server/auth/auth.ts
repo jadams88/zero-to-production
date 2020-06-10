@@ -16,9 +16,9 @@ import {
 import { config, authConfig } from '../../environments/environment';
 import { configureSendgrid } from '@ztp/server/utils';
 
-// const verifyUrl = restVerifyUrl(authConfig.authServerUrl);
+// const verifyUrl = restVerifyUrl(authConfig.authServerHost);
 // uncomment the below to change to a GraphQL verify url
-// const verifyUrl = graphQLVerifyUrl(authConfig.authServerUrl);
+// const verifyUrl = graphQLVerifyUrl(authConfig.authServerHost);
 
 // const verifyEmail = compose(
 // configureSendgrid(config.sendgridApiKey),

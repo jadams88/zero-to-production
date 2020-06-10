@@ -1,4 +1,4 @@
-import { MockUserModel } from './user.mock';
+import { MockAuthUserModel } from './user.mock';
 import { MockVerifyModel } from './verification.mock';
 import { privateKey } from './rsa-keys';
 import { MockRefreshModel } from './refresh-token.mock';
@@ -14,7 +14,7 @@ import {
   RefreshController,
   RevokeController,
   AuthUser,
-  UserModel,
+  AuthUserModel,
 } from '../types';
 
 export const issuer = 'some-issuer';
@@ -25,7 +25,7 @@ export function mockRegistrationConfig(
   email: jest.Mock<any, any> = jest.fn()
 ): RegistrationWithVerificationController<AuthUser, Verify> {
   return {
-    User: (MockUserModel as unknown) as UserModel<AuthUser>,
+    User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
     verifyEmail: email,
   };
@@ -33,14 +33,14 @@ export function mockRegistrationConfig(
 
 export function mockVerificationConfig(): VerifyController<AuthUser, Verify> {
   return {
-    User: (MockUserModel as unknown) as UserModel<AuthUser>,
+    User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
   };
 }
 
 export function mockLoginConfig(): LoginController<AuthUser> {
   return {
-    User: (MockUserModel as unknown) as UserModel<AuthUser>,
+    User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     privateKey,
     expireTime: 100000,
     issuer,
@@ -51,7 +51,7 @@ export function mockLoginConfig(): LoginController<AuthUser> {
 
 export function mockAuthorizeConfig(): AuthorizeController<AuthUser, Refresh> {
   return {
-    User: (MockUserModel as unknown) as UserModel<AuthUser>,
+    User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     privateKey,
     expireTime: 100000,
     issuer,

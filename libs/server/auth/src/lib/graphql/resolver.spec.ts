@@ -9,7 +9,7 @@ import {
   mockRegistrationConfig,
   mockVerificationConfig,
   MockVerifyModel,
-  MockUserModel,
+  MockAuthUserModel,
   setupTestServer,
 } from '../__tests__';
 import { AuthUser, AuthWithValidation, Verify } from '../types';
@@ -17,7 +17,7 @@ import { Server } from 'http';
 import { graphQLVerifyUrl } from './utils';
 
 const URL = 'http://localhost';
-const PORT = 9999;
+const PORT = 9998;
 
 export const runQuery = (sc: GraphQLSchema) => {
   return async (query: string, variables: { [prop: string]: any }) => {
@@ -29,7 +29,7 @@ const config: AuthWithValidation<AuthUser, Verify> = {
   login: mockLoginConfig(),
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),
-  authServerUrl: 'http://some-url.com',
+  authServerHost: 'http://some-url.com',
 };
 
 const schema = createAuthSchema(config);
@@ -134,7 +134,7 @@ describe(`GraphQL - Auth Queries`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockAuthUserModel.userToRespondWith = userWithId;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -158,11 +158,11 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(token).toBeDefined();
       expect(token).toBeString();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw unauthorized error if the user is not found', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -183,7 +183,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
       expect((result.errors as any)[0].message).toBe('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw unauthorized error if the credentials are incorrect', async () => {
@@ -196,7 +196,7 @@ describe(`GraphQL - Auth Queries`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockAuthUserModel.userToRespondWith = userWithId;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -217,7 +217,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
       expect((result.errors as any)[0].message).toBe('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw an unauthorized error if the user is not active', async () => {
@@ -230,7 +230,7 @@ describe(`GraphQL - Auth Queries`, () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockAuthUserModel.userToRespondWith = userWithId;
 
       const queryName = `login`;
       const result = await runQuery(schema)(
@@ -251,7 +251,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
       expect((result.errors as any)[0].message).toBe('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 
@@ -271,10 +271,10 @@ describe(`GraphQL - Auth Queries`, () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
-      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
+      expect(MockAuthUserModel.currentSetModel?.isVerified).toBe(false);
 
       const queryName = `verify`;
       const result = await runQuery(schema)(
@@ -294,10 +294,10 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).not.toBeDefined();
       expect(result.data).toBeDefined();
 
-      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
+      expect(MockAuthUserModel.currentSetModel?.isVerified).toBe(true);
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if a user cannot be found', async () => {
@@ -309,7 +309,7 @@ describe(`GraphQL - Auth Queries`, () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       const queryName = `verify`;
@@ -331,7 +331,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if the user is already valid', async () => {
@@ -349,7 +349,7 @@ describe(`GraphQL - Auth Queries`, () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = verifiedUser;
+      MockAuthUserModel.userToRespondWith = verifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       const queryName = `verify`;
@@ -371,7 +371,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if the token is not valid', async () => {
@@ -384,7 +384,7 @@ describe(`GraphQL - Auth Queries`, () => {
         isVerified: false,
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = null;
 
       const queryName = `verify`;
@@ -406,7 +406,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if the token does not belong to the user', async () => {
@@ -423,7 +423,7 @@ describe(`GraphQL - Auth Queries`, () => {
         userId: '2',
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       const queryName = `verify`;
@@ -445,7 +445,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).toBeDefined();
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 
@@ -487,25 +487,25 @@ describe(`GraphQL - Auth Queries`, () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       const urlQuery = graphQLVerifyUrl(`${URL}:${PORT}`)(user.email, token);
 
-      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
+      expect(MockAuthUserModel.currentSetModel?.isVerified).toBe(false);
 
       const response = await superagent.get(urlQuery);
 
-      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
+      expect(MockAuthUserModel.currentSetModel?.isVerified).toBe(true);
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 
   describe('userAvailable(username: String!): UserAvailable!', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
 
       const queryName = `userAvailable`;
       const result = await runQuery(schema)(
@@ -524,7 +524,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect(result.errors).not.toBeDefined();
       expect((result.data as any)[queryName]).toBeObject();
       expect((result.data as any)[queryName].isAvailable).toBe(true);
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('isAvailable should be false if a user with that username is found', async () => {
@@ -533,7 +533,7 @@ describe(`GraphQL - Auth Queries`, () => {
         username: takenUsername,
       } as AuthUser;
 
-      MockUserModel.userToRespondWith = takenUser;
+      MockAuthUserModel.userToRespondWith = takenUser;
 
       const queryName = `userAvailable`;
       const result = await runQuery(schema)(
@@ -553,7 +553,7 @@ describe(`GraphQL - Auth Queries`, () => {
       expect((result.data as any)[queryName]).toBeObject();
       expect((result.data as any)[queryName].isAvailable).toBe(false);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 });

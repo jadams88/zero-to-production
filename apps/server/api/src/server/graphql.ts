@@ -10,7 +10,7 @@ import {
 import { todoTypeDef, userTypeDef } from '@ztp/server/core-data';
 import { config } from '../environments';
 import { userResolvers, todosResolvers, User, Todo } from './api';
-import { authDirectives } from './auth/auth-guards';
+import { authDirectives } from './auth/guards';
 import { authSchema } from './auth/auth';
 
 const typeDefs = createTypeDefs(userTypeDef, todoTypeDef);

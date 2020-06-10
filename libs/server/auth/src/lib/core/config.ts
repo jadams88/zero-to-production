@@ -9,7 +9,7 @@ import {
   RefreshController,
   RevokeController,
   AuthorizeController,
-  UserModel,
+  AuthUserModel,
   AuthUser,
   Verify,
   Refresh,
@@ -28,17 +28,17 @@ import {
 
 export function generateAuthModuleConfig<U extends AuthUser>(
   config: AuthEnv,
-  User: UserModel<U>
+  User: AuthUserModel<U>
 ): BasicAuthModule<U>;
 export function generateAuthModuleConfig<U extends AuthUser, V extends Verify>(
   config: AuthEnv,
-  User: UserModel<U>,
+  User: AuthUserModel<U>,
   Verify: VerifyModel<V>,
   emailClient: VerifyEmail
 ): AuthWithValidation<U, V>;
 export function generateAuthModuleConfig<U extends AuthUser, R extends Refresh>(
   config: AuthEnv,
-  User: UserModel<U>,
+  User: AuthUserModel<U>,
   Refresh: RefreshModel<R>
 ): BasicAuthAndRefresh<U, R>;
 export function generateAuthModuleConfig<
@@ -47,7 +47,7 @@ export function generateAuthModuleConfig<
   R extends Refresh
 >(
   config: AuthEnv,
-  User: UserModel<U>,
+  User: AuthUserModel<U>,
   Verify: VerifyModel<V>,
   emailClient: VerifyEmail,
   Refresh: RefreshModel<R>
@@ -58,7 +58,7 @@ export function generateAuthModuleConfig<
   R extends Refresh
 >(
   config: AuthEnv,
-  User: UserModel<U>,
+  User: AuthUserModel<U>,
   VerifyM?: VerifyModel<V>,
   emailClient?: VerifyEmail,
   RefreshM?: RefreshModel<R>
@@ -91,7 +91,7 @@ export function generateAuthModuleConfig<
   };
 
   const baseConfig: BasicAuthModule<U> = {
-    authServerUrl: config.authServerUrl,
+    authServerHost: config.authServerHost,
     login,
     jwks,
     register: baseRegister,
@@ -195,7 +195,7 @@ export function generateAuthModuleConfig<
 
 export function generateAuthGuardConfig<U extends AuthUser>(
   authConfig: AuthEnv,
-  User: UserModel<U>,
+  User: AuthUserModel<U>,
   production: boolean = false
 ): AuthGuard<U> {
   const activeUser: ActiveUserGuard<U> = { User };
@@ -211,7 +211,7 @@ export function generateAuthGuardConfig<U extends AuthUser>(
   } else {
     auth = {
       allowHttp: production,
-      authServerUrl: authConfig.authServerUrl,
+      authServerHost: authConfig.authServerHost,
       issuer: authConfig.accessToken.issuer,
       audience: authConfig.accessToken.audience,
     } as VerifyJWKS;

@@ -5,7 +5,7 @@
 ### Docs
 
 - [ ] Specify minium Node version (12, TS 3.8 and private fields),
-- [ ] Thoroughly document the API Auth module
+- [x] Thoroughly document the API Auth module
 - [ ] Document File Replacement for router animations
 - [ ] Document animations
 - [ ] List other projects in readme
@@ -34,7 +34,7 @@
 
 ## Road Map
 
-### Angular App
+### Web App
 
 - [x] Rail navigation component
 - [ ] Drag & Drop Grid/Dashboard System
@@ -46,7 +46,7 @@
   - Dynamic Animation Timing
   - Using Web Components
 - [ ] Create own overlay component via using the HTML5.2 <dialog> element
-- [ ] Migrate away from Angular Material
+- [ ] Migrate away from Material Components
 
 ### API
 

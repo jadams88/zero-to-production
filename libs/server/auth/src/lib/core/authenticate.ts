@@ -1,10 +1,10 @@
 import { decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
 import { koaJwtSecret } from 'jwks-rsa';
-import { VerifyJWKS, UserModel, AuthUser, VerifyRefresh } from '../types';
+import { VerifyJWKS, AuthUserModel, AuthUser, VerifyRefresh } from '../types';
 import { verifyToken } from './tokens';
 
-export function isActiveUser<U extends AuthUser>(User: UserModel<U>) {
+export function isActiveUser<U extends AuthUser>(User: AuthUserModel<U>) {
   return async (id: string | undefined) => {
     const user = await User.findByUserId(id);
     if (!user || !user.active) throw unauthorized(null, 'Bearer');
@@ -28,10 +28,10 @@ export const verifyRefresh = (config: VerifyRefresh) => (token: string) =>
   verifyToken(token, config);
 
 export function retrievePublicKeyFromJWKS({
-  authServerUrl,
+  authServerHost,
   allowHttp = false,
 }: VerifyJWKS) {
-  const jwksUri = `${authServerUrl}/.well-known/jwks.json`;
+  const jwksUri = `${authServerHost}/.well-known/jwks.json`;
 
   const jwtSecret = koaJwtSecret({
     cache: true,

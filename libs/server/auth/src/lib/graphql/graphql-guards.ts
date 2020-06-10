@@ -17,13 +17,13 @@ import {
 export type TResolver = GraphQLFieldResolver<any, any, any>;
 
 export function getGraphQLGuards<U extends AuthUser>(config: AuthGuard<U>) {
-  const { authenticate, verifyUser, authorize } = createGraphQLGuards(config);
+  const { authenticate, verifyIsActive } = createGraphQLGuards(config);
 
   return {
     authenticate,
-    verifyUser: (next: TResolver) => authenticate(verifyUser(next)),
-    authorize: (role: string, next: TResolver) =>
-      authenticate(verifyUser(authorize(role, next))),
+    verifyIsActive: (next: TResolver) => authenticate(verifyIsActive(next)),
+    //   authorize: (role: string, next: TResolver) =>
+    //     authenticate(verifyUser(authorize(role, next))),
   };
 }
 
@@ -38,8 +38,8 @@ export function createGraphQLGuards<U extends AuthUser>({
 
   return {
     authenticate,
-    verifyUser: verifyActiveUser(activeUser),
-    authorize: authorized,
+    verifyIsActive: verifyActiveUser(activeUser),
+    // authorize: authorized,
   };
 }
 

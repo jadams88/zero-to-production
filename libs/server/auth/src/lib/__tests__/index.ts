@@ -6,6 +6,6 @@ export {
   invalidPublicKey,
 } from './rsa-keys';
 export * from './setup';
-export { MockUserModel } from './user.mock';
+export { MockAuthUserModel } from './user.mock';
 export { MockVerifyModel } from './verification.mock';
 export * from './utils';

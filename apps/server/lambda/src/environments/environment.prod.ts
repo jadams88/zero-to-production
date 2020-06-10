@@ -4,7 +4,7 @@ import { envToNumber, getEnvVariableOrWarn } from '@ztp/server/utils';
 import { AuthEnv } from '@ztp/server/auth';
 
 const audience = getEnvVariableOrWarn('AUDIENCE');
-const authServerUrl = getEnvVariableOrWarn('AUTH_SERVER_URL');
+const authServerHost = getEnvVariableOrWarn('AUTH_SERVER_URL');
 
 export const config: ServerConfig = {
   production: true,
@@ -25,7 +25,7 @@ export const config: ServerConfig = {
 
 export const authConfig: AuthEnv = {
   jwksRoute: false,
-  authServerUrl,
+  authServerHost,
   accessToken: {
     privateKey: getEnvVariableOrWarn('ACCESS_TOKEN_PRIVATE_KEY'),
     publicKey: getEnvVariableOrWarn('ACCESS_TOKEN_PUBLIC_KEY'),

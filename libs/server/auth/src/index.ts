@@ -1,9 +1,16 @@
 export type {
   AuthModuleConfig,
-  UserModel,
+  BasicAuthModule,
+  AuthWithValidation,
+  BasicAuthAndRefresh,
+  CompleteAuth,
   AuthEnv,
-  AuthGuard,
-  JWKSRoute,
+  AuthUserModel,
+  AuthUser,
+  RefreshModel,
+  Refresh,
+  VerifyModel,
+  Verify,
 } from './lib/types';
 
 export {

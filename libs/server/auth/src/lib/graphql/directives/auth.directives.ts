@@ -20,15 +20,15 @@ export function createAuthDirectives<U extends AuthUser>(
   config: AuthGuard<U>
 ): { [key in AuthDirectiveName]: typeof SchemaDirectiveVisitor } {
   //
-  const { authenticate, verifyUser } = createGraphQLGuards(config);
+  const { authenticate, verifyIsActive } = createGraphQLGuards(config);
 
   return {
     [AuthDirectiveName.authenticated]: createAuthenticateDirective(
       authenticate
     ),
-    [AuthDirectiveName.activeUser]: createActiveUserDirective(
+    [AuthDirectiveName.isActiveUser]: createActiveUserDirective(
       authenticate,
-      verifyUser
+      verifyIsActive
     ),
   };
 }

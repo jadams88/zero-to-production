@@ -49,7 +49,7 @@ export function createEmailMessage(
 export function isJWKS(
   config: VerifyToken | VerifyJWKS
 ): config is VerifyToken {
-  return (config as VerifyJWKS).authServerUrl === undefined;
+  return (config as VerifyJWKS).authServerHost === undefined;
 }
 
 export function includeRefresh<

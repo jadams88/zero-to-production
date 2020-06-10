@@ -25,8 +25,8 @@ export function createActiveUserDirective(
     visitObject(type: GraphQLObjectType) {
       // Check if the Type has previously been applied
       // Mark the GraphQLObjectType object to avoid re-wrapping:
-      if ((type as any)[DirectiveWrapped.authUser]) return;
-      (type as any)[DirectiveWrapped.authUser] = true;
+      if ((type as any)[DirectiveWrapped.activeUser]) return;
+      (type as any)[DirectiveWrapped.activeUser] = true;
 
       // For each field, call the 'visitFieldDefinition'
       const fields = type.getFields();
@@ -39,8 +39,8 @@ export function createActiveUserDirective(
     visitFieldDefinition(field: GraphQLField<any, any>) {
       // Check if the field has previously been applied
       // Mark the GraphQLField to avoid re-wrapping:
-      if ((field as any)[DirectiveWrapped.authUser]) return;
-      (field as any)[DirectiveWrapped.authUser] = true;
+      if ((field as any)[DirectiveWrapped.activeUser]) return;
+      (field as any)[DirectiveWrapped.activeUser] = true;
 
       const { resolve = defaultFieldResolver } = field;
 

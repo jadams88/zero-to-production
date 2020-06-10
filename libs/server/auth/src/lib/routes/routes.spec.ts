@@ -4,7 +4,7 @@ import superagent from 'superagent';
 import { hash } from 'bcryptjs';
 import { applyAuthRoutes } from './routes';
 import {
-  MockUserModel,
+  MockAuthUserModel,
   MockRefreshModel,
   privateKey,
   audience,
@@ -35,7 +35,7 @@ const config: CompleteAuth<AuthUser, Verify, Refresh> = {
   authorize: mockAuthorizeConfig(),
   refresh: mockRefreshTokenConfig(),
   revoke: mockRevokeConfig(),
-  authServerUrl: `${URL}:${PORT}`,
+  authServerHost: `${URL}:${PORT}`,
 };
 
 const user = ({
@@ -60,10 +60,10 @@ describe('Router - Auth', () => {
     server.close();
   });
 
-  describe('/authorize/register', () => {
+  describe('/register', () => {
     it('should register a new User', async () => {
       const response = await superagent
-        .post(agentRequest('/authorize/register'))
+        .post(agentRequest('/register'))
         .send({ ...user });
 
       expect(response.body.id).toBeDefined();
@@ -74,13 +74,13 @@ describe('Router - Auth', () => {
     it(`should throw if User is invalid`, async () => {
       // Don't pass anything on the req.body
       await expect(
-        superagent.post(agentRequest('/authorize/register'))
+        superagent.post(agentRequest('/register'))
       ).rejects.toThrowError('Bad Request');
     });
 
     it('should not return the new Users password', async () => {
       const response = await superagent
-        .post(agentRequest('/authorize/register'))
+        .post(agentRequest('/register'))
         .send({ ...user });
 
       expect(response.body.password).not.toBeDefined();
@@ -88,7 +88,7 @@ describe('Router - Auth', () => {
     });
   });
 
-  describe('/authorize/login', () => {
+  describe('/login', () => {
     it('should return an access token if correct credentials are provided', async () => {
       const userWithId = {
         ...user,
@@ -99,16 +99,16 @@ describe('Router - Auth', () => {
       // Set the hashed password to be correct
       userWithId.hashedPassword = await hash((user as any).password, 10);
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockAuthUserModel.userToRespondWith = userWithId;
 
       const response = await superagent
-        .post(agentRequest('/authorize/login'))
+        .post(agentRequest('/login'))
         .send(userWithId);
 
       expect(response.body).toBeDefined();
       expect(response.body.token).toBeString();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw unauthorized error if the user is not found', async () => {
@@ -118,15 +118,13 @@ describe('Router - Auth', () => {
         active: true,
       };
 
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
 
       await expect(
-        superagent
-          .post(agentRequest('/authorize/login'))
-          .send({ ...userWithId })
+        superagent.post(agentRequest('/login')).send({ ...userWithId })
       ).rejects.toThrowError('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw an unauthorized error if the user is not active', async () => {
@@ -136,19 +134,17 @@ describe('Router - Auth', () => {
         active: false,
       };
 
-      MockUserModel.userToRespondWith = userWithId;
+      MockAuthUserModel.userToRespondWith = userWithId;
 
       await expect(
-        superagent
-          .post(agentRequest('/authorize/login'))
-          .send({ ...userWithId })
+        superagent.post(agentRequest('/login')).send({ ...userWithId })
       ).rejects.toThrowError('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 
-  describe('/authorize/verify', () => {
+  describe('/verify', () => {
     it('should verify a users email', async () => {
       const userId = '1';
       const token = 'SOME_TOKEN';
@@ -164,19 +160,19 @@ describe('Router - Auth', () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
-      expect(MockUserModel.currentSetModel?.isVerified).toBe(false);
+      expect(MockAuthUserModel.currentSetModel?.isVerified).toBe(false);
 
       const response = await superagent.get(
-        agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+        agentRequest(`/verify?token=${token}&email=${user.email}`)
       );
 
-      expect(MockUserModel.currentSetModel?.isVerified).toBe(true);
+      expect(MockAuthUserModel.currentSetModel?.isVerified).toBe(true);
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if a user cannot be found', async () => {
@@ -188,17 +184,17 @@ describe('Router - Auth', () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       await expect(
         superagent.get(
-          agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+          agentRequest(`/verify?token=${token}&email=${user.email}`)
         )
       ).rejects.toThrowError('Bad Request');
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if the user is already valid', async () => {
@@ -216,17 +212,17 @@ describe('Router - Auth', () => {
         userId,
       };
 
-      MockUserModel.userToRespondWith = verifiedUser;
+      MockAuthUserModel.userToRespondWith = verifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       await expect(
         superagent.get(
-          agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+          agentRequest(`/verify?token=${token}&email=${user.email}`)
         )
       ).rejects.toThrowError('Bad Request');
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if the token is not valid', async () => {
@@ -239,17 +235,17 @@ describe('Router - Auth', () => {
         isVerified: false,
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = null;
 
       await expect(
         superagent.get(
-          agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+          agentRequest(`/verify?token=${token}&email=${user.email}`)
         )
       ).rejects.toThrowError('Bad Request');
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw if the token does not belong to the user', async () => {
@@ -266,17 +262,17 @@ describe('Router - Auth', () => {
         userId: '2',
       };
 
-      MockUserModel.userToRespondWith = unverifiedUser;
+      MockAuthUserModel.userToRespondWith = unverifiedUser;
       MockVerifyModel.tokenToRespondWith = verificationToken;
 
       await expect(
         superagent.get(
-          agentRequest(`/authorize/verify?token=${token}&email=${user.email}`)
+          agentRequest(`/verify?token=${token}&email=${user.email}`)
         )
       ).rejects.toThrowError('Bad Request');
 
       MockVerifyModel.reset();
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 
@@ -296,7 +292,7 @@ describe('Router - Auth', () => {
         hashedPassword,
       };
 
-      MockUserModel.userToRespondWith = userWithCorrectPassword;
+      MockAuthUserModel.userToRespondWith = userWithCorrectPassword;
 
       const response = await superagent
         .post(agentRequest('/authorize'))
@@ -306,7 +302,7 @@ describe('Router - Auth', () => {
       expect(response.body.token).toBeString();
       expect(response.body.refreshToken).toBeString();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
@@ -332,7 +328,7 @@ describe('Router - Auth', () => {
         hashedPassword: undefined,
       };
 
-      MockUserModel.userToRespondWith = userWithPassword;
+      MockAuthUserModel.userToRespondWith = userWithPassword;
 
       await expect(
         superagent
@@ -346,7 +342,7 @@ describe('Router - Auth', () => {
           .send(userWithIncorrectCorrectPassword)
       ).rejects.toThrowError('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
@@ -360,13 +356,13 @@ describe('Router - Auth', () => {
         hashedPassword,
       };
 
-      MockUserModel.userToRespondWith = inactiveUser;
+      MockAuthUserModel.userToRespondWith = inactiveUser;
 
       await expect(
         superagent.post(agentRequest('/authorize')).send(inactiveUser)
       ).rejects.toThrowError('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
   });
@@ -407,7 +403,7 @@ describe('Router - Auth', () => {
       expect(response.body).toBeDefined();
       expect(response.body.token).toBeString();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
@@ -444,7 +440,7 @@ describe('Router - Auth', () => {
         superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
       ).rejects.toThrowError('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
@@ -481,7 +477,7 @@ describe('Router - Auth', () => {
         superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
       ).rejects.toThrowError('Unauthorized');
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
@@ -521,7 +517,7 @@ describe('Router - Auth', () => {
       // check the 'remove' handler has been called
       expect(MockRefreshModel.currentSetModel).toBe(null);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
   });
@@ -564,23 +560,23 @@ describe('Router - Auth', () => {
       // check if remove was called
       expect(MockRefreshModel.currentSetModel).toBe(null);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
   });
 
-  describe('/authorize/available', () => {
+  describe('/available', () => {
     it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
 
       const response = await superagent.get(
-        agentRequest('/authorize/available?username=username')
+        agentRequest('/available?username=username')
       );
 
       expect(response.body).toBeDefined();
       expect(response.body.isAvailable).toBe(true);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('isAvailable should be false if a user with that username is found', async () => {
@@ -589,16 +585,16 @@ describe('Router - Auth', () => {
         username: takenUsername,
       } as AuthUser;
 
-      MockUserModel.userToRespondWith = takenUser;
+      MockAuthUserModel.userToRespondWith = takenUser;
 
       const response = await superagent.get(
-        agentRequest(`/authorize/available?username=${takenUsername}`)
+        agentRequest(`/available?username=${takenUsername}`)
       );
 
       expect(response.body).toBeDefined();
       expect(response.body.isAvailable).toBe(false);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 });

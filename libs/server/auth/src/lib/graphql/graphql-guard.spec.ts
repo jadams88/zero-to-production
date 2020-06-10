@@ -9,14 +9,14 @@ import {
   TResolver,
 } from './graphql-guards';
 import { signAccessToken } from '../core/tokens';
-import { MockUserModel } from '../__tests__/user.mock';
+import { MockAuthUserModel } from '../__tests__/user.mock';
 import {
   privateKey,
   invalidPrivateKey,
   publicKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
-import { AuthUser, UserModel } from '../types';
+import { AuthUser, AuthUserModel } from '../types';
 
 export function newId() {
   return Math.random().toString();
@@ -118,7 +118,7 @@ describe('GraphQL - Auth Guards', () => {
       await expect(
         authenticatedJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })(noOpNext)(
@@ -140,7 +140,7 @@ describe('GraphQL - Auth Guards', () => {
       await expect(
         authenticatedJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })(noOpNext)({}, {}, {}, {} as GraphQLResolveInfo)
@@ -157,7 +157,7 @@ describe('GraphQL - Auth Guards', () => {
       await expect(
         authenticatedJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })(noOpNext)(
@@ -179,7 +179,7 @@ describe('GraphQL - Auth Guards', () => {
       await expect(
         authenticatedJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })(noOpNext)(
@@ -201,7 +201,7 @@ describe('GraphQL - Auth Guards', () => {
       await expect(
         authenticatedJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer: 'some-wrong-issuer',
           audience,
         })(noOpNext)(
@@ -223,7 +223,7 @@ describe('GraphQL - Auth Guards', () => {
       await expect(
         authenticatedJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience: 'wrong-audience',
         })(noOpNext)(
@@ -246,14 +246,14 @@ describe('GraphQL - Auth Guards', () => {
         active: true,
       } as AuthUser;
 
-      const spy = jest.spyOn(MockUserModel, 'findByUserId');
+      const spy = jest.spyOn(MockAuthUserModel, 'findByUserId');
 
       const ctx = { user: { sub: id } };
-      MockUserModel.userToRespondWith = mockUser;
+      MockAuthUserModel.userToRespondWith = mockUser;
 
       await expect(
         verifyActiveUser({
-          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+          User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
         })(noOpNext)({}, {}, ctx, {} as GraphQLResolveInfo)
       ).resolves.not.toThrowError();
 
@@ -263,19 +263,19 @@ describe('GraphQL - Auth Guards', () => {
       expect((ctx.user as any).id).toEqual(mockUser.id);
       expect((ctx.user as any).active).toEqual(mockUser.active);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw 401 Unauthorized if the user can not be found', async () => {
       const id = newId();
-      const spy = jest.spyOn(MockUserModel, 'findByUserId');
+      const spy = jest.spyOn(MockAuthUserModel, 'findByUserId');
 
       const ctx = { user: { sub: id } };
-      MockUserModel.userToRespondWith = null;
+      MockAuthUserModel.userToRespondWith = null;
 
       await expect(
         verifyActiveUser({
-          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+          User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
         })(noOpNext)({}, {}, ctx, {} as GraphQLResolveInfo)
       ).rejects.toThrowError('Unauthorized');
 
@@ -283,7 +283,7 @@ describe('GraphQL - Auth Guards', () => {
       expect(spy).toHaveBeenCalledWith(id);
       expect((ctx.user as any).id).not.toBeDefined();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw 401 Unauthorized if the user is not active', async () => {
@@ -293,14 +293,14 @@ describe('GraphQL - Auth Guards', () => {
         active: false,
       } as AuthUser;
 
-      const spy = jest.spyOn(MockUserModel, 'findByUserId');
+      const spy = jest.spyOn(MockAuthUserModel, 'findByUserId');
 
       const ctx = { user: { sub: id } };
-      MockUserModel.userToRespondWith = mockUser;
+      MockAuthUserModel.userToRespondWith = mockUser;
 
       await expect(
         verifyActiveUser({
-          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+          User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
         })(noOpNext)({}, {}, ctx, {} as GraphQLResolveInfo)
       ).rejects.toThrowError('Unauthorized');
 
@@ -308,7 +308,7 @@ describe('GraphQL - Auth Guards', () => {
       expect(spy).toHaveBeenCalledWith(id);
       expect(ctx.user).not.toEqual(mockUser);
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 });

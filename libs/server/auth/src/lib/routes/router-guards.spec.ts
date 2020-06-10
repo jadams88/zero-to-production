@@ -9,14 +9,14 @@ import {
   authenticateJWKS,
 } from './router-guards';
 import { signAccessToken } from '../core/tokens';
-import { MockUserModel } from '../__tests__/user.mock';
+import { MockAuthUserModel } from '../__tests__/user.mock';
 import {
   privateKey,
   publicKey,
   invalidPrivateKey,
   invalidPublicKey,
 } from '../__tests__/rsa-keys';
-import type { AuthUser, UserModel } from '../types';
+import type { AuthUser, AuthUserModel } from '../types';
 
 export function newId() {
   return mongoose.Types.ObjectId().toHexString();
@@ -130,7 +130,7 @@ describe('Router - Auth Guards', () => {
       await expect(
         authenticateJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })({ request: { token: jwt }, state: {} } as any, nextSpy)
@@ -150,7 +150,7 @@ describe('Router - Auth Guards', () => {
       await expect(
         authenticateJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })({ request: {}, state: {} } as any, nextSpy)
@@ -170,7 +170,7 @@ describe('Router - Auth Guards', () => {
       await expect(
         authenticateJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })({ request: { token: jwt }, state: {} } as any, nextSpy)
@@ -190,7 +190,7 @@ describe('Router - Auth Guards', () => {
       await expect(
         authenticateJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience,
         })({ request: { token: jwt }, state: {} } as any, nextSpy)
@@ -210,7 +210,7 @@ describe('Router - Auth Guards', () => {
       await expect(
         authenticateJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer: 'some-wrong-issuer',
           audience,
         })({ request: { token: jwt }, state: {} } as any, nextSpy)
@@ -230,7 +230,7 @@ describe('Router - Auth Guards', () => {
       await expect(
         authenticateJWKS({
           allowHttp: true,
-          authServerUrl: 'http://some-url',
+          authServerHost: 'http://some-url',
           issuer,
           audience: 'wrong-audience',
         })({ request: { token: jwt }, state: {} } as any, nextSpy)
@@ -251,10 +251,10 @@ describe('Router - Auth Guards', () => {
         active: true,
       } as AuthUser;
 
-      MockUserModel.userToRespondWith = mockUser;
+      MockAuthUserModel.userToRespondWith = mockUser;
       await expect(
         verifyActiveUser({
-          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+          User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
         })(
           ({ user: { sub: id } } as unknown) as Koa.ParameterizedContext,
           nextSpy
@@ -263,7 +263,7 @@ describe('Router - Auth Guards', () => {
 
       expect(nextSpy).toHaveBeenCalled();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
 
     it('should throw 401 Unauthorized if the User can not be found', async () => {
@@ -276,13 +276,13 @@ describe('Router - Auth Guards', () => {
         active: true,
       } as AuthUser;
 
-      const spy = jest.spyOn(MockUserModel, 'findByUserId');
+      const spy = jest.spyOn(MockAuthUserModel, 'findByUserId');
 
-      MockUserModel.userToRespondWith = mockUser;
+      MockAuthUserModel.userToRespondWith = mockUser;
 
       await expect(
         verifyActiveUser({
-          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+          User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
         })(
           ({ user: { sub: wrongId } } as unknown) as Koa.ParameterizedContext,
           nextSpy
@@ -303,12 +303,12 @@ describe('Router - Auth Guards', () => {
         active: false,
       } as AuthUser;
 
-      const spy = jest.spyOn(MockUserModel, 'findByUserId');
+      const spy = jest.spyOn(MockAuthUserModel, 'findByUserId');
 
-      MockUserModel.userToRespondWith = mockUser;
+      MockAuthUserModel.userToRespondWith = mockUser;
       await expect(
         verifyActiveUser({
-          User: (MockUserModel as unknown) as UserModel<AuthUser>,
+          User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
         })(
           ({ user: { sub: id } } as unknown) as Koa.ParameterizedContext,
           nextSpy
@@ -319,7 +319,7 @@ describe('Router - Auth Guards', () => {
       expect(spy).toHaveBeenCalledWith(id);
       expect(nextSpy).not.toHaveBeenCalled();
 
-      MockUserModel.reset();
+      MockAuthUserModel.reset();
     });
   });
 });

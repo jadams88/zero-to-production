@@ -34,7 +34,7 @@ export function createAuthenticateDirective(
       (type as any)[DirectiveWrapped.auth] = true;
 
       // Check if the @activeUser directive has been applied, and return if it has
-      if (checkAppliedDirectives(type, [AuthDirectiveName.activeUser])) {
+      if (checkAppliedDirectives(type, [AuthDirectiveName.isActiveUser])) {
         return;
       }
 
@@ -53,7 +53,7 @@ export function createAuthenticateDirective(
       (field as any)[DirectiveWrapped.auth] = true;
 
       // Check if the @activeUser directive has been applied, and return if it has
-      if (checkAppliedDirectives(field, [AuthDirectiveName.activeUser])) {
+      if (checkAppliedDirectives(field, [AuthDirectiveName.isActiveUser])) {
         return;
       }
 

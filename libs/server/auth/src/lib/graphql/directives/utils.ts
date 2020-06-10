@@ -1,13 +1,13 @@
 import { GraphQLField, GraphQLObjectType, GraphQLFieldResolver } from 'graphql';
 
 export enum AuthDirectiveName {
-  authenticated = 'authenticated',
-  activeUser = 'activeUser',
+  authenticated = 'authenticate',
+  isActiveUser = 'isActiveUser',
 }
 
 export enum DirectiveWrapped {
   auth = '_authFieldWrapped',
-  authUser = '_authUserFieldWrapped',
+  activeUser = '_activeUserFieldWrapped',
 }
 
 export type TAuthResolver = (

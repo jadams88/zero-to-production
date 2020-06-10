@@ -4,7 +4,7 @@ import { TestServerConfig } from '@ztp/data';
 import { AuthEnv } from '@ztp/server/auth';
 
 const audience = 'http://localhost:3000';
-const authServerUrl = audience;
+const authServerHost = audience;
 
 const privateKey = `-----BEGIN PRIVATE KEY-----
 MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAXf+ZATlbBu+O
@@ -59,7 +59,7 @@ export const testConfig: TestServerConfig = {
 
 export const testAuthConfig: AuthEnv = {
   jwksRoute: true,
-  authServerUrl,
+  authServerHost,
   accessToken: {
     privateKey,
     publicKey,

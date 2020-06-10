@@ -19,7 +19,7 @@ import type {
   AuthUser,
   Refresh,
   Verify,
-  UserModel,
+  AuthUserModel,
   VerifyModel,
   VerifyEmail,
   BasicRegistrationController,
@@ -41,62 +41,23 @@ export function setupRegisterController<U extends AuthUser, V extends Verify>(
   // defaults to one in the utils
   const {
     User,
-    Verify: Token,
+    Verify: VerifyToken,
     verifyEmail,
     validatePassword = isPasswordAllowed,
   } = config as RegistrationWithVerificationController<U, V>;
 
   const basicReg = simpleRegistration(User, validatePassword);
 
-  if (!Token) {
+  if (!VerifyToken) {
     return basicReg;
   } else {
-    const sendEmailVerification = verifyUser(Token, verifyEmail);
+    const sendEmailVerification = verifyUser(VerifyToken, verifyEmail);
     return (user: AuthUser) => basicReg(user).then(sendEmailVerification);
-    // await sendEmailVerification(newUser);
   }
-
-  // return async (user: User) => {
-  //   const password: string = (user as any).password;
-  //   if (!password) Boom.badRequest('No password provided');
-
-  //   if (!passwordValidator(password))
-  //     throw Boom.badRequest('Password does not meet requirements');
-
-  //   const currentUser = await User.findByUsername(user.username);
-  //   if (currentUser !== null)
-  //     throw Boom.badRequest('Username is not available');
-
-  //   const hashedPassword = await hash(password, 10);
-
-  //   const newUser = new User({
-  //     ...user,
-  //     isVerified: false,
-  //     active: true,
-  //     hashedPassword,
-  //   });
-
-  //   const savedUser = await newUser.save();
-
-  //   // Check the controller is set up to include email verification
-  //   if (Verify) {
-  //     const verificationToken = new Verify({
-  //       userId: savedUser.id,
-  //       token: randomBytes(16).toString('hex'),
-  //     });
-
-  //     await Promise.all([
-  //       verificationToken.save(),
-  //       verifyEmail(user.email, verificationToken.token),
-  //     ]);
-  //   }
-
-  //   return stripPasswordFields<AuthUser>(savedUser);
-  // };
 }
 
 export function simpleRegistration<U extends AuthUser>(
-  User: UserModel<U>,
+  User: AuthUserModel<U>,
   passwordValidator: PasswordValidator
 ) {
   return async (user: AuthUser) => {
@@ -146,7 +107,7 @@ export function verifyUser<V extends Verify>(
  *
  *
  * @export
- * @param {IUserModel} User
+ * @param {IAuthUserModel} User
  * @param {IVerifyModel} VerificationToken
  * @returns Verification Controller
  */
@@ -190,11 +151,11 @@ export function setupVerifyController({
  *
  * @export
  * @param {{
- *   userModel: IUserModel;
+ *   AuthUserModel: IAuthUserModel;
  *   secret: string;
  *   expireTime: number;
  * }} {
- *   userModel,
+ *   AuthUserModel,
  *   secret,
  *   expireTime
  * }

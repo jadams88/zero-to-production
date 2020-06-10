@@ -9,7 +9,7 @@ import {
 } from '@ztp/server/graphql';
 import { todoTypeDef, userTypeDef } from '@ztp/server/core-data';
 import { config } from '../environments/environment';
-import { authDirectives } from './auth/auth.guards';
+import { authDirectives } from './auth/guards';
 import { usersResolvers, todosResolvers } from './api';
 import { authSchema } from './auth/auth';
 

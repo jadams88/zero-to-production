@@ -17,8 +17,8 @@ export const baseTypeDef = gql`
   scalar Upload
 
   directive @formatDate(format: String = "yyyy-MM-dd") on FIELD_DEFINITION
-  directive @authenticated on OBJECT | FIELD_DEFINITION
-  directive @activeUser on OBJECT | FIELD_DEFINITION
+  directive @authenticate on OBJECT | FIELD_DEFINITION
+  directive @isActiveUser on OBJECT | FIELD_DEFINITION
 
   type File {
     id: ID!
@@ -28,8 +28,8 @@ export const baseTypeDef = gql`
     encoding: String!
   }
 
-  type Query @authenticated
-  type Mutation @authenticated
+  type Query @authenticate
+  type Mutation @authenticate
   # type Subscription
 
   schema {
