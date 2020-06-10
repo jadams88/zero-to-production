@@ -82,7 +82,7 @@
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-link": "^1.2.14",
-    "apollo-server-koa": "^2.13.1",
+    "apollo-server-koa": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "dataloader": "^2.0.0",
     "date-fns": "^2.13.0",
