@@ -7,9 +7,9 @@ import {
 } from '@ztp/data';
 import { envToNumber, getEnvVariableOrWarn } from '@ztp/server/utils';
 import { AuthEnv } from '@ztp/server/auth';
-import { devConfig, devAuthConfig } from './development.js';
-import { prodConfig, prodAuthConfig } from './production.js';
-import { testConfig, testAuthConfig } from './test.js';
+import { devConfig, devAuthConfig } from './development';
+import { prodConfig, prodAuthConfig } from './production';
+import { testConfig, testAuthConfig } from './test';
 
 /**
  * Config values common across all environments environments
