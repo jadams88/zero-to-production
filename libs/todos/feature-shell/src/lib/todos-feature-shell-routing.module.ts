@@ -12,6 +12,8 @@ import { TodoFeatureShellComponent } from './todos-feature-shell.component';
 import { TodoResolver } from '@ztp/todos/data-access';
 
 export const TODOS_ROUTES: Routes = [
+  // the can activate guard will mean that this route will never
+  // match if the user is not logged in
   {
     path: '',
     component: TodoFeatureShellComponent,

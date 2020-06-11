@@ -11,31 +11,26 @@
   <a target="_blank" rel="noreferrer noopener" href="https://nrwl.io/">Nrwl</a>
   provide.
 </p>
-<button class="show" *ngIf="!show" mat-stroked-button (click)="showTodos()">
-  Show me the App!!
-</button>
-<ng-container *ngIf="show">
-  <h4>NOTE</h4>
-  <p>
-    The application below is a complete working application with a live GraphQL
-    API hosted on Google Cloud Kubernetes as provided in this repo (<em
-      >apps/server/api/</em
-    >
-    ) and you will have to register before you can log in.
-  </p>
-  <p>
-    For privacy reasons the API has been configured to accept dummy data (so not
-    to collect any sensitive information). The email address you provide does
-    <b>NOT</b> have to be unique and will note be 'verified' so go ahead and put
-    <b>test@email.com</b> or similar as it only needs to satisfy the email
-    validation. Your username is the only thing required to be unique for
-    registration to be successful.
-  </p>
-  <p>
-    The Database will be wiped regularly so don't be surprised if you come back
-    next week and its all gone.
-  </p>
-  <section class="app">
-    <router-outlet></router-outlet>
-  </section>
-</ng-container>
+<h4>NOTE</h4>
+<p>
+  The application below is a complete working application with a live GraphQL
+  API hosted on Google Cloud Kubernetes as provided in this repo (<em
+    >apps/server/api/</em
+  >
+  ). You will have to register before you can log in.
+</p>
+<p>
+  For privacy reasons the API has been configured to accept dummy data (so not
+  to collect any sensitive information). The email address you provide does
+  <b>NOT</b> have to be unique and will note be 'verified' so go ahead and put
+  <b>test@email.com</b> or similar as it only needs to satisfy the email
+  validation. Your username is the only thing required to be unique for
+  registration to be successful.
+</p>
+<p>
+  The Database will be wiped regularly so don't be surprised if you come back
+  next week and its all gone.
+</p>
+<section class="app">
+  <router-outlet></router-outlet>
+</section>

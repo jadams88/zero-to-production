@@ -2007,6 +2007,38 @@
           "styleext": "scss"
         }
       }
+    },
+    "demo-examples": {
+      "projectType": "library",
+      "root": "libs/demo/examples",
+      "sourceRoot": "libs/demo/examples/src",
+      "prefix": "ztp",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/demo/examples/tsconfig.lib.json",
+              "libs/demo/examples/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/demo/examples/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/demo/examples/jest.config.js",
+            "tsConfig": "libs/demo/examples/tsconfig.spec.json",
+            "passWithNoTests": true,
+            "setupFile": "libs/demo/examples/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      }
     }
   },
   "cli": {

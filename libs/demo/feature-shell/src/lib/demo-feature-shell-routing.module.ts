@@ -16,7 +16,7 @@ export const Demo_ROUTES: Routes = [
       {
         path: 'examples',
         loadChildren: () =>
-          import('@ztp/demo/live-demos').then((m) => m.DemoLiveDemosModule),
+          import('@ztp/demo/examples').then((m) => m.DemoExamplesModule),
         data: { preload: true }, // Preload this route
       },
       {

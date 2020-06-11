@@ -1,4 +1,4 @@
-<article class="example">
+<!-- <article class="example">
   <header class="example-description">
     <h3>{{ (example$ | async)?.title }}</h3>
     <p>{{ (example$ | async)?.description }}</p>
@@ -13,84 +13,83 @@
       </a>
     </p>
   </header>
-  <div class="example-demonstration">
-    <h4>How to use</h4>
-    <p>
-      First register the dynamic form module in the root AppModule. Here you
-      provide a registry of components the form will render for each form
-      element type. Optionally, you can provide custom error messages for each
-      error type.
-    </p>
-    <p>
-      NOTE: For convenience, a Material Design component registry is provided in
-      <a
-        target="_blank"
-        rel="noreferrer noopener"
-        href="https://github.com/jonathonadams/zero-to-production/tree/master/libs/common/dynamic-form-material-components"
-        >libs/common/dynamic-form-material-components</a
-      >. Go ahead and make your own (and let me know how it goes).
-    </p>
-    <pre><code class="language-ts">{{ moduleRegistry }}</code></pre>
-    <p>
-      Each instance of the dynamic form is unique application wide identified by
-      the <em>formName</em> property.
-    </p>
-    <p>
-      Create a new form instance and define and set the structure to render the
-      form.
-    </p>
-    <pre><code class="language-ts">{{ setStructureMarkup }}</code></pre>
-    <p>
-      In you markup include the dynamic form component and set the
-      <em>formName</em>
-      property.
-    </p>
-    <pre><code class="language-html">{{ markup }}</code></pre>
-    <p>
-      The output of submitting the form is provided via an observable from the
-      <em>DynamicFormsFacade</em>.
-    </p>
-    <pre><code class="language-ts">{{ submitSyntax }}</code></pre>
-    <p>
-      For a complete guide on how to make your own form components, provide
-      custom error messages and styling, please see the
-      <a
-        target="_blank"
-        rel="noreferrer noopener"
-        href="https://github.com/jonathonadams/zero-to-production/tree/master/libs/common/dynamic-form"
-        >dynamic form library</a
-      >
-    </p>
+  <div class="example-demonstration"> -->
+<h4>How to use</h4>
+<p>
+  First register the dynamic form module in the root AppModule. Here you provide
+  a registry of components the form will render for each form element type.
+  Optionally, you can provide custom error messages for each error type.
+</p>
+<p>
+  NOTE: For convenience, a Material Design component registry is provided in
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/tree/master/libs/common/dynamic-form-material-components"
+    >libs/common/dynamic-form-material-components</a
+  >. Go ahead and make your own (and let me know how it goes).
+</p>
+<pre><code class="language-ts">{{ moduleRegistry }}</code></pre>
+<p>
+  Each instance of the dynamic form is unique application wide identified by the
+  <em>formName</em> property.
+</p>
+<p>
+  Create a new form instance and define and set the structure to render the
+  form.
+</p>
+<pre><code class="language-ts">{{ setStructureMarkup }}</code></pre>
+<p>
+  In you markup include the dynamic form component and set the
+  <em>formName</em>
+  property.
+</p>
+<pre><code class="language-html">{{ markup }}</code></pre>
+<p>
+  The output of submitting the form is provided via an observable from the
+  <em>DynamicFormsFacade</em>.
+</p>
+<pre><code class="language-ts">{{ submitSyntax }}</code></pre>
+<p>
+  For a complete guide on how to make your own form components, provide custom
+  error messages and styling, please see the
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/tree/master/libs/common/dynamic-form"
+    >dynamic form library</a
+  >
+</p>
 
-    <h4>Try it below</h4>
-    <section class="form-config">
-      <aside class="config">
-        <mat-checkbox (change)="complexForm($event.checked)">
-          Complex Form
-        </mat-checkbox>
+<h4>Try it below</h4>
+<section class="form-config">
+  <aside class="config">
+    <mat-checkbox (change)="complexForm($event.checked)">
+      Complex Form
+    </mat-checkbox>
 
-        <mat-checkbox (change)="toggleAnimations($event)">
-          Animations
-        </mat-checkbox>
+    <mat-checkbox (change)="toggleAnimations($event)">
+      Animations
+    </mat-checkbox>
 
-        <mat-checkbox (change)="togglePagination($event)">
-          Section Pagination
-        </mat-checkbox>
+    <mat-checkbox (change)="togglePagination($event)">
+      Section Pagination
+    </mat-checkbox>
 
-        <mat-checkbox (change)="toggleDisabled($event)">
-          Disabled
-        </mat-checkbox>
-      </aside>
+    <mat-checkbox (change)="toggleDisabled($event)">
+      Disabled
+    </mat-checkbox>
+  </aside>
 
-      <app-dynamic-form [formName]="formName">
-        <button mat-raised-button type="submit">Submit</button>
-      </app-dynamic-form>
-    </section>
-    <h4>Submit Output</h4>
-    <div class="output">
-      <pre
-        class="language-json"
-      ><code class="language=json" [innerHtml]="submit$ | async | json | codeHighlight"></code></pre>
-    </div>
-  </div>
-</article>
+  <app-dynamic-form [formName]="formName">
+    <button mat-raised-button type="submit">Submit</button>
+  </app-dynamic-form>
+</section>
+<h4>Submit Output</h4>
+<div class="output">
+  <pre
+    class="language-json"
+  ><code class="language=json" [innerHtml]="submit$ | async | json | codeHighlight"></code></pre>
+</div>
+<!-- </div>
+</article> -->

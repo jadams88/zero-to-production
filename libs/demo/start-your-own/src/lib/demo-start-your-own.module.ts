@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { GuidesComponent } from './guides/guides.component';
 
+const ROUTES: Routes = [{ path: '', component: GuidesComponent }];
+
 @NgModule({
-  imports: [RouterModule],
+  imports: [RouterModule.forChild(ROUTES)],
   declarations: [GuidesComponent],
 })
 export class DemoStartYourOwnModule {

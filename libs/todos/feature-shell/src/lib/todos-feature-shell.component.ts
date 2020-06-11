@@ -4,7 +4,14 @@ import { ISideNavRoute } from '@ztp/common/side-nav';
 @Component({
   selector: 'todo-feature-shell',
   templateUrl: './todos-feature-shell.component.html',
-  styleUrls: ['./todos-feature-shell.component.scss'],
+  styles: [
+    `
+      :host {
+        display: block;
+        height: 100%;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoFeatureShellComponent {

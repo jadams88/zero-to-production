@@ -15,7 +15,7 @@ import {
   FormArrayTypes,
 } from '@ztp/common/dynamic-form';
 import { CodeHighlightService } from '@ztp/demo/utils';
-import { IExample, DemoFacade } from '@ztp/demo/data-access';
+// import { IExample, DemoFacade } from '@ztp/demo/data-access';
 import {
   markup,
   submitSyntax,
@@ -113,7 +113,7 @@ const COMPLEX_FORM: TFormStructure = [
 })
 export class ExampleDynamicFormComponent implements OnInit, AfterViewInit {
   readonly formName = 'dynamic-form-example';
-  example$: Observable<IExample | undefined>;
+  // example$: Observable<IExample | undefined>;
   submit$: Observable<any>;
 
   setStructureMarkup = setStructureMarkup;
@@ -122,11 +122,11 @@ export class ExampleDynamicFormComponent implements OnInit, AfterViewInit {
   moduleRegistry = moduleRegistry;
 
   constructor(
-    private facade: DemoFacade,
+    // private facade: DemoFacade,
     private formFacade: DynamicFormFacade,
     private highlight: CodeHighlightService
   ) {
-    this.example$ = this.facade.selectExampleById('1'); // hard coded because it is first and not coming from the db
+    // this.example$ = this.facade.selectExampleById('1'); // hard coded because it is first and not coming from the db
     this.formFacade.createFormIfNotExist(this.formName);
     this.submit$ = this.formFacade.formSubmits$(this.formName);
   }

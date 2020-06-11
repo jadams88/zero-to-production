@@ -1,0 +1,9 @@
+<layout-center-page class="container">
+  <article class="example">
+    <header class="example-description">
+      <h3>{{ (example$ | async)?.title }}</h3>
+      <p>{{ (example$ | async)?.description }}</p>
+    </header>
+    <aside class="example-demonstration"><router-outlet></router-outlet></aside>
+  </article>
+</layout-center-page>

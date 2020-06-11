@@ -5,3 +5,10 @@ export const addExamples = createAction(
   '[Example] Add',
   props<{ examples: IExample[] }>()
 );
+
+export const selectExample = createAction(
+  '[Example] Select',
+  props<{ id: string }>()
+);
+
+export const clearSelected = createAction('[Example] Clear');

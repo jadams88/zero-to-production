@@ -196,6 +196,9 @@
     },
     "demo-utils": {
       "tags": ["scope:demo", "type:util", "platform:web"]
+    },
+    "demo-examples": {
+      "tags": []
     }
   }
 }

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
-import { SkipLinkService } from '../skip-link.server';
+import { SkipLinkService } from '../skip-link.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

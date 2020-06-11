@@ -1,14 +1,7 @@
-import {
-  Directive,
-  Input,
-  ElementRef,
-  OnInit,
-  OnDestroy,
-  HostBinding,
-} from '@angular/core';
+import { Directive, Input, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { SkipLinkService } from '../skip-link.server';
+import { SkipLinkService } from '../skip-link.service';
 
 @Directive({
   selector: '[ztpSkipLink]',

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Routes, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DemoUtilsModule } from '@ztp/demo/utils';
 import { CommonUiButtonsModule } from '@ztp/common/ui/buttons';
@@ -21,10 +22,15 @@ const COMPONENTS = [
   ExampleFormBuilderOverviewComponent,
 ];
 
+const ROUTES: Routes = [
+  { path: '', component: ExampleFormBuilderOverviewComponent },
+];
+
 @NgModule({
   declarations: COMPONENTS,
   imports: [
     CommonModule,
+    RouterModule.forChild(ROUTES),
     CommonUiButtonsModule,
     CommonUiCardModule,
     FontAwesomeModule,

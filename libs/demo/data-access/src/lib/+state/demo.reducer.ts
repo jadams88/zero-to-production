@@ -11,20 +11,31 @@ import { IExample } from '../example.interface';
 
 export const exampleEntityStateKey = 'demoState';
 
+export interface ExampleEntityState extends EntityState<IExample> {
+  selectedExampleId: string | null;
+}
 export interface DemoState {
-  examples: EntityState<IExample>;
+  examples: ExampleEntityState;
 }
 
 export const adapter: EntityAdapter<IExample> = createEntityAdapter<IExample>();
 
 export const initialDemoState: DemoState = {
-  examples: adapter.getInitialState(),
+  examples: adapter.getInitialState({
+    selectedExampleId: null,
+  }),
 };
 
 export const demoReducer = createReducer(
   initialDemoState,
   on(ExampleActions.addExamples, (state, { examples }) => {
     return { examples: adapter.setAll(examples, state.examples) };
+  }),
+  on(ExampleActions.selectExample, (state, { id }) => {
+    return { examples: { ...state.examples, selectedExampleId: id } };
+  }),
+  on(ExampleActions.clearSelected, (state) => {
+    return { examples: { ...state.examples, selectedExampleId: null } };
   })
 );
 
@@ -45,3 +56,14 @@ export const {
   selectEntities: selectExampleEntities,
   selectAll: selectAllExamples,
 } = adapter.getSelectors(selectExamples);
+
+export const selectCurrentExampleId = createSelector(
+  selectExamples,
+  (state: ExampleEntityState) => state.selectedExampleId
+);
+
+export const selectCurrentExample = createSelector(
+  selectExampleEntities,
+  selectCurrentExampleId,
+  (exampleEntities, exampleId) => exampleEntities[String(exampleId)]
+);

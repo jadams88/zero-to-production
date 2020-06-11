@@ -41,7 +41,7 @@ export const examples: IExample[] = [
       'It is common practice to lazy load modules as child routes but there are more ' +
       'ways to benefit from code splitting. Scrolling is just one example of how to ' +
       'manually load modules and components.',
-    url: 'lazy-scroll',
+    url: 'lazy-scrolling',
   },
   {
     id: '5',
@@ -50,7 +50,7 @@ export const examples: IExample[] = [
     description:
       'We have all seen a Todo App before but this demonstrates how a well structured monorepo ' +
       'can make your code highly reusable.',
-    url: 'secure',
+    url: 'todos',
   },
   {
     id: '6',
