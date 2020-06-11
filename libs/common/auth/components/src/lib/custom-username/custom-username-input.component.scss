@@ -1,6 +1,12 @@
 :host {
   display: block;
   width: 100%;
+
+  :host-context(.dark-theme) {
+    input {
+      color: rgba(white, 0.74);
+    }
+  }
 }
 
 div {
