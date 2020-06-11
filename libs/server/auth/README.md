@@ -15,7 +15,7 @@ export interface AuthUserModel<U extends AuthUser> {
 
 // User instance
 export interface AuthUser {
-  id: string | number;
+  id?: string | number;
   username: string;
   email: string;
   active: boolean;
