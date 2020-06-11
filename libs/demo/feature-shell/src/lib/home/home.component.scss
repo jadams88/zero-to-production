@@ -1,0 +1,57 @@
+:host {
+  display: block;
+  height: 100%;
+  // background-color: rgba(209, 75, 100, 0.5);
+  // background-image: linear-gradient(#a7fde5, #a7b9fd);
+  // background-repeat: no-repeat;
+  // background-position: center center;
+}
+
+.container {
+  overflow-y: auto;
+  height: 100%;
+
+  .content {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 0.5em;
+  }
+
+  .about {
+    border-radius: 10px;
+    .heading {
+      text-align: center;
+      display: block;
+    }
+  }
+
+  .demo {
+    overflow: hidden; // needed to maintain height when element spin into view
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: stretch;
+    padding-bottom: 2em;
+
+    .example {
+      // cursor: pointer;
+      margin: 0.5em;
+      height: auto;
+      min-height: 8em;
+      width: 19em;
+      transform-style: preserve-3d;
+      perspective: 400rem;
+      // transform-origin: bottom;
+      opacity: 0; // so the card is initially invisible
+      // > * {
+      // backface-visibility: hidden;
+      // }
+      // .inner-card {
+      //   background-color: rgba(255, 255, 255, 0.9);
+      //   height: 100%;
+      //   opacity: 0;
+      // }
+    }
+  }
+}

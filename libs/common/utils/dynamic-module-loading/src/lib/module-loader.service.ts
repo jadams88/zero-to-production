@@ -105,7 +105,7 @@ export class ModuleLoaderService {
         // 'lazyEntryComponent' is a getter on the Module definition
         // that returns the Component to act as the entry component. e.g.
         //
-        // export class ExamplesFormBuilderModule {
+        // export class DemoFormBuilderModule {
         //   static get lazyEntryComponent() {
         //      return ExampleFormBuilderOverviewComponent;
         //   }

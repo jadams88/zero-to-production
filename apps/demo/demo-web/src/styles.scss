@@ -1,0 +1,85 @@
+// Normalize css
+@import '~normalize.css';
+// Angular Material Themeing Mixins
+@import '~@angular/material/theming';
+
+// import the theming & typography file
+@import 'styles/theme.scss';
+@import 'styles/typography.scss';
+@import 'styles/common.scss';
+
+@include mat-core();
+
+/* You can add global styles to this file, and also import other style files */
+html,
+body,
+demo-root {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+body {
+  font-family: Muli, sans-serif;
+}
+
+// ------------------------------------------------
+// Insert additional styles here
+// ------------------------------------------------
+
+.ztp-form {
+  // styling for all forms
+  .ztp-nav-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  // example form
+  &.example-form {
+    margin: 1em;
+
+    .example-dependents {
+      > * {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .ztp-form-header {
+        margin-right: 1em;
+        justify-content: start;
+      }
+    }
+  }
+
+  // form builder form
+  .form-builder-create {
+    display: flex;
+    justify-content: space-between;
+    --flex-direction: column;
+    --align-items: flex-start;
+
+    flex-direction: var(--flex-direction);
+    align-items: var(--flex-direction);
+
+    @media (min-width: 600px) {
+      --flex-direction: row;
+      --align-items: center;
+    }
+  }
+}
+
+// border radius on any generated code blocks from 'prism.js'
+pre[class^='language-'],
+pre[class*=' language-'] {
+  border-radius: 4px;
+}
+// inline code blocks from 'marked.js'
+code:not([class]) {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}

@@ -1,0 +1,49 @@
+<section class="container" cdkScrollable>
+  <div class="content">
+    <div class="about">
+      <h1 class="heading">Zero to Production</h1>
+      <h3 class="heading">Fullstack Monorepo Starter</h3>
+      <h4>About</h4>
+      <p>
+        A full stack Monorepo starter to use for the foundation for your next
+        project.
+      </p>
+      <h4>Guides</h4>
+      <p>
+        Follow the guides to step through deploying your own UI with Firebase
+        and your API either serverless with AWS Lambda or in a Kubernetes
+        Cluster on Google Cloud.
+      </p>
+      <h4>Whats in the box</h4>
+      <ul>
+        <li>
+          Two Angular apps. This "demo" site and a Todo App with authentication
+          using NgRx & GraphQL.
+        </li>
+        <li>
+          A Node.js GraphQL API with Koa.js , GraphQL & MongoDB configured to
+          deploy serverless or with Docker & Kubernetes.
+        </li>
+        <li>
+          Guides to get you up and running with a deployed Angular application
+          and API server.
+        </li>
+      </ul>
+
+      <h4>Angular Demo</h4>
+      <p>
+        Demo of some less more advanced Angular techniques.
+      </p>
+    </div>
+    <div class="demo">
+      <ztp-example
+        class="example"
+        *ngFor="let example of examples$ | async; let i = index"
+        trackBy="trackExample"
+        ztpAnimateScrollEntry
+        [example]="example"
+      >
+      </ztp-example>
+    </div>
+  </div>
+</section>

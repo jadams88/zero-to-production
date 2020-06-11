@@ -8,7 +8,7 @@
 # (a PR has been merged). This workflow with lint, test & build the affected apps
 # between the last commit to master. It will then run 'semantic release' to create
 # a new semver GitHub release based on the commit message. If either the
-# 'examples-web-functions' app (demo site hosted on Firebase) or the 'server-lambda'
+# 'demo-web-functions' app (demo site hosted on Firebase) or the 'server-lambda'
 # app (API server hosted on AWS Lambda) are affected by the release they will be built
 # and automatically deployed.
 #
@@ -115,23 +115,23 @@ jobs:
               echo "Server Lambda was not affected";
             fi
 
-  # Check if the 'examples-web-functions' project was affected and deploy
-  examples-web-functions-deploy:
+  # Check if the 'demo-web-functions' project was affected and deploy
+  demo-web-functions-deploy:
     <<: *setup
     steps:
       - checkout
       - <<: *deps-restore
       - run:
-          name: Deploy the examples site to Firebase Functions
+          name: Deploy the demo site to Firebase Functions
           command: |-
             AFFECTED=$(npx nx affected:apps --plain --base=master~1 --head=master);
-            if [[ ${AFFECTED} == *"examples-web-functions"* ]]
+            if [[ ${AFFECTED} == *"demo-web-functions"* ]]
             then
-              echo "Examples Web Functions affected. Deploying new version";
-              npx nx run examples-web-functions:build:production;
-              npx nx run examples-web-functions:deploy-ci --args="--token=${FIREBASE_TOKEN}";
+              echo "Demo Web Functions affected. Deploying new version";
+              npx nx run demo-web-functions:build:production;
+              npx nx run demo-web-functions:deploy-ci --args="--token=${FIREBASE_TOKEN}";
             else
-              echo "Examples Web Functions was not affected";
+              echo "Demo Web Functions was not affected";
             fi
 
 workflows:
@@ -161,7 +161,7 @@ workflows:
           <<: *master-only
           requires:
             - release
-      - examples-web-functions-deploy:
+      - demo-web-functions-deploy:
           <<: *master-only
           requires:
             - release

@@ -1340,32 +1340,32 @@
       },
       "schematics": {}
     },
-    "examples-web": {
+    "demo-web": {
       "projectType": "application",
       "schematics": {
         "@nrwl/angular:component": {
           "style": "scss"
         }
       },
-      "root": "apps/examples/examples-web",
-      "sourceRoot": "apps/examples/examples-web/src",
+      "root": "apps/demo/demo-web",
+      "sourceRoot": "apps/demo/demo-web/src",
       "prefix": "ztp",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/apps/examples/examples-web",
-            "index": "apps/examples/examples-web/src/index.html",
-            "main": "apps/examples/examples-web/src/main.ts",
-            "polyfills": "apps/examples/examples-web/src/polyfills.ts",
-            "tsConfig": "apps/examples/examples-web/tsconfig.app.json",
+            "outputPath": "dist/apps/demo/demo-web",
+            "index": "apps/demo/demo-web/src/index.html",
+            "main": "apps/demo/demo-web/src/main.ts",
+            "polyfills": "apps/demo/demo-web/src/polyfills.ts",
+            "tsConfig": "apps/demo/demo-web/tsconfig.app.json",
             "aot": true,
             "extractCss": true,
             "baseHref": "/",
             "assets": [
-              "apps/examples/examples-web/src/favicon.ico",
-              "apps/examples/examples-web/src/assets",
-              "apps/examples/examples-web/src/manifest.webmanifest",
+              "apps/demo/demo-web/src/favicon.ico",
+              "apps/demo/demo-web/src/assets",
+              "apps/demo/demo-web/src/manifest.webmanifest",
               {
                 "glob": "**/*.md",
                 "input": "./guides/",
@@ -1373,14 +1373,14 @@
               }
             ],
             "styles": [
-              "apps/examples/examples-web/src/styles.scss",
+              "apps/demo/demo-web/src/styles.scss",
               {
-                "input": "apps/examples/examples-web/src/theme/theme-default.scss",
+                "input": "apps/demo/demo-web/src/theme/theme-default.scss",
                 "lazy": true,
                 "bundleName": "theme-default"
               },
               {
-                "input": "apps/examples/examples-web/src/theme/theme-default-dark.scss",
+                "input": "apps/demo/demo-web/src/theme/theme-default-dark.scss",
                 "lazy": true,
                 "bundleName": "theme-default-dark"
               }
@@ -1396,8 +1396,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/examples/examples-web/src/environments/environment.ts",
-                  "with": "apps/examples/examples-web/src/environments/environment.prod.ts"
+                  "replace": "apps/demo/demo-web/src/environments/environment.ts",
+                  "with": "apps/demo/demo-web/src/environments/environment.prod.ts"
                 }
               ],
               "baseHref": "/",
@@ -1422,11 +1422,11 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "apps/examples/examples-web/ngsw-config.json"
+              "ngswConfigPath": "apps/demo/demo-web/ngsw-config.json"
             },
             "functions": {
-              "outputPath": "apps/examples/examples-web-functions/dist/browser",
-              "index": "apps/examples/examples-web/src/index.original.html",
+              "outputPath": "apps/demo/demo-web-functions/dist/browser",
+              "index": "apps/demo/demo-web/src/index.original.html",
               "baseHref": "/z2p-firebase/us-central1/universal/"
             }
           }
@@ -1435,53 +1435,53 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "baseHref": "/",
-            "browserTarget": "examples-web:build"
+            "browserTarget": "demo-web:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "examples-web:build:production"
+              "browserTarget": "demo-web:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "examples-web:build"
+            "browserTarget": "demo-web:build"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "apps/examples/examples-web/tsconfig.app.json",
-              "apps/examples/examples-web/tsconfig.spec.json"
+              "apps/demo/demo-web/tsconfig.app.json",
+              "apps/demo/demo-web/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/examples/examples-web/**"]
+            "exclude": ["**/node_modules/**", "!apps/demo/demo-web/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/examples/examples-web/jest.config.js",
-            "tsConfig": "apps/examples/examples-web/tsconfig.spec.json",
-            "setupFile": "apps/examples/examples-web/src/test-setup.ts",
+            "jestConfig": "apps/demo/demo-web/jest.config.js",
+            "tsConfig": "apps/demo/demo-web/tsconfig.spec.json",
+            "setupFile": "apps/demo/demo-web/src/test-setup.ts",
             "passWithNoTests": true
           }
         },
         "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
-            "outputPath": "apps/examples/examples-web-functions/dist/server",
-            "main": "apps/examples/examples-web/server.ts",
-            "tsConfig": "apps/examples/examples-web/tsconfig.server.json"
+            "outputPath": "apps/demo/demo-web-functions/dist/server",
+            "main": "apps/demo/demo-web/server.ts",
+            "tsConfig": "apps/demo/demo-web/tsconfig.server.json"
           },
           "configurations": {
             "production": {
               "outputHashing": "media",
               "fileReplacements": [
                 {
-                  "replace": "apps/examples/examples-web/src/environments/environment.ts",
-                  "with": "apps/examples/examples-web/src/environments/environment.prod.ts"
+                  "replace": "apps/demo/demo-web/src/environments/environment.ts",
+                  "with": "apps/demo/demo-web/src/environments/environment.prod.ts"
                 }
               ],
               "sourceMap": false,
@@ -1492,22 +1492,22 @@
         "serve-ssr": {
           "builder": "@nguniversal/builders:ssr-dev-server",
           "options": {
-            "browserTarget": "examples-web:build",
-            "serverTarget": "examples-web:server"
+            "browserTarget": "demo-web:build",
+            "serverTarget": "demo-web:server"
           },
           "configurations": {
             "production": {
-              "browserTarget": "examples-web:build:production",
-              "serverTarget": "examples-web:server:production"
+              "browserTarget": "demo-web:build:production",
+              "serverTarget": "demo-web:server:production"
             }
           }
         },
         "prerender": {
           "builder": "@nguniversal/builders:prerender",
           "options": {
-            "browserTarget": "examples-web:build:production",
-            "serverTarget": "examples-web:server:production",
-            "routes": ["/", "/examples"]
+            "browserTarget": "demo-web:build:production",
+            "serverTarget": "demo-web:server:production",
+            "routes": ["/", "/demo"]
           },
           "configurations": {
             "production": {}
@@ -1515,17 +1515,17 @@
         }
       }
     },
-    "examples-web-functions": {
-      "root": "apps/examples/examples-web-functions",
-      "sourceRoot": "apps/examples/examples-web-functions/src",
+    "demo-web-functions": {
+      "root": "apps/demo/demo-web-functions",
+      "sourceRoot": "apps/demo/demo-web-functions/src",
       "projectType": "application",
       "architect": {
         "build-functions": {
           "builder": "@uqt/ng-node:build",
           "options": {
-            "outputPath": "apps/examples/examples-web-functions/dist",
-            "src": "apps/examples/examples-web-functions/src",
-            "tsConfig": "apps/examples/examples-web-functions/tsconfig.json"
+            "outputPath": "apps/demo/demo-web-functions/dist",
+            "src": "apps/demo/demo-web-functions/src",
+            "tsConfig": "apps/demo/demo-web-functions/tsconfig.json"
           }
         },
         "build": {
@@ -1533,13 +1533,13 @@
           "options": {
             "targets": [
               {
-                "target": "examples-web:build:functions"
+                "target": "demo-web:build:functions"
               },
               {
-                "target": "examples-web:server"
+                "target": "demo-web:server"
               },
               {
-                "target": "examples-web-functions:build-functions"
+                "target": "demo-web-functions:build-functions"
               }
             ]
           },
@@ -1547,13 +1547,13 @@
             "production": {
               "targets": [
                 {
-                  "target": "examples-web:build:functions,production"
+                  "target": "demo-web:build:functions,production"
                 },
                 {
-                  "target": "examples-web:server:production"
+                  "target": "demo-web:server:production"
                 },
                 {
-                  "target": "examples-web-functions:build-functions"
+                  "target": "demo-web-functions:build-functions"
                 }
               ]
             }
@@ -1564,10 +1564,10 @@
           "options": {
             "targets": [
               {
-                "target": "examples-web-functions:build"
+                "target": "demo-web-functions:build"
               },
               {
-                "target": "examples-web-functions:run"
+                "target": "demo-web-functions:run"
               }
             ]
           }
@@ -1580,7 +1580,7 @@
                 "command": "firebase serve --project z2p-firebase"
               }
             ],
-            "cwd": "apps/examples/examples-web-functions"
+            "cwd": "apps/demo/demo-web-functions"
           }
         },
         "firebase-deploy": {
@@ -1591,7 +1591,7 @@
                 "command": "firebase deploy --project z2p-firebase"
               }
             ],
-            "cwd": "apps/examples/examples-web-functions"
+            "cwd": "apps/demo/demo-web-functions"
           }
         },
         "deploy": {
@@ -1599,10 +1599,10 @@
           "options": {
             "targets": [
               {
-                "target": "examples-web-functions:build:production"
+                "target": "demo-web-functions:build:production"
               },
               {
-                "target": "examples-web-functions:firebase-deploy"
+                "target": "demo-web-functions:firebase-deploy"
               }
             ]
           }
@@ -1615,83 +1615,75 @@
                 "command": "firebase deploy --project z2p-firebase --token {args.token}"
               }
             ],
-            "cwd": "apps/examples/examples-web-functions"
+            "cwd": "apps/demo/demo-web-functions"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "apps/examples/examples-web-functions/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/examples/examples-web-functions**"
-            ]
+            "tsConfig": ["apps/demo/demo-web-functions/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**", "!apps/demo/demo-web-functions**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/examples/examples-web-functions/jest.config.js",
-            "tsConfig": "apps/examples/examples-web-functions/tsconfig.spec.json",
+            "jestConfig": "apps/demo/demo-web-functions/jest.config.js",
+            "tsConfig": "apps/demo/demo-web-functions/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
       }
     },
-    "examples-web-e2e": {
-      "root": "apps/examples/examples-web-e2e",
-      "sourceRoot": "apps/examples/examples-web-e2e/src",
+    "demo-web-e2e": {
+      "root": "apps/demo/demo-web-e2e",
+      "sourceRoot": "apps/demo/demo-web-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/examples/examples-web-e2e/cypress.json",
-            "tsConfig": "apps/examples/examples-web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "examples-web:serve"
+            "cypressConfig": "apps/demo/demo-web-e2e/cypress.json",
+            "tsConfig": "apps/demo/demo-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "demo-web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "examples-web:serve:production"
+              "devServerTarget": "demo-web:serve:production"
             }
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/examples/examples-web-e2e/tsconfig.e2e.json"],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/examples/examples-web-e2e/**"
-            ]
+            "tsConfig": ["apps/demo/demo-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/demo/demo-web-e2e/**"]
           }
         }
       }
     },
-    "examples-feature-shell": {
+    "demo-feature-shell": {
       "projectType": "library",
-      "root": "libs/examples/feature-shell",
-      "sourceRoot": "libs/examples/feature-shell/src",
+      "root": "libs/demo/feature-shell",
+      "sourceRoot": "libs/demo/feature-shell/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/feature-shell/tsconfig.lib.json",
-              "libs/examples/feature-shell/tsconfig.spec.json"
+              "libs/demo/feature-shell/tsconfig.lib.json",
+              "libs/demo/feature-shell/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/feature-shell/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/feature-shell/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/feature-shell/jest.config.js",
-            "tsConfig": "libs/examples/feature-shell/tsconfig.spec.json",
-            "setupFile": "libs/examples/feature-shell/src/test-setup.ts",
+            "jestConfig": "libs/demo/feature-shell/jest.config.js",
+            "tsConfig": "libs/demo/feature-shell/tsconfig.spec.json",
+            "setupFile": "libs/demo/feature-shell/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1702,28 +1694,28 @@
         }
       }
     },
-    "examples-data-access": {
+    "demo-data-access": {
       "projectType": "library",
-      "root": "libs/examples/data-access",
-      "sourceRoot": "libs/examples/data-access/src",
+      "root": "libs/demo/data-access",
+      "sourceRoot": "libs/demo/data-access/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/data-access/tsconfig.lib.json",
-              "libs/examples/data-access/tsconfig.spec.json"
+              "libs/demo/data-access/tsconfig.lib.json",
+              "libs/demo/data-access/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/data-access/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/data-access/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/data-access/jest.config.js",
-            "tsConfig": "libs/examples/data-access/tsconfig.spec.json",
-            "setupFile": "libs/examples/data-access/src/test-setup.ts",
+            "jestConfig": "libs/demo/data-access/jest.config.js",
+            "tsConfig": "libs/demo/data-access/tsconfig.spec.json",
+            "setupFile": "libs/demo/data-access/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1734,28 +1726,28 @@
         }
       }
     },
-    "examples-form-builder": {
+    "demo-form-builder": {
       "projectType": "library",
-      "root": "libs/examples/form-builder",
-      "sourceRoot": "libs/examples/form-builder/src",
+      "root": "libs/demo/form-builder",
+      "sourceRoot": "libs/demo/form-builder/src",
       "prefix": "ex",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/form-builder/tsconfig.lib.json",
-              "libs/examples/form-builder/tsconfig.spec.json"
+              "libs/demo/form-builder/tsconfig.lib.json",
+              "libs/demo/form-builder/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/form-builder/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/form-builder/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/form-builder/jest.config.js",
-            "tsConfig": "libs/examples/form-builder/tsconfig.spec.json",
-            "setupFile": "libs/examples/form-builder/src/test-setup.ts",
+            "jestConfig": "libs/demo/form-builder/jest.config.js",
+            "tsConfig": "libs/demo/form-builder/tsconfig.spec.json",
+            "setupFile": "libs/demo/form-builder/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1766,28 +1758,28 @@
         }
       }
     },
-    "examples-theming": {
+    "demo-theming": {
       "projectType": "library",
-      "root": "libs/examples/theming",
-      "sourceRoot": "libs/examples/theming/src",
+      "root": "libs/demo/theming",
+      "sourceRoot": "libs/demo/theming/src",
       "prefix": "ex",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/theming/tsconfig.lib.json",
-              "libs/examples/theming/tsconfig.spec.json"
+              "libs/demo/theming/tsconfig.lib.json",
+              "libs/demo/theming/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/theming/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/theming/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/theming/jest.config.js",
-            "tsConfig": "libs/examples/theming/tsconfig.spec.json",
-            "setupFile": "libs/examples/theming/src/test-setup.ts",
+            "jestConfig": "libs/demo/theming/jest.config.js",
+            "tsConfig": "libs/demo/theming/tsconfig.spec.json",
+            "setupFile": "libs/demo/theming/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1798,20 +1790,20 @@
         }
       }
     },
-    "examples-utils": {
+    "demo-utils": {
       "projectType": "library",
-      "root": "libs/examples/utils",
-      "sourceRoot": "libs/examples/utils/src",
+      "root": "libs/demo/utils",
+      "sourceRoot": "libs/demo/utils/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/utils/tsconfig.lib.json",
-              "libs/examples/utils/tsconfig.spec.json"
+              "libs/demo/utils/tsconfig.lib.json",
+              "libs/demo/utils/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/utils/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/utils/**"]
           }
         }
       },
@@ -1821,28 +1813,28 @@
         }
       }
     },
-    "examples-secure-todos": {
+    "demo-secure-todos": {
       "projectType": "library",
-      "root": "libs/examples/secure-todos",
-      "sourceRoot": "libs/examples/secure-todos/src",
+      "root": "libs/demo/secure-todos",
+      "sourceRoot": "libs/demo/secure-todos/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/secure-todos/tsconfig.lib.json",
-              "libs/examples/secure-todos/tsconfig.spec.json"
+              "libs/demo/secure-todos/tsconfig.lib.json",
+              "libs/demo/secure-todos/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/secure-todos/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/secure-todos/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/secure-todos/jest.config.js",
-            "tsConfig": "libs/examples/secure-todos/tsconfig.spec.json",
-            "setupFile": "libs/examples/secure-todos/src/test-setup.ts",
+            "jestConfig": "libs/demo/secure-todos/jest.config.js",
+            "tsConfig": "libs/demo/secure-todos/tsconfig.spec.json",
+            "setupFile": "libs/demo/secure-todos/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1853,31 +1845,31 @@
         }
       }
     },
-    "examples-lazy-load-scrolling": {
+    "demo-lazy-load-scrolling": {
       "projectType": "library",
-      "root": "libs/examples/lazy-load-scrolling",
-      "sourceRoot": "libs/examples/lazy-load-scrolling/src",
+      "root": "libs/demo/lazy-load-scrolling",
+      "sourceRoot": "libs/demo/lazy-load-scrolling/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/lazy-load-scrolling/tsconfig.lib.json",
-              "libs/examples/lazy-load-scrolling/tsconfig.spec.json"
+              "libs/demo/lazy-load-scrolling/tsconfig.lib.json",
+              "libs/demo/lazy-load-scrolling/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/examples/lazy-load-scrolling/**"
+              "!libs/demo/lazy-load-scrolling/**"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/lazy-load-scrolling/jest.config.js",
-            "tsConfig": "libs/examples/lazy-load-scrolling/tsconfig.spec.json",
-            "setupFile": "libs/examples/lazy-load-scrolling/src/test-setup.ts",
+            "jestConfig": "libs/demo/lazy-load-scrolling/jest.config.js",
+            "tsConfig": "libs/demo/lazy-load-scrolling/tsconfig.spec.json",
+            "setupFile": "libs/demo/lazy-load-scrolling/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1888,28 +1880,28 @@
         }
       }
     },
-    "examples-live-demos": {
+    "demo-live-demos": {
       "projectType": "library",
-      "root": "libs/examples/live-demos",
-      "sourceRoot": "libs/examples/live-demos/src",
+      "root": "libs/demo/live-demos",
+      "sourceRoot": "libs/demo/live-demos/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/live-demos/tsconfig.lib.json",
-              "libs/examples/live-demos/tsconfig.spec.json"
+              "libs/demo/live-demos/tsconfig.lib.json",
+              "libs/demo/live-demos/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/live-demos/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/live-demos/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/live-demos/jest.config.js",
-            "tsConfig": "libs/examples/live-demos/tsconfig.spec.json",
-            "setupFile": "libs/examples/live-demos/src/test-setup.ts",
+            "jestConfig": "libs/demo/live-demos/jest.config.js",
+            "tsConfig": "libs/demo/live-demos/tsconfig.spec.json",
+            "setupFile": "libs/demo/live-demos/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1920,28 +1912,28 @@
         }
       }
     },
-    "examples-dynamic-form": {
+    "demo-dynamic-form": {
       "projectType": "library",
-      "root": "libs/examples/dynamic-form",
-      "sourceRoot": "libs/examples/dynamic-form/src",
+      "root": "libs/demo/dynamic-form",
+      "sourceRoot": "libs/demo/dynamic-form/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/dynamic-form/tsconfig.lib.json",
-              "libs/examples/dynamic-form/tsconfig.spec.json"
+              "libs/demo/dynamic-form/tsconfig.lib.json",
+              "libs/demo/dynamic-form/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/dynamic-form/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/dynamic-form/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/dynamic-form/jest.config.js",
-            "tsConfig": "libs/examples/dynamic-form/tsconfig.spec.json",
-            "setupFile": "libs/examples/dynamic-form/src/test-setup.ts",
+            "jestConfig": "libs/demo/dynamic-form/jest.config.js",
+            "tsConfig": "libs/demo/dynamic-form/tsconfig.spec.json",
+            "setupFile": "libs/demo/dynamic-form/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1952,31 +1944,28 @@
         }
       }
     },
-    "examples-start-your-own": {
+    "demo-start-your-own": {
       "projectType": "library",
-      "root": "libs/examples/start-your-own",
-      "sourceRoot": "libs/examples/start-your-own/src",
+      "root": "libs/demo/start-your-own",
+      "sourceRoot": "libs/demo/start-your-own/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/start-your-own/tsconfig.lib.json",
-              "libs/examples/start-your-own/tsconfig.spec.json"
+              "libs/demo/start-your-own/tsconfig.lib.json",
+              "libs/demo/start-your-own/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/examples/start-your-own/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/demo/start-your-own/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/start-your-own/jest.config.js",
-            "tsConfig": "libs/examples/start-your-own/tsconfig.spec.json",
-            "setupFile": "libs/examples/start-your-own/src/test-setup.ts",
+            "jestConfig": "libs/demo/start-your-own/jest.config.js",
+            "tsConfig": "libs/demo/start-your-own/tsconfig.spec.json",
+            "setupFile": "libs/demo/start-your-own/src/test-setup.ts",
             "passWithNoTests": true
           }
         }
@@ -1987,29 +1976,29 @@
         }
       }
     },
-    "examples-guides": {
+    "demo-guides": {
       "projectType": "library",
-      "root": "libs/examples/guides",
-      "sourceRoot": "libs/examples/guides/src",
+      "root": "libs/demo/guides",
+      "sourceRoot": "libs/demo/guides/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/examples/guides/tsconfig.lib.json",
-              "libs/examples/guides/tsconfig.spec.json"
+              "libs/demo/guides/tsconfig.lib.json",
+              "libs/demo/guides/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/examples/guides/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/guides/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/examples/guides/jest.config.js",
-            "tsConfig": "libs/examples/guides/tsconfig.spec.json",
+            "jestConfig": "libs/demo/guides/jest.config.js",
+            "tsConfig": "libs/demo/guides/tsconfig.spec.json",
             "passWithNoTests": true,
-            "setupFile": "libs/examples/guides/src/test-setup.ts"
+            "setupFile": "libs/demo/guides/src/test-setup.ts"
           }
         }
       },

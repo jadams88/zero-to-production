@@ -153,49 +153,49 @@
     "todos-all-todos": {
       "tags": ["scope:todos", "type:feature", "platform:web"]
     },
-    "examples-web": {
-      "tags": ["scope:examples", "type:app", "platform:web"]
+    "demo-web": {
+      "tags": ["scope:demo", "type:app", "platform:web"]
     },
-    "examples-web-e2e": {
-      "tags": ["scope:examples", "type:app", "platform:web"],
-      "implicitDependencies": ["examples-web"]
+    "demo-web-e2e": {
+      "tags": ["scope:demo", "type:app", "platform:web"],
+      "implicitDependencies": ["demo-web"]
     },
-    "examples-web-functions": {
-      "tags": ["scope:examples", "type:app", "platform:web"],
-      "implicitDependencies": ["examples-web"]
+    "demo-web-functions": {
+      "tags": ["scope:demo", "type:app", "platform:web"],
+      "implicitDependencies": ["demo-web"]
     },
-    "examples-feature-shell": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-feature-shell": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-live-demos": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-live-demos": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-data-access": {
-      "tags": ["scope:examples", "type:data-access", "platform:web"]
+    "demo-data-access": {
+      "tags": ["scope:demo", "type:data-access", "platform:web"]
     },
-    "examples-form-builder": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-form-builder": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-theming": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-theming": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-secure-todos": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-secure-todos": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-lazy-load-scrolling": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-lazy-load-scrolling": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-dynamic-form": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-dynamic-form": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-start-your-own": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-start-your-own": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-guides": {
-      "tags": ["scope:examples", "type:feature", "platform:web"]
+    "demo-guides": {
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "examples-utils": {
-      "tags": ["scope:examples", "type:util", "platform:web"]
+    "demo-utils": {
+      "tags": ["scope:demo", "type:util", "platform:web"]
     }
   }
 }

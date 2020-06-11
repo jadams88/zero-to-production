@@ -1,0 +1,84 @@
+<p>
+  Library:
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/tree/master/libs/common/utils/dynamic-module-loading"
+  >
+    libs/common/utils/dynamic-module-loading
+  </a>
+</p>
+<p>
+  Because of a long outstanding
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/angular/angular/issues/14424"
+    >bug/feature request</a
+  >
+  in Angulars View Engine it has is not been possible to lazy load entry
+  components. This limitation could be worked around by using Web Components and
+  Angular Elements, however with with the introduction of the Ivy Rendering
+  Engine this is no longer needed (entry components have been depreciated).
+</p>
+<p>
+  Define a 'registry' of modules to be lazy loaded. The import path follows the
+  same convention as when defining a lazy loaded routed module. The Angular
+  Compiler & Webpack will take care of code splitting for you. Then provide the
+  registry as a provider to the parent module.
+</p>
+<pre><code class="language-ts">{{ moduleProviders }}</code></pre>
+<p>
+  Create a <em>ModuleLoadingService</em> to handle loading the modules as
+  required.
+</p>
+<pre><code class="language-ts">{{ moduleLoadingService }}</code></pre>
+<p>
+  The lazy loading strategy (scrolling, dialog etc) will determine what to do
+  once the module is loaded and compiled. For this example the module loading
+  service produces an Observable of the component factory so the scrolling
+  component can subscribe and render the entry component once loaded.
+</p>
+<h4>Try it Out</h4>
+<ol>
+  <li>Open Developer Tools <b>></b> Networking Tab</li>
+  <li>Clear Network History</li>
+  <li>Refresh Browser Window</li>
+  <li>Start Scrolling</li>
+  <li>Note the lazy loading of modules as you scroll</li>
+  <li>Profit!!</li>
+</ol>
+<p>
+  For the source code for this example see the
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="  https://github.com/jonathonadams/zero-to-production/blob/master/libs/common/utils/dynamic-module-loading/src/lib/module-loader.service.ts"
+    >Module Loading Service</a
+  >,
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/live-demos/src/lib/lazy-modules.ts"
+    >Module Registry</a
+  >,
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/live-demos/src/lib/example-demos/demo-demos.component.ts"
+    >Scrolling Component (TS)</a
+  >,
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/live-demos/src/lib/example-demos/demo-demos.component.html"
+    >Scrolling Component (html)</a
+  >
+  and the
+  <a
+    target="_blank"
+    rel="noreferrer noopener"
+    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/common/utils/dynamic-module-loading/src/lib/scroll/lazy-load-scroll.directive.ts"
+    >Scrolling Directive</a
+  >
+</p>

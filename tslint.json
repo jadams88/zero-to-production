@@ -72,8 +72,8 @@
             "onlyDependOnLibsWithTags": ["scope:todos", "scope:shared"]
           },
           {
-            "sourceTag": "scope:examples",
-            "onlyDependOnLibsWithTags": ["scope:examples", "scope:shared"]
+            "sourceTag": "scope:demo",
+            "onlyDependOnLibsWithTags": ["scope:demo", "scope:shared"]
           },
           {
             "sourceTag": "type:feature",

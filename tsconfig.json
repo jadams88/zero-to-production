@@ -54,23 +54,19 @@
       "@ztp/todos/data-access": ["libs/todos/data-access/src/index.ts"],
       "@ztp/todos/todo-detail": ["libs/todos/todo-detail/src/index.ts"],
       "@ztp/todos/all-todos": ["libs/todos/all-todos/src/index.ts"],
-      "@ztp/examples/feature-shell": [
-        "libs/examples/feature-shell/src/index.ts"
+      "@ztp/demo/feature-shell": ["libs/demo/feature-shell/src/index.ts"],
+      "@ztp/demo/data-access": ["libs/demo/data-access/src/index.ts"],
+      "@ztp/demo/form-builder": ["libs/demo/form-builder/src/index.ts"],
+      "@ztp/demo/theming": ["libs/demo/theming/src/index.ts"],
+      "@ztp/demo/utils": ["libs/demo/utils/src/index.ts"],
+      "@ztp/demo/secure-todos": ["libs/demo/secure-todos/src/index.ts"],
+      "@ztp/demo/lazy-load-scrolling": [
+        "libs/demo/lazy-load-scrolling/src/index.ts"
       ],
-      "@ztp/examples/data-access": ["libs/examples/data-access/src/index.ts"],
-      "@ztp/examples/form-builder": ["libs/examples/form-builder/src/index.ts"],
-      "@ztp/examples/theming": ["libs/examples/theming/src/index.ts"],
-      "@ztp/examples/utils": ["libs/examples/utils/src/index.ts"],
-      "@ztp/examples/secure-todos": ["libs/examples/secure-todos/src/index.ts"],
-      "@ztp/examples/lazy-load-scrolling": [
-        "libs/examples/lazy-load-scrolling/src/index.ts"
-      ],
-      "@ztp/examples/live-demos": ["libs/examples/live-demos/src/index.ts"],
-      "@ztp/examples/dynamic-form": ["libs/examples/dynamic-form/src/index.ts"],
-      "@ztp/examples/make-it-your-own": [
-        "libs/examples/start-your-own/src/index.ts"
-      ],
-      "@ztp/examples/guides": ["libs/examples/guides/src/index.ts"]
+      "@ztp/demo/live-demos": ["libs/demo/live-demos/src/index.ts"],
+      "@ztp/demo/dynamic-form": ["libs/demo/dynamic-form/src/index.ts"],
+      "@ztp/demo/make-it-your-own": ["libs/demo/start-your-own/src/index.ts"],
+      "@ztp/demo/guides": ["libs/demo/guides/src/index.ts"]
     }
   }
 }

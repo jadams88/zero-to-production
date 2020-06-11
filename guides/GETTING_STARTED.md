@@ -24,11 +24,11 @@ $ npm i
 The "Examples" angular app and respective libs are all the files
 associated with this demo site at [zero-to-production.dev]
 
-- delete the "examples" applications in `apps/examples/*`
-- delete all libs corresponding to the "Examples" application at `libs/examples/*`
-- delete all projects and libraries in the `angular.json` and `nx.json` that begin with `examples-`. These should be all projects starting from `examples-web`.
-- delete all TypeScript path `@aliases` starting with `@ztp/examples/*` in `tsconfig.json`
-- remove the `scope:examples` entry from the `nx-enforce-module-boundaries` rule in `tslint.json`
+- delete the "demo" applications in `apps/demo/*`
+- delete all libs corresponding to the "Examples" application at `libs/demo/*`
+- delete all projects and libraries in the `angular.json` and `nx.json` that begin with `demo-`. These should be all projects starting from `demo-web`.
+- delete all TypeScript path `@aliases` starting with `@ztp/demo/*` in `tsconfig.json`
+- remove the `scope:demo` entry from the `nx-enforce-module-boundaries` rule in `tslint.json`
 
   ```json
   // tslint.json
@@ -36,8 +36,8 @@ associated with this demo site at [zero-to-production.dev]
   ...
   // delete these lines
     {
-      "sourceTag": "scope:examples",
-      "onlyDependOnLibsWithTags": ["scope:examples", "scope:shared"]
+      "sourceTag": "scope:demo",
+      "onlyDependOnLibsWithTags": ["scope:demo", "scope:shared"]
     }
   ```
 
@@ -59,7 +59,7 @@ associated with this demo site at [zero-to-production.dev]
 
 ##### Project Structure
 
-The repo follows the [Nrwl] monorepo guidelines where all applications are in the `apps/` directory and all associated libraries are in the `libs/` directory. Assuming you have followed the above and deleted the `examples` applications you should be left with the following app structure:
+The repo follows the [Nrwl] monorepo guidelines where all applications are in the `apps/` directory and all associated libraries are in the `libs/` directory. Assuming you have followed the above and deleted the `demo` applications you should be left with the following app structure:
 
 - `apps/todos/todos-web` - The Angular web Todo application.
 - `apps/todos/todos-web-e2e` - The Angular web end-to-end application.

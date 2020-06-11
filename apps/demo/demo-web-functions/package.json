@@ -1,0 +1,13 @@
+{
+  "name": "demo-web-functions",
+  "description": "SSR Firebase Functions",
+  "main": "dist/index.js",
+  "engines": {
+    "node": "10"
+  },
+  "dependencies": {
+    "firebase-functions": "^3.7.0",
+    "firebase-admin": "^8.12.1"
+  },
+  "private": true
+}
