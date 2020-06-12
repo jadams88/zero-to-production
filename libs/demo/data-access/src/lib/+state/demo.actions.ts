@@ -8,7 +8,7 @@ export const addExamples = createAction(
 
 export const selectExample = createAction(
   '[Example] Select',
-  props<{ id: string }>()
+  props<{ url: string }>()
 );
 
 export const clearSelected = createAction('[Example] Clear');

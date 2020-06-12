@@ -21,7 +21,7 @@ export class LazyLoadScrollDirective implements OnDestroy {
    * @required
    */
   @Input() modules: number | undefined;
-  @Input() loadThreshold = 1000; // pixels until next load
+  @Input() loadThreshold = 400; // pixels until next load
   @Output() loadIndex = new EventEmitter<number>();
 
   constructor(private loadingService: ModuleLoaderService) {

@@ -12,17 +12,19 @@ import { IExample } from '../example.interface';
 export const exampleEntityStateKey = 'demoState';
 
 export interface ExampleEntityState extends EntityState<IExample> {
-  selectedExampleId: string | null;
+  selectedExampleUrl: string | null;
 }
 export interface DemoState {
   examples: ExampleEntityState;
 }
 
-export const adapter: EntityAdapter<IExample> = createEntityAdapter<IExample>();
+export const adapter: EntityAdapter<IExample> = createEntityAdapter<IExample>({
+  selectId: (e: IExample) => e.url,
+});
 
 export const initialDemoState: DemoState = {
   examples: adapter.getInitialState({
-    selectedExampleId: null,
+    selectedExampleUrl: null,
   }),
 };
 
@@ -31,11 +33,11 @@ export const demoReducer = createReducer(
   on(ExampleActions.addExamples, (state, { examples }) => {
     return { examples: adapter.setAll(examples, state.examples) };
   }),
-  on(ExampleActions.selectExample, (state, { id }) => {
-    return { examples: { ...state.examples, selectedExampleId: id } };
+  on(ExampleActions.selectExample, (state, { url }) => {
+    return { examples: { ...state.examples, selectedExampleUrl: url } };
   }),
   on(ExampleActions.clearSelected, (state) => {
-    return { examples: { ...state.examples, selectedExampleId: null } };
+    return { examples: { ...state.examples, selectedExampleUrl: null } };
   })
 );
 
@@ -57,13 +59,13 @@ export const {
   selectAll: selectAllExamples,
 } = adapter.getSelectors(selectExamples);
 
-export const selectCurrentExampleId = createSelector(
+export const selectCurrentExampleUrl = createSelector(
   selectExamples,
-  (state: ExampleEntityState) => state.selectedExampleId
+  (state: ExampleEntityState) => state.selectedExampleUrl
 );
 
 export const selectCurrentExample = createSelector(
   selectExampleEntities,
-  selectCurrentExampleId,
-  (exampleEntities, exampleId) => exampleEntities[String(exampleId)]
+  selectCurrentExampleUrl,
+  (exampleEntities, url) => exampleEntities[url as any]
 );

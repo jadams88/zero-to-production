@@ -27,6 +27,6 @@ export class DemoHomeComponent implements OnInit {
   }
 
   trackExample(i: number, e: IExample) {
-    return e.id;
+    return e.url;
   }
 }

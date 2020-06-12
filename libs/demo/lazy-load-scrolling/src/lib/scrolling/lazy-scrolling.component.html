@@ -1,0 +1,41 @@
+<div
+  class="content"
+  ztpLazyLoadScroll
+  (loadIndex)="loadModule($event)"
+  [modules]="modules?.length"
+>
+  <div
+    *ngFor="let lazy of modules; trackBy: trackModule; let last = last"
+    #lazyItem
+  >
+    <!-- 
+      Because we are lazy-loading components as we scroll here, if 'looks' odd if the
+      first component is not rendered when you first navigate to this view.
+      Because we don't lazy load the first component, we hard code the first component
+      and bundle it in the main component.
+  
+      In this demo, our 'demo' state is hard coded and initialized in the entry component
+      for the feature shell. Because of this we can guarantee the order of the demo.
+      This might NOT be the case if you load data from a server and you will have to adapt appropriately
+     -->
+    <!-- <ztp-example-dynamic-form
+      *ngIf="example.url === 'dynamic-form'; else elseBlock"
+    >
+    </ztp-example-dynamic-form> -->
+
+    <ng-container
+      class="module"
+      loadThreshold="500"
+      ztpFactoryRenderer
+      [componentFactory]="selectFactory(lazy.key) | async"
+    ></ng-container>
+
+    <!-- <ng-template> -->
+    <!-- <ztp-example-detail
+        #example.url
+        [example]="example"
+      >
+      </ztp-example-detail> -->
+    <!-- </ng-template> -->
+  </div>
+</div>

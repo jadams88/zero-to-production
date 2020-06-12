@@ -38,7 +38,7 @@
     <div class="demo">
       <ztp-example
         class="example"
-        *ngFor="let example of examples$ | async; let i = index"
+        *ngFor="let example of examples$ | async"
         trackBy="trackExample"
         ztpAnimateScrollEntry
         [example]="example"

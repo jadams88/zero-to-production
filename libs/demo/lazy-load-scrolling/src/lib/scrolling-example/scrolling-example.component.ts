@@ -7,11 +7,11 @@ import { CodeHighlightService } from '@ztp/demo/utils';
 import { moduleLoadingService, moduleProviders } from './scrolling.code';
 
 @Component({
-  selector: 'ztp-scrolling',
-  templateUrl: './scrolling.component.html',
+  selector: 'ztp-scrolling-example',
+  templateUrl: './scrolling-example.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScrollingComponent implements AfterViewInit {
+export class ScrollingExampleComponent implements AfterViewInit {
   constructor(private highlightService: CodeHighlightService) {}
 
   moduleProviders = moduleProviders;

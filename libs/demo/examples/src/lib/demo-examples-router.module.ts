@@ -1,45 +1,14 @@
 import { NgModule } from '@angular/core';
-import {
-  RouterModule,
-  Routes,
-  UrlSegment,
-  UrlMatchResult,
-  Route,
-  UrlSegmentGroup,
-  UrlMatcher,
-} from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { ExampleComponent } from './example/example.component';
-
-// TODO -> remove the 'as any' from type null after angular v10
-// https://github.com/angular/angular/pull/31098
-
-function customUrlMatcher(url: string): UrlMatcher {
-  return (segments: UrlSegment[], group: UrlSegmentGroup, route: Route) => {
-    // const [{ path = '' } = {}] = segments;
-    console.log(segments);
-    console.log(group);
-    console.log(route);
-    // console.log(path);
-    console.log(url);
-
-    const path = '1';
-    if (path === url) {
-      return {
-        consumed: [segments[0]],
-      } as UrlMatchResult;
-    } else {
-      return null as any;
-    }
-  };
-}
 
 const ROUTES: Routes = [
   {
-    path: ':example',
+    path: '',
     component: ExampleComponent,
     children: [
       {
-        matcher: customUrlMatcher('dynamic-form'),
+        path: 'dynamic-form',
         loadChildren: () =>
           import('@ztp/demo/dynamic-form').then((m) => m.DemoDynamicFormModule),
         data: { preload: true },
@@ -73,11 +42,10 @@ const ROUTES: Routes = [
             (m) => m.DemoStartYourOwnModule
           ),
       },
-      // {
-      //   path: '',
-      //   pathMatch: 'full',
-      //   redirectTo: 'dynamic-form',
-      // },
+      {
+        path: '**',
+        redirectTo: 'dynamic-form',
+      },
     ],
   },
 ];

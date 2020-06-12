@@ -7,10 +7,18 @@
   height: 100%;
   overflow-y: auto;
 
-  .example-description {
-    margin-bottom: 1em;
-    p {
-      word-wrap: break-word;
+  .example {
+    padding: 0 0.5rem 2rem;
+
+    @media (max-width: 599px) {
+      padding: 0 1rem 2rem;
+    }
+
+    .example-description {
+      margin-bottom: 1em;
+      p {
+        word-wrap: break-word;
+      }
     }
   }
 }
