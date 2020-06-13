@@ -41,8 +41,4 @@ const ROUTES: Routes = [
     DemoUtilsModule,
   ],
 })
-export class DemoFormBuilderModule {
-  static get lazyEntryComponent() {
-    return ExampleFormBuilderOverviewComponent;
-  }
-}
+export class DemoFormBuilderModule {}

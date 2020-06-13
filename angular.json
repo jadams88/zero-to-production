@@ -1880,38 +1880,6 @@
         }
       }
     },
-    "demo-live-demos": {
-      "projectType": "library",
-      "root": "libs/demo/live-demos",
-      "sourceRoot": "libs/demo/live-demos/src",
-      "prefix": "ztp",
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/demo/live-demos/tsconfig.lib.json",
-              "libs/demo/live-demos/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/demo/live-demos/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/demo/live-demos/jest.config.js",
-            "tsConfig": "libs/demo/live-demos/tsconfig.spec.json",
-            "setupFile": "libs/demo/live-demos/src/test-setup.ts",
-            "passWithNoTests": true
-          }
-        }
-      },
-      "schematics": {
-        "@nrwl/angular:component": {
-          "styleext": "scss"
-        }
-      }
-    },
     "demo-dynamic-form": {
       "projectType": "library",
       "root": "libs/demo/dynamic-form",

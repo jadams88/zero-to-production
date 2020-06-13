@@ -8,8 +8,4 @@ const ROUTES: Routes = [{ path: '', component: GuidesComponent }];
   imports: [RouterModule.forChild(ROUTES)],
   declarations: [GuidesComponent],
 })
-export class DemoStartYourOwnModule {
-  static get lazyEntryComponent() {
-    return GuidesComponent;
-  }
-}
+export class DemoStartYourOwnModule {}

@@ -8,8 +8,4 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [CommonModule, MatButtonModule, DemoSecureTodosRoutingModule],
   declarations: [ExampleTodosComponent],
 })
-export class DemoSecureTodosModule {
-  static get lazyEntryComponent() {
-    return ExampleTodosComponent;
-  }
-}
+export class DemoSecureTodosModule {}

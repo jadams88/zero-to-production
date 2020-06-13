@@ -22,8 +22,4 @@ const ROUTES: Routes = [{ path: '', component: CssThemingComponent }];
   ],
   declarations: [CssThemingComponent],
 })
-export class DemoThemingModule {
-  static get lazyEntryComponent() {
-    return CssThemingComponent;
-  }
-}
+export class DemoThemingModule {}

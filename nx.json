@@ -167,9 +167,6 @@
     "demo-feature-shell": {
       "tags": ["scope:demo", "type:feature", "platform:web"]
     },
-    "demo-live-demos": {
-      "tags": ["scope:demo", "type:feature", "platform:web"]
-    },
     "demo-data-access": {
       "tags": ["scope:demo", "type:data-access", "platform:web"]
     },
@@ -198,7 +195,7 @@
       "tags": ["scope:demo", "type:util", "platform:web"]
     },
     "demo-examples": {
-      "tags": []
+      "tags": ["scope:demo", "type:feature", "platform:web"]
     }
   }
 }
