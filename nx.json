@@ -87,7 +87,7 @@
     "shared-dashboard": {
       "tags": ["scope:shared", "type:feature", "platform:web"]
     },
-    "common-utils-dynamic-module-loading": {
+    "common-dynamic-module-loading": {
       "tags": ["scope:shared", "type:util", "platform:web"]
     },
     "common-utils-notifications": {

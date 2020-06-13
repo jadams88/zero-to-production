@@ -23,11 +23,12 @@ interface IFactoryRegistry {
   [key: string]: { factory: ComponentFactory<any> } | undefined;
 }
 
-export interface ILazyModuleRegistry {
-  [key: string]: TModuleImportPath;
+export interface ILazyModule {
+  key: string;
+  module: TModuleImportPath;
 }
 
-export const LAZY_MODULE_REGISTRY = new InjectionToken<ILazyModuleRegistry>(
+export const LAZY_MODULES = new InjectionToken<ILazyModule[]>(
   'LAZY_MODULE_REGISTRY'
 );
 
@@ -46,13 +47,13 @@ export class ModuleLoaderService {
   private registry$ = this.registry.asObservable();
 
   constructor(
-    @Inject(LAZY_MODULE_REGISTRY)
-    _lazyModuleRegistry: ILazyModuleRegistry,
+    @Inject(LAZY_MODULES)
+    modules: ILazyModule[],
     private compiler: Compiler,
     private injector: Injector
   ) {
     // Register the providers in the internal map
-    this._registerModule(_lazyModuleRegistry);
+    this.registerModule(modules);
   }
 
   selectFactory(tag: string): Observable<ComponentFactory<any> | undefined> {
@@ -63,15 +64,24 @@ export class ModuleLoaderService {
     );
   }
 
-  private _registerModule(modules: ILazyModuleRegistry): void {
-    Object.keys(modules).forEach((key) => {
-      const moduleRegister: IModuleRegistry = {
-        importPath: modules[key],
+  private registerModule(modules: ILazyModule[]): void {
+    modules.forEach((module) => {
+      const register: IModuleRegistry = {
+        importPath: module.module,
         loadComplete: false,
         loadInitiated: false,
       };
-      this._registry.set(key, moduleRegister);
+      this._registry.set(module.key, register);
     });
+
+    // Object.keys(modules).forEach((key) => {
+    //   const moduleRegister: IModuleRegistry = {
+    //     importPath: modules[key],
+    //     loadComplete: false,
+    //     loadInitiated: false,
+    //   };
+    //   this._registry.set(key, moduleRegister);
+    // });
   }
 
   public async initLoadModule(key: string): Promise<boolean> {

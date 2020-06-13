@@ -3,26 +3,27 @@ import {
   ChangeDetectionStrategy,
   ComponentFactory,
   OnInit,
-  Input,
+  Inject,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ModuleLoaderService } from '@ztp/common/dynamic-module-loading';
-
-export interface LazyModule {
-  key: string;
-  [pro: string]: any | undefined;
-}
+import {
+  ModuleLoaderService,
+  LAZY_MODULES,
+  ILazyModule,
+} from '../module-loader.service';
 
 @Component({
-  selector: 'ztp-lazy-scrolling',
-  templateUrl: './lazy-scrolling.component.html',
-  styleUrls: ['./lazy-scrolling.component.scss'],
+  selector: 'ztp-lazy-viewport',
+  templateUrl: './lazy-viewport.component.html',
+  styleUrls: ['./lazy-viewport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LazyScrolling implements OnInit {
-  @Input() modules: LazyModule[];
-
-  constructor(private moduleLoader: ModuleLoaderService) {}
+export class LazyViewportComponent implements OnInit {
+  constructor(
+    @Inject(LAZY_MODULES)
+    public modules: ILazyModule[],
+    private moduleLoader: ModuleLoaderService
+  ) {}
 
   ngOnInit() {
     // Initialize the load of the first module

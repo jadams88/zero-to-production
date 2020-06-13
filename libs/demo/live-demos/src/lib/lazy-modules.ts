@@ -1,4 +1,4 @@
-import { ILazyModuleRegistry } from '@ztp/common/utils/dynamic-module-loading';
+import { ILazyModuleRegistry } from '@ztp/common/dynamic-module-loading';
 
 export const LAZY_MODULES: ILazyModuleRegistry = {
   'form-builder': () =>

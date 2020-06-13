@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { ModuleLoaderService } from '@ztp/common/utils/dynamic-module-loading';
+import { ModuleLoaderService } from '@ztp/common/dynamic-module-loading';
 import { DemoFacade, IExample } from '@ztp/demo/data-access';
 import { Title, Meta } from '@angular/platform-browser';
 

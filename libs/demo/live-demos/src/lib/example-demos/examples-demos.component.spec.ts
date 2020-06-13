@@ -3,7 +3,7 @@ import { DemoExamplesComponent } from './examples-demos.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DemoFacade } from '@ztp/demo/data-access';
 import { of } from 'rxjs';
-import { ModuleLoaderService } from '@ztp/common/utils/dynamic-module-loading';
+import { ModuleLoaderService } from '@ztp/common/dynamic-module-loading';
 
 describe('DemoExamplesComponent', () => {
   let component: DemoExamplesComponent;

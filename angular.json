@@ -633,31 +633,31 @@
         }
       }
     },
-    "common-utils-dynamic-module-loading": {
+    "common-dynamic-module-loading": {
       "projectType": "library",
-      "root": "libs/common/utils/dynamic-module-loading",
-      "sourceRoot": "libs/common/utils/dynamic-module-loading/src",
+      "root": "libs/common/dynamic-module-loading",
+      "sourceRoot": "libs/common/dynamic-module-loading/src",
       "prefix": "ztp",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/common/utils/dynamic-module-loading/tsconfig.lib.json",
-              "libs/common/utils/dynamic-module-loading/tsconfig.spec.json"
+              "libs/common/dynamic-module-loading/tsconfig.lib.json",
+              "libs/common/dynamic-module-loading/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/utils/dynamic-module-loading/**"
+              "!libs/common/dynamic-module-loading/**"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/common/utils/dynamic-module-loading/jest.config.js",
-            "tsConfig": "libs/common/utils/dynamic-module-loading/tsconfig.spec.json",
-            "setupFile": "libs/common/utils/dynamic-module-loading/src/test-setup.ts",
+            "jestConfig": "libs/common/dynamic-module-loading/jest.config.js",
+            "tsConfig": "libs/common/dynamic-module-loading/tsconfig.spec.json",
+            "setupFile": "libs/common/dynamic-module-loading/src/test-setup.ts",
             "passWithNoTests": true
           }
         }

@@ -1,12 +1,18 @@
-import { ILazyModuleRegistry } from '@ztp/common/utils/dynamic-module-loading';
+import { ILazyModule } from '@ztp/common/dynamic-module-loading';
 
-export const LAZY_MODULES: ILazyModuleRegistry = {
-  'lazy-module-one': () =>
-    import('./lazy-module-1/lazy-module-one.module').then(
-      (m) => m.LazyModuleOne
-    ),
-  'lazy-module-two': () =>
-    import('./lazy-module-2/lazy-module-two.module').then(
-      (m) => m.LazyModuleTwo
-    ),
-};
+export const MODULES: ILazyModule[] = [
+  {
+    key: 'lazy-module-one',
+    module: () =>
+      import('./lazy-module-1/lazy-module-one.module').then(
+        (m) => m.LazyModuleOne
+      ),
+  },
+  {
+    key: 'lazy-module-two',
+    module: () =>
+      import('./lazy-module-2/lazy-module-two.module').then(
+        (m) => m.LazyModuleTwo
+      ),
+  },
+];

@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ScrollingExampleComponent } from './scrolling-example/scrolling-example.component';
 import {
-  LAZY_MODULE_REGISTRY,
-  CommonUtilsDynamicModuleLoadingModule,
-} from '@ztp/common/utils/dynamic-module-loading';
-import { LAZY_MODULES } from './lazy-modules';
-import { LazyScrolling } from './scrolling/lazy-scrolling.component';
+  LAZY_MODULES,
+  CommonDynamicModuleLoadingModule,
+} from '@ztp/common/dynamic-module-loading';
+import { ScrollingExampleComponent } from './scrolling-example/scrolling-example.component';
+import { MODULES } from './lazy-modules';
 
 const ROUTES: Routes = [{ path: '', component: ScrollingExampleComponent }];
 
@@ -15,13 +14,13 @@ const ROUTES: Routes = [{ path: '', component: ScrollingExampleComponent }];
   imports: [
     CommonModule,
     RouterModule.forChild(ROUTES),
-    CommonUtilsDynamicModuleLoadingModule,
+    CommonDynamicModuleLoadingModule,
   ],
-  declarations: [ScrollingExampleComponent, LazyScrolling],
+  declarations: [ScrollingExampleComponent],
   providers: [
     {
-      provide: LAZY_MODULE_REGISTRY,
-      useValue: LAZY_MODULES,
+      provide: LAZY_MODULES,
+      useValue: MODULES,
     },
   ],
 })

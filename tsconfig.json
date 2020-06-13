@@ -22,8 +22,8 @@
       ],
       "@ztp/common/router": ["libs/common/router/src/index.ts"],
       "@ztp/shared/dashboard": ["libs/shared/dashboard/src/index.ts"],
-      "@ztp/common/utils/dynamic-module-loading": [
-        "libs/common/utils/dynamic-module-loading/src/index.ts"
+      "@ztp/common/dynamic-module-loading": [
+        "libs/common/dynamic-module-loading/src/index.ts"
       ],
       "@ztp/common/utils/overlay": ["libs/common/utils/overlay/src/index.ts"],
       "@ztp/common/utils/notifications": [

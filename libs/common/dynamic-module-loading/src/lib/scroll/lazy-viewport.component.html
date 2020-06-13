@@ -2,7 +2,6 @@
   class="container"
   ztpLazyLoadScroll
   (loadModule)="loadModule($event)"
-  [modules]="modules"
   [loadThreshold]="100"
 >
   <div *ngFor="let lazy of modules; trackBy: trackModule">

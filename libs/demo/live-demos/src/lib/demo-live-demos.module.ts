@@ -5,9 +5,9 @@ import { DemoLiveDemosRoutingModule } from './demo-live-demos-routing.module';
 import { DemoExamplesComponent } from './example-demos/examples-demos.component';
 import { ExampleDetailComponent } from './example-demos/example-detail/example-detail.component';
 import {
-  CommonUtilsDynamicModuleLoadingModule,
+  CommonDynamicModuleLoadingModule,
   LAZY_MODULE_REGISTRY,
-} from '@ztp/common/utils/dynamic-module-loading';
+} from '@ztp/common/dynamic-module-loading';
 import { LAZY_MODULES } from './lazy-modules';
 import { DemoDynamicFormModule } from '@ztp/demo/dynamic-form';
 import { CommonUiLayoutsModule } from '@ztp/common/ui/layouts';
@@ -17,7 +17,7 @@ import { CommonUiLayoutsModule } from '@ztp/common/ui/layouts';
     CommonModule,
     DemoLiveDemosRoutingModule,
     CommonUiLayoutsModule,
-    CommonUtilsDynamicModuleLoadingModule,
+    CommonDynamicModuleLoadingModule,
     DemoDynamicFormModule,
     ScrollingModule, // only needed for drag & drop form builder
   ],
