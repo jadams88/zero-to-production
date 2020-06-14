@@ -21,4 +21,10 @@ export class ExampleComponent {
       switchMap(() => this.facade.selectedExample$)
     );
   }
+
+  creteLibUrl(path: string) {
+    return (
+      'https://github.com/jonathonadams/zero-to-production/tree/master/' + path
+    );
+  }
 }

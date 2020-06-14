@@ -1,8 +1,18 @@
 <layout-center-page class="container">
   <article class="example">
-    <header class="example-description">
-      <h3>{{ (example$ | async)?.title }}</h3>
-      <p>{{ (example$ | async)?.description }}</p>
+    <header *ngIf="example$ | async as example" class="example-description">
+      <h3>{{ example.title }}</h3>
+      <p *ngIf="example.libPath">
+        Library:
+        <a
+          target="_blank"
+          rel="noreferrer noopener"
+          [href]="creteLibUrl(example.libPath)"
+        >
+          {{ example.libPath }}
+        </a>
+      </p>
+      <p>{{ example.description }}</p>
     </header>
     <aside class="example-demonstration"><router-outlet></router-outlet></aside>
   </article>

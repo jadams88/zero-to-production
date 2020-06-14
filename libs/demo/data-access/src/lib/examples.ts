@@ -1,8 +1,6 @@
 import { IExample } from '@ztp/demo/data-access';
 
 export const examples: IExample[] = [
-  // The Dynamic Form Component must be the first example to align with the lazy load modules
-  // If this changes, ensure to correct the that component as well
   {
     url: 'dynamic-form',
     title: 'Dynamic Form Component',
@@ -13,6 +11,7 @@ export const examples: IExample[] = [
       'can become tedious quickly. Creating a dynamic form component ' +
       'application wide can significantly simplify forms and help standardize styling, ' +
       'validation, animations etc.',
+    libPath: 'libs/common/dynamic-form',
   },
   {
     url: 'form-builder',
@@ -21,6 +20,7 @@ export const examples: IExample[] = [
     description:
       'Building on the Dynamic Form Component, an example of a Drag & Drop Form ' +
       'Builder to allow users to build their own forms.',
+    libPath: 'libs/common/form-builder',
   },
   {
     url: 'theming',
@@ -29,6 +29,7 @@ export const examples: IExample[] = [
     description:
       'Combing CSS Variables along with a Theming Service for user ' +
       'configurable themes.',
+    libPath: 'libs/common/utils/theme',
   },
   {
     url: 'lazy-scrolling',
@@ -38,6 +39,7 @@ export const examples: IExample[] = [
       'It is common practice to lazy load modules as child routes but there are more ' +
       'ways to benefit from code splitting. Scrolling is just one example of how to ' +
       'manually load modules and components.',
+    libPath: 'libs/common/dynamic-module-loading',
   },
   {
     url: 'todos',

@@ -3,6 +3,7 @@ import { ThemeService } from '@ztp/common/utils/theme';
 import { Observable } from 'rxjs';
 import { AnimationService } from '@ztp/common/animations';
 import { Meta } from '@angular/platform-browser';
+import { CheckForUpdatesService } from '@ztp/common/utils/service-worker';
 
 @Component({
   selector: 'demo-root',
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
   constructor(
     private themeService: ThemeService,
     private animationService: AnimationService,
+    private checkForUpdate: CheckForUpdatesService,
     private meta: Meta
   ) {
     this.darkMode$ = this.themeService.darkMode$;
