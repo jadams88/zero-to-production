@@ -34,7 +34,6 @@
     "validate-packages": "node ./tools/scripts/bin/validate-packages.js",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
     "semantic-release": "semantic-release",
-    "affected:tag": "node ./tools/scripts/bin/tag-affected.js",
     "nx": "nx"
   },
   "husky": {
