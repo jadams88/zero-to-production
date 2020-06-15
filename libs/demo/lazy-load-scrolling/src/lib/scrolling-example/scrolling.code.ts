@@ -1,7 +1,9 @@
-export const moduleProviders = `// demo.ts
-export const LAZY_MODULES: ILazyModuleRegistry = {
-  ...
-  'form-builder': () => import('@ztp/demo/form-builder').then(m => m.DemoFormBuilderModule),
+export const moduleProviders = `// lazy-modules.ts
+export const MODULES: ILazyModule[] = [
+  { 
+    key: 'form-builder',
+    module: () => import('@ztp/demo/form-builder').then(m => m.DemoFormBuilderModule)
+  }
    ...
 };
 
@@ -10,8 +12,8 @@ export const LAZY_MODULES: ILazyModuleRegistry = {
   ...
   providers: [
     {
-      provide: LAZY_MODULE_REGISTRY,
-      useValue: LAZY_MODULES
+      provide: LAZY_MODULES,
+      useValue: MODULES,
     }
   ]
 })

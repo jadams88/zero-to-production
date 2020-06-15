@@ -18,7 +18,7 @@ import {
 } from '@angular/animations';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { AnimationService } from '@ztp/common/animations';
+import { AnimationService } from '../animation.service';
 
 export enum ElementViewportPosition {
   Above = 'Above',

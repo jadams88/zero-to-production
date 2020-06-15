@@ -5,6 +5,7 @@ import {
   LAZY_MODULES,
   CommonDynamicModuleLoadingModule,
 } from '@ztp/common/dynamic-module-loading';
+import { CommonUiCardModule } from '@ztp/common/ui/card';
 import { ScrollingExampleComponent } from './scrolling-example/scrolling-example.component';
 import { MODULES } from './lazy-modules';
 
@@ -13,6 +14,7 @@ const ROUTES: Routes = [{ path: '', component: ScrollingExampleComponent }];
 @NgModule({
   imports: [
     CommonModule,
+    CommonUiCardModule,
     RouterModule.forChild(ROUTES),
     CommonDynamicModuleLoadingModule,
   ],

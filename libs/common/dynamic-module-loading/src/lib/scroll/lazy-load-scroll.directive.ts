@@ -21,8 +21,12 @@ export class LazyLoadScrollDirective implements OnDestroy {
   private initLoad = false;
   private sub: Subscription;
   private _keys: string[] = [];
+  private _threshold = 400;
 
-  @Input() loadThreshold = 400;
+  @Input()
+  set loadThreshold(t: number | undefined | null) {
+    if (t) this._threshold = t;
+  }
   @Output() loadModule = new EventEmitter<string>();
 
   constructor(
@@ -60,7 +64,7 @@ export class LazyLoadScrollDirective implements OnDestroy {
     if (
       this.initLoad === false &&
       this._keys.length > 0 &&
-      this.pixelsFromBottom(event.target as HTMLElement) < this.loadThreshold
+      this.pixelsFromBottom(event.target as HTMLElement) < this._threshold
     ) {
       const [key] = this._keys;
       this.loadModule.emit(key);

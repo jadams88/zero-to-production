@@ -8,9 +8,10 @@
   >
   in Angulars View Engine it has is not been possible to lazy load entry
   components. This limitation could be worked around by using Web Components and
-  Angular Elements, however with with the introduction of the Ivy Rendering
-  Engine this is no longer needed (entry components have been depreciated).
+  Angular Elements, however with the introduction of the Ivy Rendering Engine
+  this is no longer necessary.
 </p>
+<h4>How to use</h4>
 <p>
   Define a 'registry' of modules to be lazy loaded. The import path follows the
   same convention as when defining a lazy loaded routed module. The Angular
@@ -33,10 +34,8 @@
 <ol>
   <li>Open Developer Tools <b>></b> Networking Tab</li>
   <li>Clear Network History</li>
-  <li>Refresh Browser Window</li>
-  <li>Start Scrolling</li>
+  <li>Scroll the components below</li>
   <li>Note the lazy loading of modules as you scroll</li>
-  <li>Profit!!</li>
 </ol>
 <p>
   For the source code for this example see the
@@ -49,20 +48,14 @@
   <a
     target="_blank"
     rel="noreferrer noopener"
-    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/live-demos/src/lib/lazy-modules.ts"
+    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/lazy-load-scrolling/src/lib/lazy-modules.ts"
     >Module Registry</a
   >,
   <a
     target="_blank"
     rel="noreferrer noopener"
-    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/live-demos/src/lib/example-demos/demo-demos.component.ts"
-    >Scrolling Component (TS)</a
-  >,
-  <a
-    target="_blank"
-    rel="noreferrer noopener"
-    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/demo/live-demos/src/lib/example-demos/demo-demos.component.html"
-    >Scrolling Component (html)</a
+    href="https://github.com/jonathonadams/zero-to-production/blob/master/libs/common/dynamic-module-loading/src/lib/scroll/lazy-viewport.component.ts"
+    >Scrolling Viewport</a
   >
   and the
   <a
@@ -72,4 +65,4 @@
     >Scrolling Directive</a
   >
 </p>
-<ztp-lazy-viewport class="view-port"></ztp-lazy-viewport>
+<ztp-lazy-viewport class="view-port" [loadThreshold]="100"></ztp-lazy-viewport>

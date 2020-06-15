@@ -6,3 +6,4 @@ export { expandFromCenter } from './lib/effects/expand-from-center';
 export { slideAnimation } from './lib/router/slide.animation';
 export { listAnimation } from './lib/lists/list.animations';
 export { routerCardFlipAnimation } from './lib/effects/card-flip.animation';
+export { AnimateScrollEntryDirective } from './lib/scroll/animate-scroll-entry.directive';

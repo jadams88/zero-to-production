@@ -14,7 +14,7 @@ import { moduleLoadingService, moduleProviders } from './scrolling.code';
   styles: [
     `
       .view-port {
-        height: 200px;
+        height: 400px;
       }
     `,
   ],

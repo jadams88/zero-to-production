@@ -4,6 +4,7 @@ import {
   ComponentFactory,
   OnInit,
   Inject,
+  Input,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -19,6 +20,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LazyViewportComponent implements OnInit {
+  @Input() loadThreshold: number;
+
   constructor(
     @Inject(LAZY_MODULES)
     public modules: ILazyModule[],

@@ -2,13 +2,11 @@
   class="container"
   ztpLazyLoadScroll
   (loadModule)="loadModule($event)"
-  [loadThreshold]="100"
+  [loadThreshold]="loadThreshold"
 >
-  <div *ngFor="let lazy of modules; trackBy: trackModule">
-    <ng-container
-      class="module"
-      ztpFactoryRenderer
-      [componentFactory]="selectFactory(lazy.key) | async"
-    ></ng-container>
-  </div>
+  <ng-container
+    *ngFor="let lazy of modules; trackBy: trackModule"
+    ztpFactoryRenderer
+    [componentFactory]="selectFactory(lazy.key) | async"
+  ></ng-container>
 </div>

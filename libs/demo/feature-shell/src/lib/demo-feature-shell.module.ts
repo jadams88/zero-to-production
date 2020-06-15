@@ -4,7 +4,7 @@ import { DemoFeatureShellRoutingModule } from './demo-feature-shell-routing.modu
 import { DemoFeatureShellComponent } from './demo-feature-shell.component';
 import { CommonUiToolbarModule } from '@ztp/common/ui/toolbar';
 import { CommonUiCardModule } from '@ztp/common/ui/card';
-import { AnimateScrollEntryDirective } from '@ztp/demo/utils';
+import { AnimateScrollEntryDirective } from '@ztp/common/animations';
 import { ExampleComponent } from './example/example.component';
 import { DemoDataAccessModule } from '@ztp/demo/data-access';
 import { DemoHomeComponent } from './home/home.component';
