@@ -19,13 +19,13 @@ $ npm i
 - edit/delete `CODE_OF_CONDUCT.md` and `LICENSE.md` files as desired.
 - create you own color theme in `styles/theme.scss`
 
-##### Remove "Examples" Project Files (Optional)
+##### Remove "Demo" Project Files (Optional)
 
-The "Examples" angular app and respective libs are all the files
+The "Demo" angular app and respective libs are all the files
 associated with this demo site at [zero-to-production.dev]
 
 - delete the "demo" applications in `apps/demo/*`
-- delete all libs corresponding to the "Examples" application at `libs/demo/*`
+- delete all libs corresponding to the "Demo" application at `libs/demo/*`
 - delete all projects and libraries in the `angular.json` and `nx.json` that begin with `demo-`. These should be all projects starting from `demo-web`.
 - delete all TypeScript path `@aliases` starting with `@ztp/demo/*` in `tsconfig.json`
 - remove the `scope:demo` entry from the `nx-enforce-module-boundaries` rule in `tslint.json`
