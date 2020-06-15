@@ -14,6 +14,19 @@
       padding: 0 1rem 2rem;
     }
 
+    .select-header {
+      display: inline-block;
+      margin-right: 1rem;
+    }
+
+    .selected-example {
+      width: 15rem;
+    }
+
+    .example-title {
+      margin-top: 0;
+    }
+
     .example-description {
       margin-bottom: 1em;
       p {

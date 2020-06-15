@@ -1,18 +1,33 @@
 <layout-center-page class="container">
   <article class="example">
-    <header *ngIf="example$ | async as example" class="example-description">
-      <h3>{{ example.title }}</h3>
-      <p *ngIf="example.libPath">
-        Library:
-        <a
-          target="_blank"
-          rel="noreferrer noopener"
-          [href]="creteLibUrl(example.libPath)"
+    <header class="example-description">
+      <h5 class="select-header">Select example:</h5>
+      <mat-form-field class="selected-example">
+        <mat-select
+          [value]="(selectedExample$ | async)?.url"
+          (selectionChange)="exampleChanged($event)"
         >
-          {{ example.libPath }}
-        </a>
-      </p>
-      <p>{{ example.description }}</p>
+          <mat-option disabled [value]="undefined">-- --</mat-option>
+          <mat-option *ngFor="let ex of examples$ | async" [value]="ex.url">{{
+            ex.title
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <ng-container *ngIf="selectedExample$ | async as example">
+        <h3 class="example-title">{{ example.title }}</h3>
+        <p *ngIf="example.libPath">
+          Library:
+          <a
+            target="_blank"
+            rel="noreferrer noopener"
+            [href]="creteLibUrl(example.libPath)"
+          >
+            {{ example.libPath }}
+          </a>
+        </p>
+        <p>{{ example.description }}</p>
+      </ng-container>
     </header>
     <aside class="example-demonstration"><router-outlet></router-outlet></aside>
   </article>

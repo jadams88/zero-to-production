@@ -50,7 +50,7 @@ export const examples: IExample[] = [
       'can make your code highly reusable.',
   },
   {
-    url: 'make-it-your-own',
+    url: 'start-your-own',
     title: 'Start Your Own Monorepo',
     summary:
       'Clone, build, deploy! Make this repo the start of your own project.',
