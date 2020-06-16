@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'lazy-component-three',
+  selector: 'ztp-lazy-component-three',
   templateUrl: './lazy-component-three.component.html',
   styles: [
     `
