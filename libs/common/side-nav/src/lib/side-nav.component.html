@@ -24,7 +24,7 @@
         <a
           #navLinks
           [routerLink]="[route.path]"
-          [state]="{ skipLink: 'main-nav-' + route.aria }"
+          [state]="{ trace: 'main-nav-' + route.aria, navLink: 'side-nav' }"
           ztpSkipLink
           [title]="'main-nav-' + route.aria"
           routerLinkActive
@@ -51,7 +51,8 @@
     <main role="main">
       <ztp-router-skip-link
         class="skip-link"
-        [active]="!isOpen"
+        [active]="isOpen"
+        navLink="side-nav"
       ></ztp-router-skip-link>
       <router-outlet #appContent="outlet"></router-outlet>
     </main>

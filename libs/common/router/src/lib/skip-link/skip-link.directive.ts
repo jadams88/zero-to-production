@@ -1,13 +1,13 @@
 import { Directive, Input, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { SkipLinkService } from '../skip-link.service';
+import { SkipLinkService } from './skip-link.service';
 
 @Directive({
   selector: '[ztpSkipLink]',
 })
 export class SkipLinkDirective implements OnInit, OnDestroy {
-  @Input() state: { skipLink: string; [key: string]: any | undefined };
+  @Input() state: { trace: string; [key: string]: any | undefined };
   private sub: Subscription;
 
   constructor(
@@ -17,7 +17,7 @@ export class SkipLinkDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.sub = this.skipLink.setFocus$
-      .pipe(filter((t) => t === this.state.skipLink))
+      .pipe(filter((t) => t === this.state.trace))
       .subscribe(() => {
         this.el.nativeElement.focus();
       });

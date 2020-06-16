@@ -5,7 +5,7 @@
         *ngFor="let route of navRoutes"
         class="nav-button"
         [routerLink]="route.link"
-        [state]="{ skipLink: 'main-nav-' + route.aria }"
+        [state]="{ trace: 'main-nav-' + route.aria, navLink: 'demo-nav' }"
         ztpSkipLink
         [title]="'main-nav-' + route.aria"
         routerLinkActive
