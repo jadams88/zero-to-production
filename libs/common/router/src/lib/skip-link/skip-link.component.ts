@@ -22,7 +22,7 @@ export class RouterSkipLinkComponent implements OnDestroy {
   _nav = false;
   _active = true;
   private sub: Subscription;
-  trace: string = '';
+  trace = '';
 
   @ViewChild('skipLink', { static: true }) skipLink: ElementRef<
     HTMLButtonElement
