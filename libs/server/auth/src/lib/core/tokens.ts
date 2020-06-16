@@ -12,7 +12,7 @@ export function signAccessToken(config: SignAccessToken) {
       config.privateKey,
       {
         algorithm: 'RS256',
-        subject: user.id.toString(),
+        subject: user.id?.toString(),
         expiresIn: config.expireTime,
         issuer: config.issuer,
         keyid: config.keyId,
@@ -31,7 +31,7 @@ export function signRefreshToken(config: SignRefresh) {
       config.privateKey,
       {
         algorithm: 'RS256',
-        subject: user.id.toString(),
+        subject: user.id?.toString(),
         issuer: config.issuer,
         audience: config.audience,
       }

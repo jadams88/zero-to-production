@@ -5,6 +5,7 @@ import { CheckForUpdatesService } from './check-for-updates.service';
 import { ApplicationRef } from '@angular/core';
 import { of } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('CheckForUpdatesService', () => {
   let swService: CheckForUpdatesService;
@@ -25,6 +26,7 @@ describe('CheckForUpdatesService', () => {
         { provide: SwUpdate, useValue: updateSpy },
         { provide: ApplicationRef, useValue: appRefSpy },
         { provide: DOCUMENT, useValue: {} },
+        { provide: MatSnackBar, useValue: {} },
       ],
     });
     swService = TestBed.inject<CheckForUpdatesService>(CheckForUpdatesService);

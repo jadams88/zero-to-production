@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExampleTodosComponent } from './example-todos.component';
-import { RouterModule, Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('ExampleTodosComponent', () => {
@@ -10,9 +10,8 @@ describe('ExampleTodosComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterModule],
+      imports: [RouterTestingModule],
       declarations: [ExampleTodosComponent],
-      providers: [{ provide: Router, useValue: {} }],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
   }));

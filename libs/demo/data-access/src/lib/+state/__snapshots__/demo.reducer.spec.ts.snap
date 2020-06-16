@@ -4,25 +4,24 @@ exports[`ExampleReducer AddExamples should add the demo to the example state 1`]
 Object {
   "examples": Object {
     "entities": Object {
-      "1": Object {
+      "example-1": Object {
         "description": "some full description",
-        "id": "1",
         "summary": "some description",
         "title": "some title",
         "url": "example-1",
       },
-      "2": Object {
+      "example-2": Object {
         "description": "some other full description",
-        "id": "2",
         "summary": "some other description",
         "title": "another title",
         "url": "example-2",
       },
     },
     "ids": Array [
-      "1",
-      "2",
+      "example-1",
+      "example-2",
     ],
+    "selectedExampleUrl": null,
   },
 }
 `;
@@ -32,6 +31,7 @@ Object {
   "examples": Object {
     "entities": Object {},
     "ids": Array [],
+    "selectedExampleUrl": null,
   },
 }
 `;
