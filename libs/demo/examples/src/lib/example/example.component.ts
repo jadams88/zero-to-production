@@ -33,11 +33,15 @@ export class ExampleComponent {
   }
 
   splitUrl(fullUrl: string): string | undefined {
-    const regEx = /(?<=\/examples\/)(?<example>(\w|-)+)/;
-    const url = regEx.exec(fullUrl);
-    if (url && url.groups) {
-      return url.groups.example;
-    }
+    // lookbehind regex is only supported in v8 at this stage
+    // const regEx = /(?<=\/examples\/)(?<example>(\w|-)+)/;
+    // const url = regEx.exec(fullUrl);
+    // if (url && url.groups) {
+    //   return url.groups.example;
+    // }
+
+    const parts = fullUrl.split('/');
+    return parts[2];
   }
 
   creteLibUrl(path: string) {
