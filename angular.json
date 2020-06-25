@@ -39,7 +39,7 @@
               "apps/server/api/tsconfig.app.json",
               "apps/server/api/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/server/api/**"]
+            "exclude": ["**/node_modules/**", "!apps/server/api/**/*"]
           }
         },
         "test": {
@@ -142,7 +142,7 @@
               "apps/server/lambda/tsconfig.app.json",
               "apps/server/lambda/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/server/lambda/**"]
+            "exclude": ["**/node_modules/**", "!apps/server/lambda/**/*"]
           }
         },
         "test": {
@@ -255,7 +255,7 @@
               "apps/todos/todos-web/tsconfig.app.json",
               "apps/todos/todos-web/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/todos/todos-web/**"]
+            "exclude": ["**/node_modules/**", "!apps/todos/todos-web/**/*"]
           }
         },
         "test": {
@@ -291,7 +291,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "apps/todos/todos-web-e2e/tsconfig.e2e.json",
-            "exclude": ["!apps/todos/todos-web-e2e/**"]
+            "exclude": ["!apps/todos/todos-web-e2e/**/*"]
           }
         }
       }
@@ -306,7 +306,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": ["libs/tests/tsconfig.lib.json"],
-            "exclude": ["**/node_modules/**", "!libs/tests/**"]
+            "exclude": ["**/node_modules/**", "!libs/tests/**/*"]
           }
         }
       }
@@ -324,7 +324,7 @@
               "libs/data/tsconfig.lib.json",
               "libs/data/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/data/**"]
+            "exclude": ["**/node_modules/**", "!libs/data/**/*"]
           }
         }
       }
@@ -342,7 +342,7 @@
               "libs/server/auth/tsconfig.lib.json",
               "libs/server/auth/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/server/auth/**"]
+            "exclude": ["**/node_modules/**", "!libs/server/auth/**/*"]
           }
         },
         "test": {
@@ -368,7 +368,7 @@
               "libs/server/middleware/tsconfig.lib.json",
               "libs/server/middleware/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/server/middleware/**"]
+            "exclude": ["**/node_modules/**", "!libs/server/middleware/**/*"]
           }
         },
         "test": {
@@ -394,7 +394,7 @@
               "libs/server/core-data/tsconfig.lib.json",
               "libs/server/core-data/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/server/core-data/**"]
+            "exclude": ["**/node_modules/**", "!libs/server/core-data/**/*"]
           }
         },
         "test": {
@@ -420,7 +420,7 @@
               "libs/server/graphql/tsconfig.lib.json",
               "libs/server/graphql/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/server/graphql/**"]
+            "exclude": ["**/node_modules/**", "!libs/server/graphql/**/*"]
           }
         },
         "test": {
@@ -446,7 +446,7 @@
               "libs/server/utils/tsconfig.lib.json",
               "libs/server/utils/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/server/utils/**"]
+            "exclude": ["**/node_modules/**", "!libs/server/utils/**/*"]
           }
         },
         "test": {
@@ -472,7 +472,7 @@
               "libs/common/data-access/tsconfig.lib.json",
               "libs/common/data-access/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/data-access/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/data-access/**/*"]
           }
         },
         "test": {
@@ -501,7 +501,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/auth/data-access/**"
+              "!libs/common/auth/data-access/**/*"
             ]
           }
         },
@@ -529,7 +529,10 @@
               "libs/common/auth/components/tsconfig.lib.json",
               "libs/common/auth/components/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/auth/components/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/common/auth/components/**/*"
+            ]
           }
         },
         "test": {
@@ -561,7 +564,7 @@
               "libs/common/router/tsconfig.lib.json",
               "libs/common/router/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/router/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/router/**/*"]
           }
         }
       },
@@ -586,7 +589,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/shared/users/data-access/**"
+              "!libs/shared/users/data-access/**/*"
             ]
           }
         },
@@ -614,7 +617,7 @@
               "libs/shared/dashboard/tsconfig.lib.json",
               "libs/shared/dashboard/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/shared/dashboard/**"]
+            "exclude": ["**/node_modules/**", "!libs/shared/dashboard/**/*"]
           }
         },
         "test": {
@@ -648,7 +651,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/dynamic-module-loading/**"
+              "!libs/common/dynamic-module-loading/**/*"
             ]
           }
         },
@@ -683,7 +686,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/utils/notifications/**"
+              "!libs/common/utils/notifications/**/*"
             ]
           }
         },
@@ -716,7 +719,7 @@
               "libs/common/utils/overlay/tsconfig.lib.json",
               "libs/common/utils/overlay/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/utils/overlay/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/utils/overlay/**/*"]
           }
         },
         "test": {
@@ -750,7 +753,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/utils/service-worker/**"
+              "!libs/common/utils/service-worker/**/*"
             ]
           }
         },
@@ -783,7 +786,7 @@
               "libs/common/utils/storage/tsconfig.lib.json",
               "libs/common/utils/storage/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/utils/storage/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/utils/storage/**/*"]
           }
         },
         "test": {
@@ -815,7 +818,7 @@
               "libs/common/utils/theme/tsconfig.lib.json",
               "libs/common/utils/theme/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/utils/theme/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/utils/theme/**/*"]
           }
         },
         "test": {
@@ -845,7 +848,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/utils/media-query/**"
+              "!libs/common/utils/media-query/**/*"
             ]
           }
         },
@@ -878,7 +881,7 @@
               "libs/todos/feature-shell/tsconfig.lib.json",
               "libs/todos/feature-shell/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/todos/feature-shell/**"]
+            "exclude": ["**/node_modules/**", "!libs/todos/feature-shell/**/*"]
           }
         },
         "test": {
@@ -910,7 +913,7 @@
               "libs/todos/data-access/tsconfig.lib.json",
               "libs/todos/data-access/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/todos/data-access/**"]
+            "exclude": ["**/node_modules/**", "!libs/todos/data-access/**/*"]
           }
         },
         "test": {
@@ -938,7 +941,7 @@
               "libs/todos/todo-detail/tsconfig.lib.json",
               "libs/todos/todo-detail/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/todos/todo-detail/**"]
+            "exclude": ["**/node_modules/**", "!libs/todos/todo-detail/**/*"]
           }
         },
         "test": {
@@ -970,7 +973,7 @@
               "libs/todos/all-todos/tsconfig.lib.json",
               "libs/todos/all-todos/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/todos/all-todos/**"]
+            "exclude": ["**/node_modules/**", "!libs/todos/all-todos/**/*"]
           }
         },
         "test": {
@@ -1002,7 +1005,7 @@
               "libs/common/animations/tsconfig.lib.json",
               "libs/common/animations/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/animations/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/animations/**/*"]
           }
         },
         "test": {
@@ -1034,7 +1037,7 @@
               "libs/common/dynamic-form/tsconfig.lib.json",
               "libs/common/dynamic-form/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/dynamic-form/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/dynamic-form/**/*"]
           }
         },
         "test": {
@@ -1068,7 +1071,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/common/dynamic-form-material-components/**"
+              "!libs/common/dynamic-form-material-components/**/*"
             ]
           }
         },
@@ -1101,7 +1104,7 @@
               "libs/common/form-builder/tsconfig.lib.json",
               "libs/common/form-builder/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/form-builder/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/form-builder/**/*"]
           }
         },
         "test": {
@@ -1133,7 +1136,7 @@
               "libs/common/grid/tsconfig.lib.json",
               "libs/common/grid/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/grid/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/grid/**/*"]
           }
         },
         "test": {
@@ -1165,7 +1168,7 @@
               "libs/common/toolbar-menu/tsconfig.lib.json",
               "libs/common/toolbar-menu/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/toolbar-menu/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/toolbar-menu/**/*"]
           }
         },
         "test": {
@@ -1197,7 +1200,7 @@
               "libs/common/ui/layouts/tsconfig.lib.json",
               "libs/common/ui/layouts/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/ui/layouts/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/ui/layouts/**/*"]
           }
         },
         "test": {
@@ -1229,7 +1232,7 @@
               "libs/common/ui/buttons/tsconfig.lib.json",
               "libs/common/ui/buttons/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/ui/buttons/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/ui/buttons/**/*"]
           }
         },
         "test": {
@@ -1261,7 +1264,7 @@
               "libs/common/ui/card/tsconfig.lib.json",
               "libs/common/ui/card/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/ui/card/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/ui/card/**/*"]
           }
         },
         "test": {
@@ -1293,7 +1296,7 @@
               "libs/common/side-nav/tsconfig.lib.json",
               "libs/common/side-nav/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/side-nav/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/side-nav/**/*"]
           }
         },
         "test": {
@@ -1325,7 +1328,7 @@
               "libs/common/ui/toolbar/tsconfig.lib.json",
               "libs/common/ui/toolbar/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/common/ui/toolbar/**"]
+            "exclude": ["**/node_modules/**", "!libs/common/ui/toolbar/**/*"]
           }
         },
         "test": {
@@ -1456,7 +1459,7 @@
               "apps/demo/demo-web/tsconfig.app.json",
               "apps/demo/demo-web/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/demo/demo-web/**"]
+            "exclude": ["**/node_modules/**", "!apps/demo/demo-web/**/*"]
           }
         },
         "test": {
@@ -1657,7 +1660,7 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": ["apps/demo/demo-web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/demo/demo-web-e2e/**"]
+            "exclude": ["**/node_modules/**", "!apps/demo/demo-web-e2e/**/*"]
           }
         }
       }
@@ -1675,7 +1678,7 @@
               "libs/demo/feature-shell/tsconfig.lib.json",
               "libs/demo/feature-shell/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/feature-shell/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/feature-shell/**/*"]
           }
         },
         "test": {
@@ -1707,7 +1710,7 @@
               "libs/demo/data-access/tsconfig.lib.json",
               "libs/demo/data-access/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/data-access/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/data-access/**/*"]
           }
         },
         "test": {
@@ -1739,7 +1742,7 @@
               "libs/demo/form-builder/tsconfig.lib.json",
               "libs/demo/form-builder/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/form-builder/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/form-builder/**/*"]
           }
         },
         "test": {
@@ -1771,7 +1774,7 @@
               "libs/demo/theming/tsconfig.lib.json",
               "libs/demo/theming/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/theming/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/theming/**/*"]
           }
         },
         "test": {
@@ -1803,7 +1806,7 @@
               "libs/demo/utils/tsconfig.lib.json",
               "libs/demo/utils/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/utils/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/utils/**/*"]
           }
         }
       },
@@ -1826,7 +1829,7 @@
               "libs/demo/secure-todos/tsconfig.lib.json",
               "libs/demo/secure-todos/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/secure-todos/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/secure-todos/**/*"]
           }
         },
         "test": {
@@ -1860,7 +1863,7 @@
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/demo/lazy-load-scrolling/**"
+              "!libs/demo/lazy-load-scrolling/**/*"
             ]
           }
         },
@@ -1893,7 +1896,7 @@
               "libs/demo/dynamic-form/tsconfig.lib.json",
               "libs/demo/dynamic-form/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/dynamic-form/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/dynamic-form/**/*"]
           }
         },
         "test": {
@@ -1925,7 +1928,7 @@
               "libs/demo/start-your-own/tsconfig.lib.json",
               "libs/demo/start-your-own/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/start-your-own/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/start-your-own/**/*"]
           }
         },
         "test": {
@@ -1957,7 +1960,7 @@
               "libs/demo/guides/tsconfig.lib.json",
               "libs/demo/guides/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/guides/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/guides/**/*"]
           }
         },
         "test": {
@@ -1989,7 +1992,7 @@
               "libs/demo/examples/tsconfig.lib.json",
               "libs/demo/examples/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/demo/examples/**"]
+            "exclude": ["**/node_modules/**", "!libs/demo/examples/**/*"]
           }
         },
         "test": {
