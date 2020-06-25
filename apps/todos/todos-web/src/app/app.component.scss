@@ -1,4 +1,18 @@
-:host,
+@import 'styles/material-theme.scss';
+@import 'app.theme';
+
+:host {
+  display: block;
+  height: 100%;
+}
 .app {
-  height: inherit;
+  height: 100%;
+
+  // Light theme
+  @include app-theme($app-theme);
+
+  // Dark theme
+  &.dark-theme {
+    @include app-theme($dark-theme);
+  }
 }
