@@ -31,9 +31,9 @@
     "ramda": "^0.27.0"
   },
   "devDependencies": {
-    "@angular/cli": "^9.1.7",
+    "@angular/cli": "^10.0.0",
     "@uqt/ng-node": "^0.0.6",
-    "typescript": "~3.8.3",
+    "typescript": "~3.9.5",
     "@types/mongoose": "^5.7.23"
   }
 }
