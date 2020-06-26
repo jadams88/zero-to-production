@@ -1,14 +1,4 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-// import compose from 'ramda/es/compose';
-// import isEmpty from 'ramda/es/isEmpty';
-// import and from 'ramda/es/and';
-// import allPass from 'ramda/es/allPass';
-// import filter from 'ramda/es/filter';
-import compose from 'ramda/src/compose';
-import isEmpty from 'ramda/src/isEmpty';
-import and from 'ramda/src/and';
-import allPass from 'ramda/src/allPass';
-import filter from 'ramda/src/filter';
 import {
   TodosEntityState,
   adapter,
@@ -16,12 +6,7 @@ import {
   todosFeatureKey,
 } from './todos.reducer';
 import { ITodo } from '@ztp/data';
-import {
-  equalsC,
-  checkTodoCompleteStatusC,
-  todoFilterStatusCheck,
-  isTodoInSearchStringC,
-} from './todos-filter-functions';
+import { isTodoInSearchString, checkStatus } from './todos-filter-functions';
 
 // Select the top level 'todos' state.
 export const selectTodoState = createFeatureSelector<TodosEntityState>(
@@ -65,18 +50,13 @@ export const selectFilteredTodos = createSelector(
   selectTodoFilterStatus,
   selectTodoSearchFilter,
   (todos: ITodo[], status: TodoFilterStatus, searchString: string | null) => {
-    const filterStatusCheck = equalsC(status);
-
-    if (and(filterStatusCheck(TodoFilterStatus.All), isEmpty(searchString))) {
+    if (status === TodoFilterStatus.All && !searchString) {
       return todos;
     } else {
-      const statusCheck = compose(
-        checkTodoCompleteStatusC,
-        todoFilterStatusCheck
-      );
-      return filter(
-        allPass([isTodoInSearchStringC(searchString), statusCheck(status)]),
-        todos
+      const check = checkStatus(status);
+
+      return todos.filter(
+        (t) => isTodoInSearchString(searchString, t) && check(t)
       );
     }
   }

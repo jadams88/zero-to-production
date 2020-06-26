@@ -1,28 +1,26 @@
-import curryN from 'ramda/src/curryN';
-import equals from 'ramda/src/equals';
-import or from 'ramda/src/or';
-import toLower from 'ramda/src/toLower';
-
 import { ITodo } from '@ztp/data';
 import { TodoFilterStatus } from './todos.reducer';
 
-function checkTodoCompleteStatus(completeStatus: boolean, todo: ITodo) {
-  return equals(completeStatus, todo.completed);
+export function isTodoInSearchString(
+  searchString: string | null,
+  todo: ITodo
+): boolean {
+  if (searchString === null) {
+    return true;
+  } else {
+    if (todo.title === '' || todo.description === '') {
+      return false;
+    } else {
+      const s = searchString.toLowerCase();
+      return (
+        todo.title.toLowerCase().includes(s) ||
+        todo.description.toLowerCase().includes(s)
+      );
+    }
+  }
 }
 
-export const checkTodoCompleteStatusC = curryN(2, checkTodoCompleteStatus);
-
-export const equalsC = curryN(2, equals);
-
-function isTodoInSearchString(searchString: string, todo: ITodo): boolean {
-  return or(
-    toLower(todo.title).includes(searchString),
-    toLower(todo.description).includes(searchString)
-  );
-}
-
-export const isTodoInSearchStringC = curryN(2, isTodoInSearchString);
-
-export function todoFilterStatusCheck(filterStatus: TodoFilterStatus) {
-  return filterStatus === TodoFilterStatus.Completed;
+export function checkStatus(status: TodoFilterStatus) {
+  const r = status === TodoFilterStatus.Completed;
+  return (t: ITodo) => t.completed === r;
 }
