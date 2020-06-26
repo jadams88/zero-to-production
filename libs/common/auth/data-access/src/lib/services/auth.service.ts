@@ -1,6 +1,4 @@
 import { Injectable, InjectionToken, Inject, PLATFORM_ID } from '@angular/core';
-// @ts-ignore
-import jwtDecode from 'jwt-decode';
 import gql from 'graphql-tag';
 import { Apollo } from 'apollo-angular';
 import { IUser } from '@ztp/data';
@@ -13,6 +11,30 @@ import {
 import { secondsToExpiresAtMillis } from '../utils';
 import { AuthFacade } from '../+state/auth.facade';
 import { isPlatformBrowser } from '@angular/common';
+
+function jwtDecode<T>(token: string | null | undefined): T | any {
+  if (token) {
+    try {
+      // second index is the body
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join('')
+      );
+
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      // ignore
+    }
+  } else {
+    return null;
+  }
+}
 
 export const AUTH_SERVER_URL = new InjectionToken<string>(
   'forRoot() Auth Server Url'
