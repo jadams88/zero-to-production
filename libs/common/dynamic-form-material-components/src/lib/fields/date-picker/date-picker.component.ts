@@ -16,6 +16,10 @@ import { Subscription } from 'rxjs';
 import { debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
 import format from 'date-fns/format';
 import { FormGroupTypes, IDatePickerField } from '@ztp/common/dynamic-form';
+import {
+  MAT_SINGLE_DATE_SELECTION_MODEL_PROVIDER,
+  MAT_DATE_RANGE_SELECTION_STRATEGY,
+} from '@angular/material/datepicker';
 
 function isValidDate(date: Date): Boolean {
   return date instanceof Date && !isNaN(date as any);
@@ -87,6 +91,10 @@ export class MyDateAdapter extends NativeDateAdapter {
   providers: [
     { provide: DateAdapter, useClass: MyDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS },
+    {
+      provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
+      useValue: MAT_SINGLE_DATE_SELECTION_MODEL_PROVIDER,
+    },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
