@@ -11,7 +11,7 @@ import {
 import { IUser } from '@ztp/data';
 import { AuthFacade } from '../+state/auth.facade';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Apollo } from 'apollo-angular';
+import { GraphQLService } from '@ztp/common/data-access';
 
 describe('AuthService', () => {
   const storageKey = 'access_token';

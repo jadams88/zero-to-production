@@ -9,11 +9,11 @@ import {
   UPDATE_TODO_QUERY,
   REMOVE_TODO_QUERY,
 } from './todos.queries';
-import { Apollo } from 'apollo-angular';
+import { GraphQLService } from '@ztp/common/data-access';
 
 describe('TodoService', () => {
   let service: TodosService;
-  let apollo: Apollo;
+  let graphQl: GraphQLService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -1,17 +1,18 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
-import { createApollo, GRAPHQL_URL } from './graphql/createApollo';
-import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
+// import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
+// import { createApollo, GRAPHQL_URL } from './graphql/createApollo';
+// import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
 import { ApiService, API_BASE_URL } from './api/api.service';
 import { HttpClientModule } from '@angular/common/http';
+import { GraphQLService, GRAPHQL_URL } from './graphql/graphql-service';
+
 // import {
 //   WEBSOCKET_URL,
 //   SOCKET_IO_NAMESPACE
 // } from './websockets/websocket.service';
 
 @NgModule({
-  imports: [HttpClientModule, ApolloModule, HttpLinkModule],
-  exports: [HttpClientModule, ApolloModule, HttpLinkModule],
+  imports: [HttpClientModule],
 })
 export class CommonDataAccessModule {
   static forRoot({
@@ -24,11 +25,12 @@ export class CommonDataAccessModule {
       ngModule: CommonDataAccessModule,
       providers: [
         ApiService,
-        {
-          provide: APOLLO_OPTIONS,
-          useFactory: createApollo,
-          deps: [HttpLink, GRAPHQL_URL],
-        },
+        GraphQLService,
+        // {
+        //   provide: APOLLO_OPTIONS,
+        //   useFactory: createApollo,
+        //   deps: [HttpLink, GRAPHQL_URL],
+        // },
         {
           provide: GRAPHQL_URL,
           useValue: graphQLUrl,

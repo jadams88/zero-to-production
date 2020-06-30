@@ -1,6 +1,6 @@
 import { Injectable, InjectionToken, Inject, PLATFORM_ID } from '@angular/core';
 import gql from 'graphql-tag';
-import { Apollo } from 'apollo-angular';
+import { GraphQLService } from '@ztp/common/data-access';
 import { IUser } from '@ztp/data';
 import {
   ILoginCredentials,
@@ -47,7 +47,7 @@ export class AuthService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private apollo: Apollo,
+    private graphQl: GraphQLService,
     private facade: AuthFacade
   ) {}
 
@@ -62,7 +62,7 @@ export class AuthService {
         }
       }
     `;
-    return this.apollo.mutate<{ login: ILoginResponse }>({
+    return this.graphQl.mutate<{ login: ILoginResponse }>({
       mutation,
       variables: credentials,
     });
@@ -76,7 +76,7 @@ export class AuthService {
         }
       }
     `;
-    return this.apollo.mutate<{ register: IUser }>({
+    return this.graphQl.mutate<{ register: IUser }>({
       mutation,
       variables: {
         input: details,
@@ -97,7 +97,7 @@ export class AuthService {
       }
     `;
 
-    return this.apollo.query<{ User: IUser }>({ query, variables: { id } });
+    return this.graphQl.query<{ User: IUser }>({ query, variables: { id } });
   }
 
   public isUserAvailable(username: string) {
@@ -109,7 +109,7 @@ export class AuthService {
       }
     `;
 
-    return this.apollo.query<{ userAvailable: { isAvailable: boolean } }>({
+    return this.graphQl.query<{ userAvailable: { isAvailable: boolean } }>({
       query,
       variables: { username },
     });

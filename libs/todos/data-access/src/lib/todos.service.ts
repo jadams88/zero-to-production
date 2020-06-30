@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Apollo } from 'apollo-angular';
+// import { GraphQLService } from '@ztp/common/data-access';
 import { FetchResult } from 'apollo-link';
 import { ITodo, ITodoNote } from '@ztp/data';
-import { ApolloUtilsService } from '@ztp/common/data-access';
+import { ApolloUtilsService, GraphQLService } from '@ztp/common/data-access';
 import {
   ALL_TODOS_QUERY,
   LOAD_TODO_QUERY,
@@ -18,14 +18,19 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class TodosService {
-  constructor(private apollo: Apollo, private utils: ApolloUtilsService) {}
+  constructor(
+    private graphQL: GraphQLService,
+    private utils: ApolloUtilsService
+  ) {}
 
   public getAllTodos(): Observable<FetchResult<{ allTodos: ITodo[] }>> {
-    return this.apollo.query<{ allTodos: ITodo[] }>({ query: ALL_TODOS_QUERY });
+    return this.graphQL.query<{ allTodos: ITodo[] }>({
+      query: ALL_TODOS_QUERY,
+    });
   }
 
   public getOneTodo(id: string): Observable<FetchResult<{ Todo: ITodo }>> {
-    return this.apollo.query<{ Todo: ITodo }>({
+    return this.graphQL.query<{ Todo: ITodo }>({
       query: LOAD_TODO_QUERY,
       variables: { id },
     });
@@ -37,7 +42,7 @@ export class TodosService {
     const variables = { input: todoToSave };
 
     // Add the new Todo to the Apollo Cache 'allTodos' after create
-    return this.apollo.mutate<{ newTodo: ITodo }>({
+    return this.graphQL.mutate<{ newTodo: ITodo }>({
       mutation: CREATE_TODO_QUERY,
       variables,
       update: this.utils.addToQueryCache(
@@ -53,7 +58,7 @@ export class TodosService {
   ): Observable<FetchResult<{ updateTodo: ITodo }>> {
     const variables = { input: updatedTodo };
 
-    return this.apollo.mutate<{ updateTodo: ITodo }>({
+    return this.graphQL.mutate<{ updateTodo: ITodo }>({
       mutation: UPDATE_TODO_QUERY,
       variables,
     });
@@ -65,7 +70,7 @@ export class TodosService {
     const variables = { id };
 
     // Remove the todo from the apollo cache
-    return this.apollo.mutate<{ removeTodo: { id: string } }>({
+    return this.graphQL.mutate<{ removeTodo: { id: string } }>({
       mutation: REMOVE_TODO_QUERY,
       variables,
       update: this.utils.removeFromQueryCache(
@@ -77,12 +82,12 @@ export class TodosService {
   }
 
   public allTodoNotesQueryRef(todoId: string): Observable<ITodoNote[]> {
-    return this.apollo
-      .watchQuery<{ allTodoNotes: ITodoNote[] }>({
+    return this.graphQL
+      .query<{ allTodoNotes: ITodoNote[] }>({
         query: ALL_TODO_NOTES,
         variables: { todoId },
       })
-      .valueChanges.pipe(map((result) => result.data.allTodoNotes));
+      .pipe(map((result) => (result.data ? result.data.allTodoNotes : [])));
   }
 
   public createTodoNote(
@@ -96,7 +101,7 @@ export class TodosService {
       },
     };
     // Add the new Todo to the Apollo Cache 'allTodos' after create
-    return this.apollo.mutate<{ newTodoNote: ITodoNote }>({
+    return this.graphQL.mutate<{ newTodoNote: ITodoNote }>({
       mutation: NEW_TODO_NOTE,
       variables,
       update: this.utils.addToQueryCache(
@@ -115,7 +120,7 @@ export class TodosService {
   ): Observable<FetchResult<{ removeTodoNote: ITodoNote }>> {
     const variables = { id };
     // Add the new Todo to the Apollo Cache 'allTodos' after create
-    return this.apollo.mutate<{ removeTodoNote: ITodoNote }>({
+    return this.graphQL.mutate<{ removeTodoNote: ITodoNote }>({
       mutation: DELETE_TODO_NOTE,
       variables,
       update: this.utils.removeFromQueryCache(

@@ -8,14 +8,14 @@ import { AppEffects } from './app.effects';
 import { NotificationService } from '@ztp/common/utils/notifications';
 import { Router } from '@angular/router';
 import { AuthActions } from '@ztp/common/auth/data-access';
-import { Apollo } from 'apollo-angular';
+import { GraphQLService } from '@ztp/common/data-access';
 
 describe('AppEffects', () => {
   let effects: AppEffects;
   let actions$: Observable<any>;
   let router: Router;
   let ns: NotificationService;
-  let apollo: Apollo;
+  let graphQl: GraphQLService;
   const nsSpy = createSpyObj('NotificationService', ['emit']);
   const apolloSpy = {
     getClient: () => ({
