@@ -36,12 +36,6 @@ export default class ApiServer {
      */
     setupGlobalMiddleware(app);
 
-    app.use(async (ctx, next) => {
-      console.log((ctx.request as any).body);
-      console.log(ctx.method);
-      await next();
-    });
-
     /**
      * Apply the REST & GraphQL endpoints
      */

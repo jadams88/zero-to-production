@@ -9,15 +9,6 @@ import {
   Observable as ZenObservable,
 } from '@apollo/client/core';
 
-@Injectable({ providedIn: 'root' })
-export class GraphQLAngular {
-  constructor(private http: HttpClient) {}
-
-  create(opts: { uri: string }) {
-    return new AngularLink(opts, this.http);
-  }
-}
-
 export class AngularLink extends ApolloLink {
   opts: { uri: string };
   constructor(opts: { uri: string }, private httpClient: HttpClient) {
