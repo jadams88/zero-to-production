@@ -1,5 +1,5 @@
 import { Injectable, InjectionToken, Inject, PLATFORM_ID } from '@angular/core';
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client/core';
 import { GraphQLService } from '@ztp/common/data-access';
 import { IUser } from '@ztp/data';
 import {
