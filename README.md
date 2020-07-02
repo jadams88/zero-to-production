@@ -4,8 +4,7 @@
 
 A full stack Monorepo starter with Angular, NgRx, Koa.js, GraphQL & Kubernetes.
 
-by Jonathon Adams  
-Email: [jono.adams22@gmail.com](mailto:jono.adams22@gmail.com?subject=Zero%20to%20Production)
+by Jonathon Adams
 
 <img src="./meta/main.png"  alt="main page" title="Main" width="600" style="text-align:center" /><br/>
 <img src="./meta/examples.png"  alt="examples page" title="Examples" width="400" />
