@@ -1,0 +1,5 @@
+{
+  "name": "todos-web",
+  "private": true,
+  "sideEffects": false
+}

@@ -9,5 +9,6 @@
     "firebase-functions": "^3.7.0",
     "firebase-admin": "^8.12.1"
   },
-  "private": true
+  "private": true,
+  "sideEffects": false
 }

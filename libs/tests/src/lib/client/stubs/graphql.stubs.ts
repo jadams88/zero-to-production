@@ -1,10 +1,10 @@
 import { Observable, of } from 'rxjs';
-import { ApolloQueryResult } from 'apollo-client';
+import { ApolloQueryResult } from '@apollo/client';
 import { FetchResult } from 'apollo-link';
 import { GraphQLError } from 'graphql';
 
 // The network status is an enum with 7 all ok.
-// https://github.com/apollographql/apollo-client/blob/master/packages/apollo-client/src/core/networkStatus.ts
+// https://github.com/apollographql/@apollo/client/blob/master/packages/@apollo/client/src/core/networkStatus.ts
 
 export class GraphQLStub {
   private expectedResponse: ApolloQueryResult<any> | undefined;
@@ -13,7 +13,6 @@ export class GraphQLStub {
     this.expectedResponse = {
       data,
       loading: false,
-      stale: false,
       networkStatus: 7,
     };
   }
@@ -23,7 +22,6 @@ export class GraphQLStub {
       data: null,
       errors,
       loading: false,
-      stale: false,
       networkStatus: 7,
     };
   }

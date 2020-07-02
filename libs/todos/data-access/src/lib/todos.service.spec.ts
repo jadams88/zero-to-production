@@ -21,7 +21,7 @@ describe('TodoService', () => {
       providers: [
         TodosService,
         {
-          provide: Apollo,
+          provide: GraphQLService,
           useValue: {
             query: jest.fn(),
             mutate: jest.fn(),
@@ -31,7 +31,7 @@ describe('TodoService', () => {
     });
 
     service = TestBed.inject<TodosService>(TodosService);
-    apollo = TestBed.inject<Apollo>(Apollo);
+    graphQl = TestBed.inject(GraphQLService);
   });
 
   it('should be created', () => {
@@ -40,7 +40,7 @@ describe('TodoService', () => {
 
   describe('getAllTodos', () => {
     it('should call the GraphQL service with the allTodos query', () => {
-      const spy = jest.spyOn(apollo, 'query');
+      const spy = jest.spyOn(graphQl, 'query');
 
       service.getAllTodos();
 
@@ -53,7 +53,7 @@ describe('TodoService', () => {
 
   describe('getOneTodo', () => {
     it('should call the GraphQL service with the loadTodo query with the todo id', () => {
-      const spy = jest.spyOn(apollo, 'query');
+      const spy = jest.spyOn(graphQl, 'query');
 
       service.getOneTodo('1');
 
@@ -69,7 +69,7 @@ describe('TodoService', () => {
 
   describe('createTodo', () => {
     it('should call the GraphQL service with the newTodo mutation with the todo', () => {
-      const spy = jest.spyOn(apollo, 'mutate');
+      const spy = jest.spyOn(graphQl, 'mutate');
 
       const originalTodo: ITodo = {
         userId: '1',
@@ -97,7 +97,7 @@ describe('TodoService', () => {
 
   describe('updateTodo', () => {
     it('should call the GraphQL service with the updateTodo mutation with the updated todo', () => {
-      const spy = jest.spyOn(apollo, 'mutate');
+      const spy = jest.spyOn(graphQl, 'mutate');
 
       const updatedTodo: ITodo = {
         id: '1',
@@ -125,7 +125,7 @@ describe('TodoService', () => {
 
   describe('deleteTodo', () => {
     it('should call the GraphQL service with the removeTodo mutation with the todo id to remove', () => {
-      const spy = jest.spyOn(apollo, 'mutate');
+      const spy = jest.spyOn(graphQl, 'mutate');
 
       const todo: ITodo = {
         id: '1',
