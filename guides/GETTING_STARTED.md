@@ -18,6 +18,7 @@ $ npm i
 - change the application prefix by doing a `search and replace` for **ztp** and replace with your desired app prefix.
 - edit/delete `CODE_OF_CONDUCT.md` and `LICENSE.md` files as desired.
 - create you own color theme in `styles/theme.scss`
+- delete the `/meta` directory.
 
 ##### Remove "Demo" Project Files (Optional)
 
