@@ -1,13 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import { print } from 'graphql';
 import {
   Operation,
   NextLink,
   FetchResult,
   ApolloLink,
-  Observable as ZenObservable,
+  Observable,
 } from '@apollo/client/core';
+
+// https://www.apollographql.com/blog/creating-a-data-component-with-apollo-link-f0719d8193ee
+// https://www.apollographql.com/blog/apollo-link-the-modular-graphql-network-stack-3b6d5fcf9244
+// https://www.apollographql.com/blog/apollo-link-creating-your-custom-graphql-client-c865be0ce059
+// https://www.apollographql.com/docs/link/
+
+// Note that zen-observable (used by apollo client) and rxjs Observable (used by angular/httpClient)
+// are not compatible, simply wrap the httpClient request call inside a zen observable.
+// This is a simple link to delegate all calls to HttpClient. That way all interceptor are called.
+// extend as necessary
 
 export class AngularLink extends ApolloLink {
   opts: { uri: string };
@@ -17,7 +26,7 @@ export class AngularLink extends ApolloLink {
   }
 
   request(op: Operation, forward?: NextLink) {
-    return new ZenObservable<FetchResult>((observer) => {
+    return new Observable<FetchResult>((observer) => {
       const body = {
         operationName: op.operationName,
         variables: op.variables,
@@ -43,9 +52,7 @@ export class AngularLink extends ApolloLink {
         });
 
       return () => {
-        if (!sub.closed) {
-          sub.unsubscribe();
-        }
+        if (!sub.closed) sub.unsubscribe();
       };
     });
   }

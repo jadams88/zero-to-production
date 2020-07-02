@@ -1,6 +1,5 @@
 import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
 import {
-  HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
   ApolloLink,
@@ -12,7 +11,7 @@ import {
   FetchResult,
   TypePolicies,
 } from '@apollo/client/core';
-import { Observable, from, observable, Subscriber } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { AngularLink } from './angular-link';
 import { HttpClient } from '@angular/common/http';
 
@@ -66,10 +65,11 @@ export class GraphQLService {
   }
 
   watchQuery<T>(opts: WatchQueryOptions): Observable<FetchResult<T>> {
-    const obsQuery = this.client.watchQuery<T>(opts);
+    const watchQ = this.client.watchQuery<T>(opts);
 
+    // wrap the watchQuery result in an rxjs observable
     return new Observable<FetchResult<T>>((observer) => {
-      const sub = obsQuery.subscribe({
+      const sub = watchQ.subscribe({
         next: (query) => observer.next(query),
         error: (e) => observer.error(e),
         complete: () => observer.complete(),
