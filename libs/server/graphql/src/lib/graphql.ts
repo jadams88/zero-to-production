@@ -49,6 +49,10 @@ export function createApollo({
 }) {
   const schema = mergeSchemas({ schemas });
   return new ApolloServer({
+    formatError: (e) => {
+      console.log(e);
+      return e;
+    },
     schema,
     // https://www.apollographql.com/docs/apollo-server/data/subscriptions/
     context: async ({ ctx, connection }: { ctx: Context; connection: any }) => {

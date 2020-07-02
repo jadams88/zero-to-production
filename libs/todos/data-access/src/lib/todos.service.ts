@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-// import { GraphQLService } from '@ztp/common/data-access';
 import { FetchResult } from 'apollo-link';
 import { ITodo, ITodoNote } from '@ztp/data';
 import { ApolloUtilsService, GraphQLService } from '@ztp/common/data-access';
@@ -83,7 +82,7 @@ export class TodosService {
 
   public allTodoNotesQueryRef(todoId: string): Observable<ITodoNote[]> {
     return this.graphQL
-      .query<{ allTodoNotes: ITodoNote[] }>({
+      .watchQuery<{ allTodoNotes: ITodoNote[] }>({
         query: ALL_TODO_NOTES,
         variables: { todoId },
       })

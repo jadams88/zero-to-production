@@ -12,7 +12,9 @@ import {
   FetchResult,
   ApolloQueryResult,
 } from '@apollo/client/core';
-import { Observable, from, observable } from 'rxjs';
+import { Observable, from, observable, Subscriber } from 'rxjs';
+import { GraphQLAngular } from './apollo-link';
+import { HttpClient } from '@angular/common/http';
 
 export const GRAPHQL_URL = new InjectionToken<string>('GraphQLUrl');
 
@@ -20,12 +22,15 @@ export const GRAPHQL_URL = new InjectionToken<string>('GraphQLUrl');
 export class GraphQLService {
   private client: ApolloClient<NormalizedCacheObject>;
 
-  constructor(@Inject(GRAPHQL_URL) uri: string) {
+  constructor(
+    private httpClient: HttpClient,
+    @Inject(GRAPHQL_URL) uri: string
+  ) {
     const cache = new InMemoryCache({
       addTypename: true,
     });
 
-    const http = new HttpLink({ uri });
+    const http = new GraphQLAngular(this.httpClient).create({ uri });
 
     const removeTypenameMiddleware = new ApolloLink((operation, forward) => {
       if (operation.variables) {
@@ -53,10 +58,20 @@ export class GraphQLService {
     return from(this.client.mutate(opts)) as Observable<FetchResult<T>>;
   }
 
-  watchQuery<T>(opts: WatchQueryOptions) {
-    const queryRef = this.client.watchQuery<T>(opts);
-    (queryRef as any)[observable] = () => queryRef;
-    return from(queryRef as any) as Observable<ApolloQueryResult<T>>;
+  watchQuery<T>(opts: WatchQueryOptions): Observable<FetchResult<T>> {
+    const obsQuery = this.client.watchQuery<T>(opts);
+
+    return new Observable<FetchResult<T>>((observer) => {
+      const sub = obsQuery.subscribe({
+        next: (query) => observer.next(query),
+        error: (e) => observer.error(e),
+        complete: () => observer.complete(),
+      });
+
+      return () => {
+        if (!sub.closed) sub.unsubscribe();
+      };
+    });
   }
 }
 
