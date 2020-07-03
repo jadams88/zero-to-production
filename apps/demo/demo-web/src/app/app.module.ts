@@ -17,7 +17,7 @@ import {
   AuthService,
 } from '@ztp/common/auth/data-access';
 import { SharedUsersDataAccessModule } from '@ztp/shared/users/data-access';
-import { StoreRouterConnectingModule, RouterState } from '@ngrx/router-store';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AppEffects } from './+state/app.effects';
 import { AppState, appReducerMap } from './+state/app.state';
 import { DemoFeatureShellModule } from '@ztp/demo/feature-shell';
