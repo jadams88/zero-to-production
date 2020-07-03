@@ -25,7 +25,6 @@ export default function (schema: FireBaseFunctionsSchema): Rule {
     addProjectToNxJson(schema.clientProject),
     updateOutputPathsAndBaserHref(schema.clientProject),
     addTestFirebaseConfiguration(schema.clientProject, schema.firebaseProject),
-    addFirebaseTarget(schema.clientProject),
   ]);
 }
 
@@ -190,9 +189,6 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
           options: {
             targets: [
               {
-                target: `${name}:build:functions`,
-              },
-              {
                 target: `${name}:server`,
               },
               {
@@ -204,13 +200,10 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
             production: {
               targets: [
                 {
-                  target: `${name}:build:functions, production`,
-                },
-                {
                   target: `${name}:server:production`,
                 },
                 {
-                  target: `${projectName}:build`,
+                  target: `${projectName}:build-functions`,
                 },
               ],
             },
@@ -272,36 +265,6 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
     };
 
     angularJson.projects[projectName] = project;
-    host.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
-  };
-}
-
-function addFirebaseTarget(name: string): Rule {
-  return (host: Tree) => {
-    const buildAll = {
-      builder: '@angular-devkit/architect:concat',
-      options: {
-        targets: [
-          { target: `${name}:build:functions` },
-          { target: `${name}:server` },
-          { target: `${name}-functions:build` },
-        ],
-      },
-      configurations: {
-        production: {
-          targets: [
-            { target: `${name}:build:production,production` },
-            { target: `${name}:server:production` },
-            { target: `${name}-functions:build` },
-          ],
-        },
-      },
-    };
-
-    const angularJson = JSON.parse(
-      (host.read('angular.json') as Buffer).toString()
-    );
-    angularJson.projects[`${name}-functions`].architect['build-all'] = buildAll;
     host.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
   };
 }
