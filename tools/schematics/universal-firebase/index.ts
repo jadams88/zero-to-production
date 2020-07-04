@@ -189,6 +189,9 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
           options: {
             targets: [
               {
+                target: `${name}:build:functions`,
+              },
+              {
                 target: `${name}:server`,
               },
               {
@@ -199,6 +202,9 @@ function addProjectToAngularJson(name: string, firebaseProject: string): Rule {
           configurations: {
             production: {
               targets: [
+                {
+                  target: `${name}:build:functions, production`,
+                },
                 {
                   target: `${name}:server:production`,
                 },

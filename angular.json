@@ -1536,6 +1536,9 @@
           "options": {
             "targets": [
               {
+                "target": "demo-web:build:functions"
+              },
+              {
                 "target": "demo-web:server"
               },
               {
@@ -1546,6 +1549,9 @@
           "configurations": {
             "production": {
               "targets": [
+                {
+                  "target": "demo-web:build:functions,production"
+                },
                 {
                   "target": "demo-web:server:production"
                 },
