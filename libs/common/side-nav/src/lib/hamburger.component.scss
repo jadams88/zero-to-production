@@ -13,19 +13,22 @@
 // all credit goes to
 // https://jonsuh.com/hamburgers/
 
-$hamburger-layer-width: 22px !default; // initial 40px
-$hamburger-layer-height: 2px !default;
-$hamburger-layer-spacing: 4px !default; // initial 6px
-$hamburger-layer-border-radius: 4px !default;
+$hamburger-layer-width: 1.25em !default; // initial 40px
+$hamburger-layer-height: 0.125em !default;
+$hamburger-layer-spacing: 0.25em !default; // initial 6px
+$hamburger-layer-border-radius: 0.25em !default;
 $hamburger-hover-opacity: 0.7 !default;
 
 .hamburger {
+  border: 0;
+  margin: 0;
+  padding: 0;
   --color: white;
   // additional styling for mini-fab
   background-color: var(--light-accent-color); // TODO theme
   overflow: hidden;
-  height: 40px;
-  width: 40px;
+  height: 2.5em;
+  width: 2.5em;
   border-radius: 50%;
 
   // styling for the burger
@@ -40,8 +43,6 @@ $hamburger-hover-opacity: 0.7 !default;
   font: inherit;
   color: inherit;
   text-transform: none;
-  border: 0;
-  margin: 0;
 
   &:hover {
     opacity: $hamburger-hover-opacity;
@@ -73,6 +74,8 @@ $hamburger-hover-opacity: 0.7 !default;
   display: block;
 
   top: 50%;
+  margin: 0 auto;
+  padding: 0;
   margin-top: $hamburger-layer-height / -2;
 
   &,

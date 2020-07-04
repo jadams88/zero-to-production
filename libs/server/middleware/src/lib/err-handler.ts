@@ -10,7 +10,6 @@ export const errorHandler: Middleware = async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    console.log(err);
     const errPayload = handleError(err);
     ctx.status = errPayload.status;
     ctx.body = errPayload.body;
