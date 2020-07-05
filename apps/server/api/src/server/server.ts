@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import Koa from 'koa';
 import Router from '@koa/router';
+import { notImplemented, methodNotAllowed } from '@hapi/boom';
 import { setupGlobalMiddleware } from '@ztp/server/middleware';
 import { apolloServer, applyGraphQLEndpoint } from './graphql';
 import { applyApiAuthRoutes } from './auth/auth';
@@ -61,7 +62,13 @@ export default class ApiServer {
      * Apply the routes
      */
     app.use(router.routes());
-    app.use(router.allowedMethods());
+    app.use(
+      router.allowedMethods({
+        throw: true,
+        notImplemented,
+        methodNotAllowed,
+      })
+    );
 
     const server = createServer(app.callback());
 

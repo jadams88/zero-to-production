@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import Router from '@koa/router';
+import { notImplemented, methodNotAllowed } from '@hapi/boom';
 import { Connection } from 'mongoose';
 import { applyRestEndpoints } from './rest';
 import { applyGraphQLEndpoint } from './graphql';
@@ -31,7 +32,13 @@ export default class LambdaServer {
      * Apply the routes
      */
     app.use(router.routes());
-    app.use(router.allowedMethods());
+    app.use(
+      router.allowedMethods({
+        throw: true,
+        notImplemented,
+        methodNotAllowed,
+      })
+    );
 
     return app;
   }
