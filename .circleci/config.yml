@@ -110,7 +110,7 @@ jobs:
             then
               echo "Server Lambda affected. Deploying new version";
               npx ng run server-lambda:build:production,ci;
-              npx nx run server-lambda:serverless-deploy;
+              npx nx run server-lambda:serverless-deploy:ci;
             else
               echo "Server Lambda was not affected";
             fi

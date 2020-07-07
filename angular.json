@@ -103,12 +103,13 @@
         "serverless-deploy": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              {
-                "command": "serverless deploy --env production"
-              }
-            ],
+            "command": "serverless deploy --env production",
             "cwd": "apps/server/lambda"
+          },
+          "configurations": {
+            "ci": {
+              "command": "serverless deploy --config serverless.ci.yml"
+            }
           }
         },
         "deploy": {

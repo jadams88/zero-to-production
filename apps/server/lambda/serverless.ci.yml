@@ -1,0 +1,30 @@
+service: zero-to-production
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+
+package:
+  exclude:
+    - node_modules/**
+    - src/**
+    - '**.json'
+    - '**.yml'
+    - jest.config.js
+    - '.**'
+    - 'dist/**.map'
+  include:
+    - dist/**
+
+functions:
+  api:
+    # For production, path is relative to project directory
+    handler: dist/main.handler
+    events:
+      - http:
+          path: / # this matches the base path
+          method: ANY
+      - http:
+          path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
+          method: ANY
