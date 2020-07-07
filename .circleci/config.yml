@@ -33,10 +33,10 @@ deps-cache: &deps-cache
     paths:
       - ./node_modules
 
-master-only: &master-only
+release-only: &release-only
   filters:
     branches:
-      only: master
+      only: release
 
 ignore-master: &ignore-master
   filters:
@@ -76,13 +76,13 @@ jobs:
       - <<: *deps-restore
       - run:
           name: Testing Affected Packages
-          command: npx nx affected --target=test --base=master~1 --head=master
+          command: npx nx affected --target=test --base=release~1 --head=release
       - run:
           name: Linting Affected Packages
-          command: npx nx affected --target=lint --base=master~1 --head=master
+          command: npx nx affected --target=lint --base=release~1 --head=release
       - run:
           name: Building Affected Applications
-          command: npx nx affected --target=build --base=master~1 --head=master --parallel=false --configuration=ci
+          command: npx nx affected --target=build --base=release~1 --head=release --parallel=false --configuration=ci
 
   # Run semantic release to create a new semver release and publish to github
   release:
@@ -147,21 +147,21 @@ workflows:
   release-and-deploy:
     jobs:
       - checkout-and-install:
-          <<: *master-only
+          <<: *release-only
       - build-and-test-latest:
-          <<: *master-only
+          <<: *release-only
           requires:
             - checkout-and-install
       - release:
-          <<: *master-only
+          <<: *release-only
           requires:
             - build-and-test-latest
       - server-lambda-deploy:
           context: aws
-          <<: *master-only
+          <<: *release-only
           requires:
             - release
       - demo-web-functions-deploy:
-          <<: *master-only
+          <<: *release-only
           requires:
             - release
