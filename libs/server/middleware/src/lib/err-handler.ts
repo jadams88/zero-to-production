@@ -1,5 +1,5 @@
-import Boom from '@hapi/boom';
-import { Middleware, ParameterizedContext } from 'koa';
+import { badRequest, badImplementation } from '@hapi/boom';
+import { Middleware } from 'koa';
 
 /**
  * Builds a custom error and logs it to the console.
@@ -25,7 +25,7 @@ function handleError(err: any): { status: number; body: any } {
     };
   } else if ((err as Error).name === 'ValidationError') {
     // It is a a mongoose validation error
-    const error = Boom.badRequest(err.message);
+    const error = badRequest(err.message);
     return {
       status: error.output.statusCode,
       body: error.output.payload,
@@ -41,14 +41,14 @@ function handleError(err: any): { status: number; body: any } {
     const index = /(?<=index: )(?<field>\w+)(?=_)/.exec(err.errmsg);
     if (index && index.groups) {
       const errorMessage = `${index.groups.field} must be unique`;
-      const error = Boom.badRequest(errorMessage);
+      const error = badRequest(errorMessage);
 
       return {
         status: error.output.statusCode,
         body: error.output.payload,
       };
     } else {
-      const error = Boom.badRequest();
+      const error = badRequest();
 
       return {
         status: error.output.statusCode,
@@ -56,7 +56,7 @@ function handleError(err: any): { status: number; body: any } {
       };
     }
   } else {
-    const error = Boom.badImplementation(err.message);
+    const error = badImplementation(err.message);
     return {
       status: error.output.statusCode,
       body: error.output.payload,

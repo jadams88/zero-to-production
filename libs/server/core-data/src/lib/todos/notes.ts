@@ -21,11 +21,15 @@ export const todoNoteSchema = new Schema<ITodoNote>(todoSchemaDefinition, {
   ...defaultSchemaOptions,
 });
 
-export function createTodoNoteModel(con: Connection): ITodoNoteModel {
-  return con.model<ITodoNoteDocument, ITodoNoteModel>(
+export async function createTodoNoteModel(
+  con: Connection
+): Promise<ITodoNoteModel> {
+  const m = con.model<ITodoNoteDocument, ITodoNoteModel>(
     todoNoteDbKey,
     todoNoteSchema
   );
+  m.createCollection();
+  return m;
 }
 
 export function getTodoNoteModel(con: Connection): ITodoNoteModel {

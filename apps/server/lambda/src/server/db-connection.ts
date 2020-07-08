@@ -21,12 +21,12 @@ export async function connectToDatabase(dbUri: string) {
      * create a single connection with 'createConnection'
      * not a connection pool with 'connect'
      */
-    connection = (await createConnection(dbUri, config.databaseOptions).catch(
-      console.error
-    )) as Connection;
-
-    // define DD schemas
-    initDbSchemasModels(connection);
+    connection = (await createConnection(dbUri, config.databaseOptions)
+      .then(initDbSchemasModels)
+      .catch((err) => {
+        console.error(err);
+        process.exit(2);
+      })) as Connection;
   }
 
   return connection;

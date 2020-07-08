@@ -27,7 +27,10 @@ export default class ApiServer {
     const connection = await connect(
       dbUrl ? dbUrl : config.dbConnectionString,
       config.databaseOptions
-    ).catch(console.error);
+    ).catch((err) => {
+      console.error(err);
+      process.exit(2);
+    });
 
     const app = this.app;
     const router = new Router();
