@@ -1,14 +1,13 @@
 // @ts-ignore
 import merge from 'lodash.merge';
 import { IResolvers } from 'apollo-server-koa';
-// @ts-ignore
-import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date';
+import { DateResolver, DateTimeResolver, TimeResolver } from 'graphql-scalars';
 
 // A function to add additional Scalar types.
 const resolverFunctions = {
-  Date: GraphQLDate,
-  Time: GraphQLTime,
-  DateTime: GraphQLDateTime,
+  Date: DateResolver,
+  Time: TimeResolver,
+  DateTime: DateTimeResolver,
 };
 
 export function createResolvers(...resolvers: IResolvers[]): IResolvers[] {
