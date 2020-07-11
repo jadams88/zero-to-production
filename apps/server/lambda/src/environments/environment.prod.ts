@@ -11,7 +11,7 @@ export const config: ServerConfig = {
   dbConnectionString: getEnvVariableOrWarn('DB_CONNECTION_STRING'),
   databaseOptions: {
     loggerLevel: 'error',
-    autoIndex: true, // TODO -> Don't auto index in production -> maybe another function?
+    autoIndex: true,
     useNewUrlParser: true,
     promiseLibrary: Promise,
     useUnifiedTopology: true,

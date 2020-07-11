@@ -15,7 +15,7 @@ export const prodConfig: ProductionServerConfig = {
   dbConnectionString: getEnvVariableOrWarn('DB_CONNECTION_STRING'),
   databaseOptions: {
     loggerLevel: 'error',
-    autoIndex: true, // TODO -> Don't auto index in production -> Create a K8's 'Job' (most probably an application)
+    autoIndex: true,
   },
 };
 

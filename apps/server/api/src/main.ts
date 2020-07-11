@@ -14,7 +14,7 @@ app.proxy = config.production;
 
 export const server = initServer();
 
-// TODO -> Replace with Top Level await once released.
+// Replace with Top Level await once released.
 // Note minimum node version
 async function initServer() {
   const apiServer = new ApiServer(app);
