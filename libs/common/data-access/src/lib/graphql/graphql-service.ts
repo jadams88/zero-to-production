@@ -1,4 +1,6 @@
 import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, from } from 'rxjs';
 import {
   InMemoryCache,
   NormalizedCacheObject,
@@ -11,9 +13,7 @@ import {
   FetchResult,
   TypePolicies,
 } from '@apollo/client/core';
-import { Observable, from } from 'rxjs';
 import { AngularLink } from './angular-link';
-import { HttpClient } from '@angular/common/http';
 
 export const GRAPHQL_URL = new InjectionToken<string>('GraphQLUrl');
 export const APOLLO_TYPE_POLICIES = new InjectionToken<
@@ -23,6 +23,7 @@ export const APOLLO_TYPE_POLICIES = new InjectionToken<
 @Injectable({ providedIn: 'root' })
 export class GraphQLService {
   private client: ApolloClient<NormalizedCacheObject>;
+  protected link: AngularLink;
 
   constructor(
     private httpClient: HttpClient,
@@ -36,7 +37,7 @@ export class GraphQLService {
       typePolicies,
     });
 
-    const http = new AngularLink({ uri }, this.httpClient);
+    this.link = new AngularLink({ uri }, this.httpClient);
 
     const removeTypenameMiddleware = new ApolloLink((operation, forward) => {
       if (operation.variables) {
@@ -46,7 +47,7 @@ export class GraphQLService {
     });
 
     this.client = new ApolloClient({
-      link: concat(removeTypenameMiddleware, http),
+      link: concat(removeTypenameMiddleware, this.link),
       cache,
       connectToDevTools: false,
     });

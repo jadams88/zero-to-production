@@ -10,7 +10,11 @@ import { environment } from '../environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
-import { CommonDataAccessModule } from '@ztp/common/data-access';
+import {
+  CommonDataAccessModule,
+  ApiService,
+  GraphQLService,
+} from '@ztp/common/data-access';
 import {
   CommonAuthDataAccessModule,
   authProviderFactory,
@@ -26,6 +30,7 @@ import { CommonDynamicFormMaterialComponentsModule } from '@ztp/common/dynamic-f
 import { APP_COMPONENTS, APP_ERRORS } from './app.dynamic-form';
 import { themeProviderFactory, ThemeService } from '@ztp/common/utils/theme';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { DemoApiService, DemoGraphQLService } from '@ztp/demo/data-access';
 
 @NgModule({
   declarations: [AppComponent],
@@ -52,6 +57,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     }),
   ],
   providers: [
+    { provide: ApiService, useExisting: DemoApiService },
+    { provide: GraphQLService, useExisting: DemoGraphQLService },
     {
       provide: APP_INITIALIZER,
       useFactory: themeProviderFactory,

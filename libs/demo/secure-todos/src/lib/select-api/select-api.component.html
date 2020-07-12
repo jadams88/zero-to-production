@@ -1,0 +1,9 @@
+Kubernetes Status {{ k8sStatus$ | async }}
+<button (click)="selectApi(k8s)">
+  Google Cloud Kubernetes
+</button>
+
+AWS Status {{ awsStatus$ | async }}
+<button (click)="selectApi(aws)">
+  AWS Lambda
+</button>

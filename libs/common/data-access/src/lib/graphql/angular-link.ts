@@ -25,6 +25,10 @@ export class AngularLink extends ApolloLink {
     this.opts = opts;
   }
 
+  set uri(uri: string) {
+    this.opts = { ...this.opts, uri };
+  }
+
   request(op: Operation, forward?: NextLink) {
     return new Observable<FetchResult>((observer) => {
       const body = {

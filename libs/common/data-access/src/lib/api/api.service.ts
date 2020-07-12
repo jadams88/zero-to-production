@@ -12,7 +12,7 @@ export const API_BASE_URL = new InjectionToken<string>('ApiBaseUrl');
 @Injectable()
 export class ApiService {
   constructor(
-    @Inject(API_BASE_URL) private baseUrl: string,
+    @Inject(API_BASE_URL) protected baseUrl: string,
     private http: HttpClient
   ) {}
 

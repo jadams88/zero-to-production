@@ -28,6 +28,10 @@ export default class LambdaServer {
     applyGraphQLEndpoint(app, conn);
     applyRestEndpoints(app, conn);
 
+    router.get('/healthz', (ctx) => {
+      ctx.status = 200;
+    });
+
     /**
      * Apply the routes
      */
