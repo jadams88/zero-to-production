@@ -1,0 +1,113 @@
+$red: #c0392b;
+$green: #27ae60;
+$yellow: #f1c40f;
+
+:host {
+  display: inline-block;
+}
+
+.status-pulse {
+  position: relative;
+  --height: 40px;
+  --dot-height: calc(var(--height) / 4);
+  --dot-offset: calc((var(--height) - var(--dot-height)) / 2);
+  --dot-radius: calc(var(--height) - var(--dot-height));
+
+  width: var(--height);
+  height: var(--height);
+}
+
+.dot {
+  width: var(--dot-height);
+  height: var(--dot-height);
+  left: var(--dot-offset);
+  top: var(--dot-offset);
+
+  border-radius: var(--dot-radius);
+  position: absolute;
+
+  &.red {
+    background-color: $red;
+  }
+
+  &.green {
+    background-color: $green;
+  }
+
+  &.yellow {
+    background-color: $yellow;
+  }
+}
+
+.pulse {
+  background: transparent;
+  border-radius: calc(var(--dot-radius) * 2);
+  height: calc(var(--height) / 2);
+  width: calc(var(--height) / 2);
+  position: absolute;
+  opacity: 0;
+  border-width: var(--dot-height);
+  border-style: solid;
+
+  animation: pulse 2s ease-out;
+  animation-iteration-count: infinite;
+
+  &.red {
+    border-color: $red;
+  }
+
+  &.green {
+    border-color: $green;
+  }
+
+  &.yellow {
+    border-color: $yellow;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  10% {
+    transform: scale(0.1);
+    opacity: 0.1;
+  }
+  20% {
+    transform: scale(0.2);
+    opacity: 0.2;
+  }
+  30% {
+    transform: scale(0.3);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(0.4);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  60% {
+    transform: scale(0.6);
+    opacity: 0.6;
+  }
+  70% {
+    transform: scale(0.75);
+    opacity: 0.5;
+  }
+  80% {
+    transform: scale(0.8);
+    opacity: 0.4;
+  }
+  90% {
+    transform: scale(0.85);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
