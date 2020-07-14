@@ -6,4 +6,8 @@ export class DemoApiService extends ApiService {
   set apiUrl(url: string) {
     this.baseUrl = url;
   }
+
+  get apiUrl() {
+    return this.baseUrl;
+  }
 }

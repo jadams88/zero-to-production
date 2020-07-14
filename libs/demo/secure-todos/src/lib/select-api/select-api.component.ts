@@ -15,6 +15,8 @@ export class SelectApiComponent {
   k8s = 'https://api.zero-to-production.dev';
   aws = 'https://fns.zero-to-production.dev';
 
+  selected: string;
+
   k8sStatus$: Observable<boolean>;
   awsStatus$: Observable<boolean>;
 
@@ -25,6 +27,12 @@ export class SelectApiComponent {
   ) {
     this.k8sStatus$ = this.pingForStatus(this.k8s);
     this.awsStatus$ = this.pingForStatus(this.aws);
+  }
+
+  ngOnInit() {
+    const baseUrl = (this.api as DemoApiService).apiUrl;
+    // remove the leading '/api' from the string
+    this.selected = baseUrl.substr(0, baseUrl.length - 4);
   }
 
   pingForStatus(url: string): Observable<boolean> {

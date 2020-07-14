@@ -8,7 +8,7 @@ $yellow: #f1c40f;
 
 .status-pulse {
   position: relative;
-  --height: 40px;
+  --height: 32px;
   --dot-height: calc(var(--height) / 4);
   --dot-offset: calc((var(--height) - var(--dot-height)) / 2);
   --dot-radius: calc(var(--height) - var(--dot-height));
@@ -49,15 +49,14 @@ $yellow: #f1c40f;
   border-width: var(--dot-height);
   border-style: solid;
 
-  animation: pulse 2s ease-out;
-  animation-iteration-count: infinite;
-
   &.red {
     border-color: $red;
   }
 
   &.green {
     border-color: $green;
+    animation: pulse 2s ease-out;
+    animation-iteration-count: infinite;
   }
 
   &.yellow {

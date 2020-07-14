@@ -1,12 +1,29 @@
+<mat-select [value]="selected">
+  <mat-option [value]="k8s">Kubernetes</mat-option>
+  <mat-option [value]="aws">AWS Lambda</mat-option>
+</mat-select>
 <p>
-  Google Cloud Kubernetes: Status {{ k8sStatus$ | async }}
-  <ztp-api-status [status]="k8sStatus$ | async"> </ztp-api-status>
+  Google Cloud Kubernetes:
+  {{
+    (k8sStatus$ | async) === true
+      ? 'Online'
+      : (k8sStatus$ | async) === false
+      ? 'Offline'
+      : 'Pending'
+  }}
 </p>
-<button (click)="selectApi(k8s)">
-  Google Cloud Kubernetes
-</button>
+<ztp-api-status [status]="k8sStatus$ | async"> </ztp-api-status>
 
-AWS Status {{ awsStatus$ | async }}
-<button (click)="selectApi(aws)">
-  AWS Lambda
-</button>
+<p>AWS Lambda: {{ (awsStatus$ | async) ? 'Online' : 'Offline' }}</p>
+
+<p>
+  AWS Lambda:
+  {{
+    (awsStatus$ | async) === true
+      ? 'Online'
+      : (k8sStatus$ | async) === false
+      ? 'Offline'
+      : 'Pending'
+  }}
+</p>
+<ztp-api-status [status]="awsStatus$ | async"> </ztp-api-status>
