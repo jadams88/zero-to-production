@@ -4,6 +4,7 @@ import { DemoApiService, DemoGraphQLService } from '@ztp/demo/data-access';
 import { timer, Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { switchMap, catchError, map } from 'rxjs/operators';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'ztp-select-api',
@@ -12,8 +13,16 @@ import { switchMap, catchError, map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectApiComponent {
-  k8s = 'https://api.zero-to-production.dev';
-  aws = 'https://fns.zero-to-production.dev';
+  servers = [
+    {
+      label: 'Google Cloud Kubernetes',
+      url: 'https://api.zero-to-production.dev',
+    },
+    {
+      label: 'AWS Lambda',
+      url: 'https://fns.zero-to-production.dev',
+    },
+  ];
 
   selected: string;
 
@@ -25,8 +34,9 @@ export class SelectApiComponent {
     private api: ApiService,
     private gql: GraphQLService
   ) {
-    this.k8sStatus$ = this.pingForStatus(this.k8s);
-    this.awsStatus$ = this.pingForStatus(this.aws);
+    [this.k8sStatus$, this.awsStatus$] = this.servers.map((s) =>
+      this.pingForStatus(s.url)
+    );
   }
 
   ngOnInit() {
@@ -36,7 +46,7 @@ export class SelectApiComponent {
   }
 
   pingForStatus(url: string): Observable<boolean> {
-    return timer(1000, 3000).pipe(
+    return timer(1000, 10000).pipe(
       switchMap(() =>
         this.http.get(`${url}/healthz`, { responseType: 'text' }).pipe(
           map(() => true),
@@ -46,8 +56,12 @@ export class SelectApiComponent {
     );
   }
 
-  selectApi(url: string) {
-    (this.api as DemoApiService).apiUrl = `${url}/api`;
-    (this.gql as DemoGraphQLService).graphQLUrl = `${url}/graphql`;
+  statusText(st: boolean | any): string {
+    return st === true ? 'Online' : st === false ? 'Offline' : 'Pending';
+  }
+
+  selectApi(evt: MatSelectChange) {
+    (this.api as DemoApiService).apiUrl = `${evt.value}/api`;
+    (this.gql as DemoGraphQLService).graphQLUrl = `${evt.value}/graphql`;
   }
 }

@@ -6,33 +6,36 @@
   another library, it can be imported into other applications.
 </p>
 <p>
-  For further information about monorepo design principles, have a look at the
-  information and tools from the amazing team at
+  For further information about monorepo design principles have a look at the
+  information and tools from the team at
   <a target="_blank" rel="noreferrer noopener" href="https://nrwl.io/">Nrwl</a>
   provide.
 </p>
+
+<h4>API Server</h4>
+<p>
+  The application below is a complete working app that is hitting a live GraphQL
+  API as provided in the monorepo. The API is configured to run in either Docker
+  & Kubernetes and one serverless as a cloud function. The servers found in
+  <em>apps/server/api</em> & <em>apps/server/lambda</em> are currently hosted
+  and Google Cloud Kubernetes & AWS Lambda respectively.
+</p>
+
+<ztp-select-api></ztp-select-api>
+
 <h4>NOTE</h4>
 <p>
-  The application below is a complete working application with a live GraphQL
-  API hosted on Google Cloud Kubernetes as provided in this repo (<em
-    >apps/server/api/</em
-  >
-  ). You will have to register before you can log in.
-</p>
-<p>
-  For privacy reasons the API has been configured to accept dummy data (so not
-  to collect any sensitive information). The email address you provide does
-  <b>NOT</b> have to be unique and will note be 'verified' so go ahead and put
-  <b>test@email.com</b> or similar as it only needs to satisfy the email
-  validation. Your username is the only thing required to be unique for
-  registration to be successful.
+  You will have to register before you can log in. For privacy reasons the API
+  has been configured to accept dummy data (so not to collect any sensitive
+  information). The email address you provide does <b>NOT</b> have to be unique
+  and will note be 'verified' so go ahead and put <b>test@email.com</b> or
+  similar as it only needs to satisfy the email validation. Your username is the
+  only thing required to be unique for registration to be successful.
 </p>
 <p>
   The Database will be wiped regularly so don't be surprised if you come back
   next week and its all gone.
 </p>
-
-<ztp-select-api></ztp-select-api>
 
 <section class="app">
   <router-outlet></router-outlet>

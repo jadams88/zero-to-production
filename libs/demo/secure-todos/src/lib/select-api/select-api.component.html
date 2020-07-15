@@ -1,29 +1,21 @@
-<mat-select [value]="selected">
-  <mat-option [value]="k8s">Kubernetes</mat-option>
-  <mat-option [value]="aws">AWS Lambda</mat-option>
-</mat-select>
-<p>
-  Google Cloud Kubernetes:
-  {{
-    (k8sStatus$ | async) === true
-      ? 'Online'
-      : (k8sStatus$ | async) === false
-      ? 'Offline'
-      : 'Pending'
-  }}
+<h5>API Status</h5>
+<p class="status">
+  {{ servers[0].label }}:
+  {{ statusText(k8sStatus$ | async) }}
+  <ztp-api-status [status]="k8sStatus$ | async"> </ztp-api-status>
 </p>
-<ztp-api-status [status]="k8sStatus$ | async"> </ztp-api-status>
 
-<p>AWS Lambda: {{ (awsStatus$ | async) ? 'Online' : 'Offline' }}</p>
-
-<p>
-  AWS Lambda:
-  {{
-    (awsStatus$ | async) === true
-      ? 'Online'
-      : (k8sStatus$ | async) === false
-      ? 'Offline'
-      : 'Pending'
-  }}
+<p class="status">
+  {{ servers[1].label }}:
+  {{ statusText(awsStatus$ | async) }}
+  <ztp-api-status [status]="awsStatus$ | async"> </ztp-api-status>
 </p>
-<ztp-api-status [status]="awsStatus$ | async"> </ztp-api-status>
+
+<mat-form-field>
+  <mat-label>Selected API</mat-label>
+  <mat-select [value]="selected" (selectionChange)="selectApi($event)">
+    <mat-option *ngFor="let server of servers" [value]="server.url">{{
+      server.label
+    }}</mat-option>
+  </mat-select>
+</mat-form-field>
