@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { ApiService, GraphQLService } from '@ztp/common/data-access';
 import { DemoApiService, DemoGraphQLService } from '@ztp/demo/data-access';
 import { timer, Observable, of } from 'rxjs';
@@ -12,7 +12,7 @@ import { MatSelectChange } from '@angular/material/select';
   styleUrls: ['./select-api.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectApiComponent {
+export class SelectApiComponent implements OnInit {
   servers = [
     {
       label: 'Google Cloud Kubernetes',
