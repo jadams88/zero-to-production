@@ -80,7 +80,7 @@
         "libs/demo/lazy-load-scrolling/src/index.ts"
       ],
       "@ztp/demo/dynamic-form": ["libs/demo/dynamic-form/src/index.ts"],
-      "@ztp/demo/make-it-your-own": ["libs/demo/start-your-own/src/index.ts"],
+      "@ztp/demo/start-your-own": ["libs/demo/start-your-own/src/index.ts"],
       "@ztp/demo/guides": ["libs/demo/guides/src/index.ts"],
       "@ztp/demo/examples": ["libs/demo/examples/src/index.ts"]
     }

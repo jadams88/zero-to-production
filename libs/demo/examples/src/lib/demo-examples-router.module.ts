@@ -36,9 +36,9 @@ const ROUTES: Routes = [
           import('@ztp/demo/secure-todos').then((m) => m.DemoSecureTodosModule),
       },
       {
-        path: 'make-it-your-own',
+        path: 'start-your-own',
         loadChildren: () =>
-          import('@ztp/demo/make-it-your-own').then(
+          import('@ztp/demo/start-your-own').then(
             (m) => m.DemoStartYourOwnModule
           ),
       },
