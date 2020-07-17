@@ -43,10 +43,15 @@ ignore-master: &ignore-master
     branches:
       ignore: master
 
-release-only: &release-only
+ignore-develop: &ignore-develop
   filters:
     branches:
-      only: release
+      ignore: develop
+
+develop-only: &develop-only
+  filters:
+    branches:
+      only: develop
 
 jobs:
   checkout-and-install:
@@ -149,44 +154,46 @@ jobs:
 
 workflows:
   version: 2
-  pull-request:
+  develop:
     jobs:
       - checkout-and-install:
           <<: *ignore-master
+          <<: *ignore-develop
       - build-and-test:
           <<: *ignore-master
-          base: origin/master
+          <<: *ignore-develop
+          base: origin/develop
           head: HEAD
           requires:
             - checkout-and-install
   build-latest:
     jobs:
       - checkout-and-install:
-          <<: *master-only
+          <<: *develop-only
       - build-and-test:
-          <<: *master-only
-          base: origin/release
-          head: origin/master
+          <<: *develop-only
+          base: origin/master
+          head: HEAD
           requires:
             - checkout-and-install
   release-and-deploy:
     jobs:
       - checkout-and-install:
-          <<: *release-only
+          <<: *master-only
       - build-and-test-all:
-          <<: *release-only
+          <<: *master-only
           requires:
             - checkout-and-install
       - release:
-          <<: *release-only
+          <<: *master-only
           requires:
             - build-and-test-all
       - server-lambda-deploy:
           context: aws
-          <<: *release-only
+          <<: *master-only
           requires:
             - release
       - demo-web-functions-deploy:
-          <<: *release-only
+          <<: *master-only
           requires:
             - release
