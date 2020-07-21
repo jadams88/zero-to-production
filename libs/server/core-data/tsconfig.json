@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -7,9 +7,20 @@
     "rootDir": "./src",
     "types": ["node", "jest"]
   },
-  "include": ["**/*.ts"],
+  "include": [],
   "references": [
-    { "path": "../../data/tsconfig.lib.json" },
-    { "path": "../utils/tsconfig.lib.json" }
-  ]
+    {
+      "path": "../../data/tsconfig.lib.json"
+    },
+    {
+      "path": "../utils/tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "files": []
 }

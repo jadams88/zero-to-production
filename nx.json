@@ -6,9 +6,9 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
     "tslint.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    "tsconfig.base.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -196,5 +196,8 @@
     "demo-examples": {
       "tags": ["scope:demo", "type:feature", "platform:web"]
     }
+  },
+  "affected": {
+    "defaultBase": "master"
   }
 }

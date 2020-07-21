@@ -8,7 +8,11 @@
   "exclude": ["**/*.spec.ts"],
   "include": ["**/*.ts"],
   "references": [
-    { "path": "../../data/tsconfig.lib.json" },
-    { "path": "../utils/tsconfig.lib.json" }
+    {
+      "path": "../../data/tsconfig.lib.json"
+    },
+    {
+      "path": "../utils/tsconfig.lib.json"
+    }
   ]
 }

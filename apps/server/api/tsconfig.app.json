@@ -8,11 +8,23 @@
   "exclude": ["**/*.spec.ts", "**/*.e2e.ts"],
   "include": ["**/*.ts", "**/*.d.ts"],
   "references": [
-    { "path": "../../../libs/data/tsconfig.lib.json" },
-    { "path": "../../../libs/server/auth/tsconfig.lib.json" },
-    { "path": "../../../libs/server/graphql/tsconfig.lib.json" },
-    { "path": "../../../libs/server/utils/tsconfig.lib.json" },
-    { "path": "../../../libs/server/middleware/tsconfig.lib.json" },
-    { "path": "../../../libs/server/core-data/tsconfig.lib.json" }
+    {
+      "path": "../../../libs/data/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../libs/server/auth/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../libs/server/graphql/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../libs/server/utils/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../libs/server/middleware/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../libs/server/core-data/tsconfig.lib.json"
+    }
   ]
 }

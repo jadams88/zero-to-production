@@ -5,12 +5,7 @@
     "outDir": "../../../dist/out-tsc",
     "module": "commonjs",
     "target": "es5"
-    // "typeRoots": [
-    //   "../node_modules/testcafe",
-    //   "../node_modules/testcafe-angular-selectors"
-    // ]
   },
   "files": ["src/*"],
   "include": ["src/**/*.ts"]
-  // "exclude": ["../node_modules/@types/jest/index.d.ts"]
 }

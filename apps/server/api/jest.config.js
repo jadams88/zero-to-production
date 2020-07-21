@@ -7,4 +7,5 @@ module.exports = {
   testEnvironment: 'node',
   preset: '../../../jest.config.js',
   coverageDirectory: '../../../coverage/apps/server/api',
+  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
 };
