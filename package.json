@@ -127,7 +127,7 @@
     "@types/ramda": "^0.27.11",
     "@types/superagent": "^4.1.8",
     "@types/testing-library__jest-dom": "^5.9.1",
-    "@uqt/ng-node": "^1.0.1",
+    "@uqt/ng-node": "^1.0.2",
     "codelyzer": "^6.0.0",
     "dotenv": "^8.0.0",
     "firebase-tools": "^8.6.0",
