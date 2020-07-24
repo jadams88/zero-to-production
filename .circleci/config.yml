@@ -203,16 +203,17 @@ workflows:
           <<: *master-only
           requires:
             - checkout-and-install
-      - release:
-          <<: *master-only
-          requires:
-            - build-and-test-latest
       - server-lambda-deploy:
           context: aws
           <<: *master-only
           requires:
-            - release
+            - build-and-test-latest
       - demo-web-functions-deploy:
           <<: *master-only
           requires:
-            - release
+            - build-and-test-latest
+      - release:
+          <<: *master-only
+          requires:
+            - demo-web-functions-deploy
+            - server-lambda-deploy
