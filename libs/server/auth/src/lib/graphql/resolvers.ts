@@ -2,7 +2,6 @@ import { GraphQLFieldResolver } from 'graphql';
 import {
   setupLoginController,
   setupRegisterController,
-  setupUserAvailableController,
   setupVerifyController,
   includeEmailVerification,
 } from '../core';
@@ -20,12 +19,11 @@ import { IResolvers } from 'apollo-server-koa';
 export type TResolver = GraphQLFieldResolver<any, any, any>;
 
 export interface SimpleAuthResolvers extends IResolvers {
-  Query: { userAvailable: TResolver };
   Mutation: { register: TResolver; login: TResolver };
 }
 
 export interface AuthWithVerify extends SimpleAuthResolvers {
-  Query: { userAvailable: TResolver; verify: TResolver };
+  Query: { verify: TResolver };
 }
 
 export function getAuthResolvers<U extends AuthUser>(
@@ -40,9 +38,6 @@ export function getAuthResolvers<U extends AuthUser, V extends Verify>(
   const { login, register, verify } = config as AuthWithValidation<U, V>;
 
   const resolvers: SimpleAuthResolvers = {
-    Query: {
-      userAvailable: userAvailableResolver(login),
-    },
     Mutation: {
       register: registerResolver(register),
       login: loginResolver(login),
@@ -53,7 +48,7 @@ export function getAuthResolvers<U extends AuthUser, V extends Verify>(
   if (includeEmailVerification(register)) {
     // Although the verify resolver is technically a 'mutation' operation,
     // it is a 'Query' operation so that it can be sent in an email link
-    (resolvers as AuthWithVerify).Query.verify = verifyResolver(verify);
+    (resolvers as AuthWithVerify).Query = { verify: verifyResolver(verify) };
     return resolvers as AuthWithVerify;
   } else {
     return resolvers as SimpleAuthResolvers;
@@ -84,15 +79,6 @@ export function loginResolver<U extends AuthUser>(
     const password: string = args.password;
 
     return loginController(username, password);
-  };
-}
-
-export function userAvailableResolver<U extends AuthUser>(
-  config: LoginController<U>
-): GraphQLFieldResolver<any, { input: AuthUser }, any> {
-  const userAvailableController = setupUserAvailableController(config);
-  return (root, args, ctx, i) => {
-    return userAvailableController(args.username);
   };
 }
 

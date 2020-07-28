@@ -3,9 +3,9 @@ import { compare, hash } from 'bcryptjs';
 import Boom from '@hapi/boom';
 import { signAccessToken, signRefreshToken } from './tokens';
 import {
-  isPasswordAllowed,
   stripPasswordFields,
   createPublicPemFromPrivate,
+  isPasswordAllowed,
 } from './utils';
 import { verifyRefresh } from './authenticate';
 import type {
@@ -272,21 +272,5 @@ export function setupRevokeRefreshTokenController<R extends Refresh>({
     }
 
     return { success: true };
-  };
-}
-
-export function setupUserAvailableController<U extends AuthUser>(
-  config: LoginController<U>
-) {
-  const { User } = config;
-
-  return async (username: string | undefined) => {
-    let isAvailable = false;
-    if (username) {
-      const resource = await User.findByUsername(username);
-      isAvailable = resource === null ? true : false;
-    }
-
-    return { isAvailable };
   };
 }

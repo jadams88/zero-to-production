@@ -100,21 +100,6 @@ export class AuthService {
     return this.graphQl.query<{ User: IUser }>({ query, variables: { id } });
   }
 
-  public isUserAvailable(username: string) {
-    const query = gql`
-      query IsUserAvailable($username: String!) {
-        userAvailable(username: $username) {
-          isAvailable
-        }
-      }
-    `;
-
-    return this.graphQl.query<{ userAvailable: { isAvailable: boolean } }>({
-      query,
-      variables: { username },
-    });
-  }
-
   get authToken(): string | null | undefined {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem(this.storageKey);

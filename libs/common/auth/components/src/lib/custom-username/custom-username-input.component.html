@@ -1,8 +1,0 @@
-<div [formGroup]="group">
-  <input type="text" [formControlName]="field.name" autocomplete="username" />
-  <span [ngSwitch]="isAvailable$ | async">
-    <mat-icon *ngSwitchCase="true">done</mat-icon>
-    <mat-icon *ngSwitchCase="false">close</mat-icon>
-    <mat-icon class="pending" *ngSwitchCase="'pending'">sync</mat-icon>
-  </span>
-</div>

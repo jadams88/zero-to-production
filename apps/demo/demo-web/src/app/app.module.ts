@@ -25,12 +25,23 @@ import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AppEffects } from './+state/app.effects';
 import { AppState, appReducerMap } from './+state/app.state';
 import { DemoFeatureShellModule } from '@ztp/demo/feature-shell';
-import { CommonDynamicFormModule } from '@ztp/common/dynamic-form';
-import { CommonDynamicFormMaterialComponentsModule } from '@ztp/common/dynamic-form-material-components';
-import { APP_COMPONENTS, APP_ERRORS } from './app.dynamic-form';
+import {
+  CommonDynamicFormModule,
+  defaultErrorMessages,
+} from '@ztp/common/dynamic-form';
 import { themeProviderFactory, ThemeService } from '@ztp/common/utils/theme';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DemoApiService, DemoGraphQLService } from '@ztp/demo/data-access';
+import {
+  CommonDynamicFormMaterialComponentsModule,
+  MATERIAL_COMPONENT_MAP,
+} from '@ztp/common/dynamic-form-material-components';
+
+export const APP_ERRORS = {
+  ...defaultErrorMessages,
+  missMatchPasswords: 'Passwords do not match',
+  doesNotMeetRequirements: 'does note satisfy requirements',
+};
 
 @NgModule({
   declarations: [AppComponent],
@@ -47,7 +58,7 @@ import { DemoApiService, DemoGraphQLService } from '@ztp/demo/data-access';
     SharedUsersDataAccessModule.forRoot(),
     CommonDynamicFormMaterialComponentsModule,
     CommonDynamicFormModule.forRoot({
-      components: APP_COMPONENTS,
+      components: MATERIAL_COMPONENT_MAP,
       errors: APP_ERRORS,
     }),
     AppRoutingModule,
