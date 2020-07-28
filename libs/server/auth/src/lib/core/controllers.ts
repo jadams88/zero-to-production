@@ -71,7 +71,7 @@ export function simpleRegistration<U extends AuthUser>(
     if (currentUser !== null)
       throw Boom.badRequest('Username is not available');
 
-    const hashedPassword = await hash(password, 10);
+    const hashedPassword = await hash(password, 13);
 
     const newUser = new User({
       ...user,
