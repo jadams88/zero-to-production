@@ -1350,6 +1350,8 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
+              "subresourceIntegrity": true,
+              "crossOrigin": "anonymous",
               "budgets": [
                 {
                   "type": "initial",
