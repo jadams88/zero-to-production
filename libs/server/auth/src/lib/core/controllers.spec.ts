@@ -8,7 +8,6 @@ import {
   setupAuthorizeController,
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
-  setupUserAvailableController,
 } from './controllers';
 import { signRefreshToken } from './tokens';
 import {

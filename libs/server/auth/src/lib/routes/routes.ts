@@ -8,7 +8,6 @@ import {
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
   setupVerifyController,
-  setupUserAvailableController,
   includeEmailVerification,
   includeRefresh,
 } from '../core';
@@ -59,7 +58,6 @@ export function applyAuthRoutes<
 
   const router = new Router();
 
-  router.get('/available', userAvailableRoute(login));
   router.post('/login', loginRoute(login));
   router.post('/register', registerRoute(register));
 
@@ -158,17 +156,6 @@ export function revokeRefreshRoute<R extends Refresh>(
     const token: string = (ctx.request as any).body.refreshToken;
     ctx.status = 200;
     ctx.body = await revokeTokenController(token);
-  };
-}
-
-export function userAvailableRoute<U extends AuthUser>(
-  config: LoginController<U>
-) {
-  const userAvailableController = setupUserAvailableController(config);
-  return async (ctx: ParameterizedContext) => {
-    const username: string | undefined = ctx.query.username;
-    ctx.status = 200;
-    ctx.body = await userAvailableController(username);
   };
 }
 

@@ -45,15 +45,6 @@ export const setAuthenticated = createAction(
   props<{ isAuthenticated: boolean; expiresAt: number | null }>()
 );
 
-export const usernamePending = createAction('[Auth/API] Username Pending');
-
-export const userAvailable = createAction(
-  '[Auth/API] Username Available',
-  props<{ isAvailable: boolean }>()
-);
-
-export const clearAvailable = createAction('[Auth/Api] Username Clear');
-
 export const logout = createAction('[Auth] Logout');
 
 export const logoutRedirect = createAction('[Auth] Logout Redirect');

@@ -9,8 +9,6 @@ import { UiLoginComponent } from './ui/login/ui-login.component';
 import { UiRegisterComponent } from './ui/register/ui-register.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { CustomUsernameComponent } from './custom-username/custom-username.components';
-import { CustomUsernameInputComponent } from './custom-username/custom-username-input.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,8 +19,6 @@ const COMPONENTS = [
   UiLoginComponent,
   RegisterComponent,
   UiRegisterComponent,
-  CustomUsernameComponent,
-  CustomUsernameInputComponent,
 ];
 
 @NgModule({

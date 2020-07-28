@@ -20,9 +20,20 @@ import { TodosFeatureShellModule } from '@ztp/todos/feature-shell';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AppEffects } from './+state/app.effects';
 import { AppState, appReducerMap } from './+state/app.state';
-import { CommonDynamicFormModule } from '@ztp/common/dynamic-form';
-import { CommonDynamicFormMaterialComponentsModule } from '@ztp/common/dynamic-form-material-components';
-import { APP_COMPONENTS, APP_ERRORS } from './app.dynamic-form';
+import {
+  CommonDynamicFormModule,
+  defaultErrorMessages,
+} from '@ztp/common/dynamic-form';
+import {
+  CommonDynamicFormMaterialComponentsModule,
+  MATERIAL_COMPONENT_MAP,
+} from '@ztp/common/dynamic-form-material-components';
+
+export const APP_ERRORS = {
+  ...defaultErrorMessages,
+  missMatchPasswords: 'Passwords do not match',
+  doesNotMeetRequirements: 'does note satisfy requirements',
+};
 
 @NgModule({
   declarations: [AppComponent],
@@ -38,7 +49,7 @@ import { APP_COMPONENTS, APP_ERRORS } from './app.dynamic-form';
     }),
     SharedUsersDataAccessModule.forRoot(),
     CommonDynamicFormModule.forRoot({
-      components: APP_COMPONENTS,
+      components: MATERIAL_COMPONENT_MAP,
       errors: APP_ERRORS,
     }),
     CommonDynamicFormMaterialComponentsModule,

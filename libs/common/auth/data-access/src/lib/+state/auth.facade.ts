@@ -10,14 +10,11 @@ import { ILoginCredentials, IRegistrationDetails } from '../auth.interface';
 export class AuthFacade {
   isAuthenticated$: Observable<boolean>;
   user$: Observable<IUser | null>;
-  // Username
-  isAvailable$: Observable<boolean | null | 'pending'>;
 
   constructor(private store: Store<any>) {
     this.isAuthenticated$ = this.store.pipe(
       select(fromAuth.selectIsAuthenticated)
     );
-    this.isAvailable$ = this.store.pipe(select(fromAuth.selectIsAvailable));
     this.user$ = this.store.pipe(select(fromAuth.selectAuthUser));
   }
 
@@ -49,17 +46,5 @@ export class AuthFacade {
     this.store.dispatch(
       AuthActions.setAuthenticated({ isAuthenticated, expiresAt })
     );
-  }
-
-  usernamePending() {
-    this.store.dispatch(AuthActions.usernamePending());
-  }
-
-  userAvailable(isAvailable: { isAvailable: boolean }) {
-    this.store.dispatch(AuthActions.userAvailable(isAvailable));
-  }
-
-  clearAvailable() {
-    this.store.dispatch(AuthActions.clearAvailable());
   }
 }

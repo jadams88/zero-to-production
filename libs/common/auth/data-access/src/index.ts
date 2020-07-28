@@ -15,6 +15,5 @@ export {
   passwordMatchValidator,
   passwordValidator,
 } from './lib/validators/auth.validators';
-export { UserAvailableValidator } from './lib/validators/user-available.validator';
 import * as AuthActions from './lib/+state/auth.actions';
 export { AuthActions };

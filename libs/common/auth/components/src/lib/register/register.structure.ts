@@ -6,21 +6,17 @@ import {
   TFormStructure,
   InputFieldTypes,
 } from '@ztp/common/dynamic-form';
-import {
-  UserAvailableValidator,
-  passwordValidator,
-} from '@ztp/common/auth/data-access';
+import { passwordValidator } from '@ztp/common/auth/data-access';
 
 const PASSWORD_GROUP: IFormGroup = {
   groupName: 'password',
   groupType: FormGroupTypes.Group,
   fields: [
     {
-      type: 'USERNAME',
+      type: FormFieldTypes.Input,
       name: 'username',
       label: 'Username',
       validators: [Validators.required],
-      asyncValidators: [UserAvailableValidator],
     },
     {
       type: FormFieldTypes.Input,

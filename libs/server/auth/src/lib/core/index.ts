@@ -6,7 +6,6 @@ export {
   setupRefreshAccessTokenController,
   setupRegisterController,
   setupRevokeRefreshTokenController,
-  setupUserAvailableController,
   setupVerifyController,
   simpleRegistration,
 } from './controllers';
@@ -15,10 +14,10 @@ export {
   includeEmailVerification,
   includeRefresh,
   isJWKS,
-  isPasswordAllowed,
   createEmailMessage,
   createPublicPemFromPrivate,
   stripPasswordFields,
+  isPasswordAllowed,
 } from './utils';
 
 export { generateAuthGuardConfig, generateAuthModuleConfig } from './config';

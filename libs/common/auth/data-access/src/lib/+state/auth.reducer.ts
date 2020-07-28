@@ -9,14 +9,12 @@ export interface AuthState {
   isAuthenticated: boolean;
   expiresAt: number | null;
   user: IUser | null;
-  isAvailable: boolean | null | 'pending';
 }
 
 export const initialState: AuthState = {
   isAuthenticated: false,
   expiresAt: null,
   user: null,
-  isAvailable: null,
 };
 
 const authReducer = createReducer(
@@ -45,15 +43,6 @@ const authReducer = createReducer(
   }),
   on(fromAuth.logout, (state) => {
     return { ...state, isAuthenticated: false };
-  }),
-  on(fromAuth.usernamePending, (state) => {
-    return { ...state, isAvailable: 'pending' as 'pending' };
-  }),
-  on(fromAuth.userAvailable, (state, { isAvailable }) => {
-    return { ...state, isAvailable };
-  }),
-  on(fromAuth.clearAvailable, (state) => {
-    return { ...state, available: null };
   })
 );
 

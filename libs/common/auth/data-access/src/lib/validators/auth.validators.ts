@@ -4,9 +4,7 @@ import {
   ValidationErrors,
   FormGroup,
 } from '@angular/forms';
-// import { passwordValidator } from '@ztp/server/auth';
 
-// TODO -> Move to shared
 export function isPasswordAllowed(password: string): boolean {
   return (
     !!password &&
