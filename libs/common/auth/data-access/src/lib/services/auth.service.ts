@@ -10,6 +10,8 @@ import {
 import { AuthFacade } from '../+state/auth.facade';
 import { jwtDecode } from './jwt-decode';
 import { AUTH_SERVER_URL } from '../tokens/tokens';
+import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 
 interface GQLSuccess<T> {
   data: T;
@@ -33,7 +35,8 @@ export class AuthService {
   constructor(
     @Inject(AUTH_SERVER_URL) private serverUrl: string,
     private http: HttpClient,
-    private facade: AuthFacade
+    private facade: AuthFacade,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   // Login function that returns a JWT
@@ -60,6 +63,7 @@ export class AuthService {
       {
         headers: this.headers,
         reportProgress: false,
+        withCredentials: true,
       }
     );
   }
@@ -139,12 +143,14 @@ export class AuthService {
       {
         headers: this.headers,
         reportProgress: false,
+        withCredentials: true,
       }
     );
   }
 
   public isLoggedIn() {
-    this.facade.isLoggedIn();
+    const originalUrl = this.document.location.pathname;
+    this.facade.isLoggedIn(originalUrl);
   }
 
   isAuthenticated(expiration: number): boolean {

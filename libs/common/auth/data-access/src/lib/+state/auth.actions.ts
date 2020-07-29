@@ -6,16 +6,15 @@ import {
   IRegistrationDetails,
 } from '../auth.interface';
 
-// export const loginRedirect = createAction('[Auth] Login Redirect');
-
-// export const registerRedirect = createAction('[Auth] Register Redirect');
-
 export const login = createAction(
   '[Auth/API] Login',
   props<ILoginCredentials>()
 );
 
-export const isLoggedIn = createAction('[Auth/API] Is Logged In');
+export const isLoggedIn = createAction(
+  '[Auth/API] Is Logged In',
+  props<{ originalUrl: string }>()
+);
 // no op action
 export const isLoggedFail = createAction('[Auth/API] Is Logged In Fail');
 
@@ -46,13 +45,11 @@ export const registerFailure = createAction(
 
 export const setAuthenticated = createAction(
   '[Auth] Set Authenticated',
-  props<{ expiresIn: number; token: string }>()
+  props<{ expiresIn: number; token: string; navigate?: string }>()
 );
 
 export const logout = createAction('[Auth] Logout');
 export const logoutSuccess = createAction('[Auth] Logout Success');
-
-// export const logoutRedirect = createAction('[Auth] Logout Redirect');
 
 export const clearAuthUser = createAction('[Auth] Clear User');
 

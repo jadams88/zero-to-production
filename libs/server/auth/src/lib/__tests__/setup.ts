@@ -1,6 +1,6 @@
 import { MockAuthUserModel } from './user.mock';
 import { MockVerifyModel } from './verification.mock';
-import { privateKey } from './rsa-keys';
+import { privateKey, publicKey } from './rsa-keys';
 import { MockRefreshModel } from './refresh-token.mock';
 import {
   Verify,
@@ -40,22 +40,36 @@ export function mockVerificationConfig(): VerifyController<AuthUser, Verify> {
 export function mockAuthorizeConfig(): AuthorizeController<AuthUser, Refresh> {
   return {
     User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
-    privateKey,
-    expireTime: 100000,
-    issuer,
-    audience,
-    keyId,
+    access: {
+      expireTime: 100000,
+      issuer,
+      audience,
+      keyId,
+      privateKey,
+    },
+    refresh: {
+      privateKey,
+      issuer,
+      audience,
+    },
     Refresh: (MockRefreshModel as unknown) as RefreshModel<Refresh>,
   };
 }
 
 export function mockRefreshTokenConfig(): RefreshController<Refresh> {
   return {
-    privateKey,
-    audience,
-    keyId,
-    expireTime: 100000,
-    issuer,
+    access: {
+      privateKey,
+      audience,
+      keyId,
+      expireTime: 100000,
+      issuer,
+    },
+    refresh: {
+      publicKey,
+      audience,
+      issuer,
+    },
     Refresh: (MockRefreshModel as unknown) as RefreshModel<Refresh>,
   };
 }

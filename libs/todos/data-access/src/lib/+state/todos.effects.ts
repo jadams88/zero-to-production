@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthActions } from '@ztp/common/auth/data-access';
+import { logout } from '@ztp/common/auth/data-access';
 import { of } from 'rxjs';
 import {
   catchError,
@@ -185,7 +185,7 @@ export class TodoEffects {
   // Clear the user todos on logout
   clearTodos$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(AuthActions.logout),
+      ofType(logout),
       map(() => TodoActions.clearTodos())
     )
   );

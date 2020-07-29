@@ -111,15 +111,16 @@ export interface VerifyController<U extends AuthUser, V extends Verify> {
   Verify: VerifyModel<V>;
 }
 
-export interface AuthorizeController<U extends AuthUser, R extends Refresh>
-  extends SignAccessToken {
+export interface AuthorizeController<U extends AuthUser, R extends Refresh> {
+  access: SignAccessToken;
+  refresh: SignRefresh;
   User: AuthUserModel<U>;
   Refresh: RefreshModel<R>;
 }
 
-export interface RefreshController<R extends Refresh>
-  extends SignAccessToken,
-    SignRefresh {
+export interface RefreshController<R extends Refresh> {
+  access: SignAccessToken;
+  refresh: VerifyRefresh;
   Refresh: RefreshModel<R>;
 }
 
@@ -138,6 +139,7 @@ export interface SignAccessToken {
   keyId: string;
 }
 
+// Generic interface for both Access and Refresh
 export interface VerifyToken {
   issuer: string;
   audience: string;
@@ -186,9 +188,9 @@ export interface AuthEnv {
     issuer: string;
     audience: string;
   };
-  refreshToken?: {
+  refreshToken: {
     privateKey: string;
-    publicKey?: string;
+    publicKey: string;
     issuer: string;
     audience: string;
   };

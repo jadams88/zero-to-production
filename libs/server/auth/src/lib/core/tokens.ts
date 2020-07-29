@@ -48,6 +48,6 @@ export function verifyToken(token: string, config: VerifyToken) {
       audience: config.audience,
     });
   } catch (err) {
-    throw unauthorized(null, 'Bearer');
+    throw unauthorized();
   }
 }

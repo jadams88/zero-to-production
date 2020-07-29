@@ -2,11 +2,7 @@ import { randomBytes } from 'crypto';
 import { compare, hash } from 'bcryptjs';
 import { badImplementation, unauthorized, badRequest } from '@hapi/boom';
 import { signAccessToken, signRefreshToken } from './tokens';
-import {
-  stripPasswordFields,
-  createPublicPemFromPrivate,
-  isPasswordAllowed,
-} from './utils';
+import { stripPasswordFields, isPasswordAllowed } from './utils';
 import { verifyRefresh } from './authenticate';
 import type {
   VerifyController,
@@ -112,8 +108,8 @@ export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
   config: AuthorizeController<U, R>
 ) {
   const { User, Refresh: Token } = config;
-  const createAccessToken = signAccessToken(config);
-  const createRefreshToken = signRefreshToken(config);
+  const createAccessToken = signAccessToken(config.access);
+  const createRefreshToken = signRefreshToken(config.refresh);
 
   return async (username: string, password: string, cookies: Cookies) => {
     if (!username || !password)
@@ -147,7 +143,7 @@ export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
 
     return {
       token: accessToken,
-      expiresIn: config.expireTime,
+      expiresIn: config.access.expireTime,
     };
   };
 }
@@ -158,20 +154,19 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
 ) {
   const { Refresh: Token } = config;
 
-  const publicKey = createPublicPemFromPrivate(config.privateKey);
-  const verify = verifyRefresh({ ...config, publicKey });
-  const createAccessToken = signAccessToken(config);
+  // const publicKey = createPublicPemFromPrivate(config.privateKey);
+  const verify = verifyRefresh(config.refresh);
+  const signAccess = signAccessToken(config.access);
 
   return async (refreshToken: string, cookies: Cookies) => {
     if (!refreshToken) return { expiresIn: null, token: null };
 
-    // throw unauthorized('No token provided');
     // Verify the refresh token. Don't care about decoding it (as we retrieve form DB as well),
-    // verify will throw a 401 if incorrect, catch and delete from the db (if exists) before throwing
+    // verify will throw a 401 if incorrect, catch and delete from the db (if exists) before returning
     try {
       await verify(refreshToken);
     } catch (e) {
-      cookies.set('refresh_token');
+      setRefreshTokenCookie(cookies);
       await Token.removeByToken(refreshToken);
       return { expiresIn: null, token: null };
     }
@@ -180,21 +175,21 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
 
     // No token found
     if (savedToken === null) {
-      cookies.set('refresh_token');
+      setRefreshTokenCookie(cookies);
       return { expiresIn: null, token: null };
     }
 
     // revoke refreshToken if user is inactive
     if (savedToken.user.active !== true) {
       await savedToken.remove();
-      cookies.set('refresh_token');
+      setRefreshTokenCookie(cookies);
       return { expiresIn: null, token: null };
     }
 
-    const accessToken = createAccessToken(savedToken.user);
+    const accessToken = signAccess(savedToken.user);
 
     return {
-      expiresIn: config.expireTime,
+      expiresIn: config.access.expireTime,
       token: accessToken,
     };
   };
@@ -206,7 +201,7 @@ export function setupRevokeRefreshTokenController<R extends Refresh>({
 }: RevokeController<R>) {
   return async (token: string, cookies: Cookies) => {
     // delete the cookie regardless
-    cookies.set('refresh_token');
+    setRefreshTokenCookie(cookies);
 
     if (!token) {
       return { success: false };

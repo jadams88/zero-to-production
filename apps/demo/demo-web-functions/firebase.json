@@ -14,7 +14,7 @@
     "rewrites": [
       {
         "source": "**/*.@(js|css|svg|md)",
-        "destination": "/index.html"
+        "destination": "/index.original.html"
       },
       {
         "source": "**",

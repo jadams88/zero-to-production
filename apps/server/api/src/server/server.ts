@@ -36,14 +36,6 @@ export default class ApiServer {
     const router = new Router();
 
     /**
-     * This is a workaround because Koa does not allow you to set the cookie secure flag over http (behind a load balancer)
-     */
-    app.use((ctx, next) => {
-      ctx.cookies.secure = true;
-      return next();
-    });
-
-    /**
      * Setup all the required middleware for the app
      */
     setupGlobalMiddleware(app);
@@ -53,7 +45,6 @@ export default class ApiServer {
      */
     app.use(restRouter.routes());
     app.use(apolloServer.getMiddleware());
-    // applyGraphQLEndpoint(app);
 
     /**
      * apply all authorization routes

@@ -272,7 +272,6 @@ describe('Auth - Controllers', () => {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        path: '/authorize/refresh',
       };
 
       const cookieSpy = jest.spyOn(cookiesMock, 'set');

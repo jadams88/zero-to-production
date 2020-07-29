@@ -6,7 +6,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { createSpyObj } from '@ztp/tests/client';
 import { AppEffects } from './app.effects';
 import { NotificationService } from '@ztp/common/utils/notifications';
-import { AuthActions } from '@ztp/common/auth/data-access';
+import { loginFailure, registerSuccess } from '@ztp/common/auth/data-access';
 
 describe('AppEffects', () => {
   let effects: AppEffects;
@@ -33,7 +33,7 @@ describe('AppEffects', () => {
       const spy = jest.spyOn(ns, 'emit');
       jest.resetAllMocks();
 
-      const action = AuthActions.loginFailure({ error: 'Nope!!' });
+      const action = loginFailure({ error: 'Nope!!' });
 
       actions$ = hot('-a---', { a: action });
 
@@ -49,7 +49,7 @@ describe('AppEffects', () => {
     it('should notify the user of successful registration', () => {
       const spy = jest.spyOn(ns, 'emit');
       jest.resetAllMocks();
-      const action = AuthActions.registerSuccess({ user: {} as any });
+      const action = registerSuccess({ user: {} as any });
 
       actions$ = hot('-a---', { a: action });
 
