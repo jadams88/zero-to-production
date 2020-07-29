@@ -1316,12 +1316,12 @@
             "styles": [
               "apps/demo/demo-web/src/styles.scss",
               {
-                "input": "apps/demo/demo-web/src/theme/theme-default.scss",
+                "input": "styles/theme-default.scss",
                 "lazy": true,
                 "bundleName": "theme-default"
               },
               {
-                "input": "apps/demo/demo-web/src/theme/theme-default-dark.scss",
+                "input": "styles/theme-default-dark.scss",
                 "lazy": true,
                 "bundleName": "theme-default-dark"
               }

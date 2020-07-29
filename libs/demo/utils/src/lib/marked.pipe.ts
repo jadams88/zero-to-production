@@ -1,17 +1,23 @@
-import { Pipe, PipeTransform, SecurityContext } from '@angular/core';
+import { Pipe, PipeTransform, SecurityContext, Inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-// @ts-ignore
-import marked from 'marked';
 import { CodeHighlightService } from './highlight.service';
+import { DOCUMENT } from '@angular/common';
 
 @Pipe({
   name: 'marked',
 })
 export class MarkedPipe implements PipeTransform {
+  private marked: any;
   private options: any;
 
-  constructor(private hl: CodeHighlightService, private sn: DomSanitizer) {
-    const renderer = new marked.Renderer();
+  constructor(
+    @Inject(DOCUMENT) doc: Document,
+    private hl: CodeHighlightService,
+    private sn: DomSanitizer
+  ) {
+    this.marked = (doc.defaultView as any).marked;
+
+    const renderer = new this.marked.Renderer();
     renderer.link = this.openInNewTabLink.bind(this);
 
     this.options = {
@@ -28,7 +34,7 @@ export class MarkedPipe implements PipeTransform {
     if (value && value.length > 0) {
       // marked.js does not put the 'language-ts' class on the <pre> tag.
       // Prism.js requires that is on the <pre> tag as well, use regex to do so
-      const html: string = marked(value, this.options);
+      const html: string = this.marked(value, this.options);
 
       return html.replace(
         /<pre>(\s*)<code class="([\w-]+)">/g,
