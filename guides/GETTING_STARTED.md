@@ -48,8 +48,6 @@ associated with this demo site at [zero-to-production.dev]
   npm uninstall <package>
   ```
 
-  - `prismjs`
-  - `marked`
   - `firebase-admin`
   - `firebase-functions`
   - `@angular/service-worker`

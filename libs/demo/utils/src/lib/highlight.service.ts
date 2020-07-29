@@ -1,29 +1,30 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-
-// @ts-ignore
-import { highlightAll, highlight, languages } from 'prismjs';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-bash';
+import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class CodeHighlightService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  private prism: any;
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(DOCUMENT) doc: Document
+  ) {
+    this.prism = (doc.defaultView as any).Prism;
+  }
 
   highlightAll() {
     if (isPlatformBrowser(this.platformId)) {
-      highlightAll();
+      this.prism.highlightAll();
     }
   }
 
   highlight(code: string, lang: string) {
-    const tokens = languages[lang];
-    if (tokens) {
-      return highlight(code, tokens, lang);
-    } else {
-      return code;
+    if (isPlatformBrowser(this.platformId)) {
+      const tokens = this.prism.languages[lang];
+      if (tokens) {
+        return this.prism.highlight(code, tokens, lang);
+      } else {
+        return code;
+      }
     }
   }
 }

@@ -36,6 +36,7 @@ import {
   CommonDynamicFormMaterialComponentsModule,
   MATERIAL_COMPONENT_MAP,
 } from '@ztp/common/dynamic-form-material-components';
+import { DemoThemeService } from '@ztp/demo/utils';
 
 export const APP_ERRORS = {
   ...defaultErrorMessages,
@@ -68,6 +69,7 @@ export const APP_ERRORS = {
     }),
   ],
   providers: [
+    { provide: ThemeService, useExisting: DemoThemeService },
     { provide: ApiService, useExisting: DemoApiService },
     { provide: GraphQLService, useExisting: DemoGraphQLService },
     {
