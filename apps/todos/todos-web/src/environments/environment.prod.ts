@@ -2,7 +2,7 @@
 const serverUrl = 'https://api.zero-to-production.dev';
 
 export const environment = {
-  production: false,
+  production: true,
   authServer: serverUrl,
   apiBaseUrl: `${serverUrl}/api`,
   graphQLUrl: `${serverUrl}/graphql`,

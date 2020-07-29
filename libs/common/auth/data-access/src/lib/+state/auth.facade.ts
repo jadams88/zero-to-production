@@ -36,8 +36,8 @@ export class AuthFacade {
     this.store.dispatch(AuthActions.loadAuthUser());
   }
 
-  isLoggedIn(): void {
-    this.store.dispatch(AuthActions.isLoggedIn());
+  isLoggedIn(url: string): void {
+    this.store.dispatch(AuthActions.isLoggedIn({ originalUrl: url }));
   }
 
   setAuthenticated(auth: { token: string; expiresIn: number }) {

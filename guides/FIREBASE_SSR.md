@@ -158,7 +158,7 @@ Additionally a **`functions`** build target has been added to the `todos-web` pr
   ]
   ```
 
-  However That is not the case. Irrespective of the rewrite rules Firebase will **always** serve an `index.html` file if it is present in the hosting directory. The Universal Server is configured to serve an `index.original.html` instead of an `index.html` if it is found in the client directory and hence replacing the `index.html` with `index.original.html` will ensure the the cloud function servers your application.
+  However That is not the case. Irrespective of the rewrite rules Firebase will **always** serve an `index.html` file if it is present in the hosting directory. The Universal Server is configured to serve an `index.original.html` instead of an `index.html` if it is found in the client directory and hence replacing the `index.html` with `index.original.html` will ensure the the cloud function servers your application [stack overflow]
 
   ```ts
   // server.ts
@@ -272,3 +272,4 @@ Not every applications will benefit from all aspects of server side rendering, s
 [custom domain]: https://firebase.google.com/docs/hosting/custom-domain
 [angular service worker]: https://angular.io/guide/service-worker-intro
 [firebase functions]: https://firebase.google.com/products/functions
+[stack overflow]: (https://stackoverflow.com/questions/50071338/how-to-redirect-all-server-requests-to-a-function-in-firebase-hosting)

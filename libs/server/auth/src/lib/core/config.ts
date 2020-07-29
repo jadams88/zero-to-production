@@ -60,14 +60,13 @@ export function generateAuthModuleConfig<
     authorize: {
       User,
       Refresh: RefreshM,
-      ...config.accessToken,
-      keyId,
+      access: { ...config.accessToken, keyId },
+      refresh: config.refreshToken,
     },
     refresh: {
       Refresh: RefreshM,
-      ...config.accessToken,
-      ...config.refreshToken,
-      keyId,
+      refresh: config.refreshToken,
+      access: { ...config.accessToken, keyId },
     },
     revoke: {
       Refresh: RefreshM,

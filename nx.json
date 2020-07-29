@@ -177,7 +177,7 @@
       "tags": ["scope:demo", "type:feature", "platform:web"]
     },
     "demo-secure-todos": {
-      "tags": ["scope:demo", "type:feature", "platform:web"]
+      "tags": ["type:feature", "platform:web"]
     },
     "demo-lazy-load-scrolling": {
       "tags": ["scope:demo", "type:feature", "platform:web"]

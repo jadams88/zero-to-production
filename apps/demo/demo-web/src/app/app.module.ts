@@ -40,6 +40,7 @@ import {
   MATERIAL_COMPONENT_MAP,
 } from '@ztp/common/dynamic-form-material-components';
 import { DemoThemeService } from '@ztp/demo/utils';
+import { TransferHttpCacheModule } from '@nguniversal/common';
 
 export const APP_ERRORS = {
   ...defaultErrorMessages,
@@ -51,6 +52,7 @@ export const APP_ERRORS = {
   declarations: [AppComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: 'zeroToProduction' }),
+    TransferHttpCacheModule,
     BrowserAnimationsModule,
     StoreModule.forRoot<AppState>(appReducerMap),
     EffectsModule.forRoot([AppEffects]),

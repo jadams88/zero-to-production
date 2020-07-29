@@ -1,10 +1,17 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  Inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { ApiService, GraphQLService } from '@ztp/common/data-access';
 import { DemoApiService, DemoGraphQLService } from '@ztp/demo/data-access';
-import { timer, Observable, of } from 'rxjs';
+import { timer, Observable, of, EMPTY } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'ztp-select-api',
@@ -30,13 +37,19 @@ export class SelectApiComponent implements OnInit {
   awsStatus$: Observable<boolean>;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private http: HttpClient,
     private api: ApiService,
     private gql: GraphQLService
   ) {
-    [this.k8sStatus$, this.awsStatus$] = this.servers.map((s) =>
-      this.pingForStatus(s.url)
-    );
+    if (isPlatformBrowser(this.platformId)) {
+      [this.k8sStatus$, this.awsStatus$] = this.servers.map((s) =>
+        this.pingForStatus(s.url)
+      );
+    } else {
+      this.k8sStatus$ = EMPTY;
+      this.awsStatus$ = EMPTY;
+    }
   }
 
   ngOnInit() {

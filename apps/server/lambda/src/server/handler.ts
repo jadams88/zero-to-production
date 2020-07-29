@@ -1,7 +1,8 @@
 import Koa from 'koa';
 import { Connection } from 'mongoose';
 import serverless, { Handler } from 'serverless-http';
-import { errorHandler, setupGlobalMiddleware } from '@ztp/server/middleware';
+import { setupGlobalMiddleware } from '@ztp/server/middleware';
+import { config } from '../environments/environment';
 import LambdaServer from './server';
 
 let handler: Handler;
@@ -12,10 +13,9 @@ export async function createHandler(conn: Connection) {
     return handler;
   }
   const koa = new Koa();
+  koa.proxy = config.production;
 
   setupGlobalMiddleware(koa);
-
-  koa.use(errorHandler);
 
   const app = new LambdaServer(koa);
 

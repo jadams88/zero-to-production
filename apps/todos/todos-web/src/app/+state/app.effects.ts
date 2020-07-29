@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
-import { AuthActions } from '@ztp/common/auth/data-access';
+import { loginFailure, registerSuccess } from '@ztp/common/auth/data-access';
 import { tap } from 'rxjs/operators';
 import { NotificationService } from '@ztp/common/utils/notifications';
 
@@ -9,7 +9,7 @@ export class AppEffects {
   loginFailure$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.loginFailure),
+        ofType(loginFailure),
         tap(() =>
           this.ns.emit('Provided credentials are incorrect. Please Try Again')
         )
@@ -20,7 +20,7 @@ export class AppEffects {
   registerSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.registerSuccess),
+        ofType(registerSuccess),
         tap(() => this.ns.emit('Registration Successful. Please log in.'))
       ),
     { dispatch: false }

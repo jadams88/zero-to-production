@@ -10,7 +10,23 @@ import { errorHandler } from './err-handler';
 
 // Configure middleware to parse income requests
 export function setupGlobalMiddleware(app: Koa) {
-  app.use(helmet());
+  /**
+   * This is a workaround because Koa does not allow you to set the cookie secure flag over http (behind a load balancer)
+   */
+  app.use((ctx, next) => {
+    ctx.cookies.secure = true;
+    return next();
+  });
+
+  app.use(
+    helmet({
+      expectCt: { enforce: true },
+      hsts: {
+        maxAge: 63072000, // two years
+        preload: true,
+      },
+    })
+  );
   app.use(compress());
   app.use(bodyParser());
   app.use(

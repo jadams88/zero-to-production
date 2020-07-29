@@ -3,6 +3,7 @@ import 'zone.js/dist/zone-node';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import express from 'express';
 import { join } from 'path';
+// import helmet from 'helmet';
 
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
@@ -11,10 +12,48 @@ import { existsSync } from 'fs';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app() {
   const server = express();
+  // const distFolder = join(process.cwd(), 'dist/apps/demo/demo-web');
   const distFolder = join(process.cwd(), 'dist/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html'))
     ? 'index.original.html'
     : 'index';
+
+  // server.use((req, res, next) => {
+  //   return helmet({
+  //     expectCt: { enforce: true },
+  //     hsts: {
+  //       maxAge: 63072000, // two years
+  //       includeSubDomains: true,
+  //       preload: true,
+  //     },
+  //     contentSecurityPolicy: {
+  //       directives: {
+  //         'default-src': ["'self'"],
+  //         'connect-src': [
+  //           'https://zero-to-production.dev',
+  //           'https://*.zero-to-production.dev',
+  //         ],
+  //         'worker-src': [`'self'`],
+  //         'script-src': [`'self'`, 'cdnjs.cloudflare.com'],
+  //         'img-src': [`'self'`, 'ssl.gstatic.com'],
+  //         'style-src': [
+  //           `'unsafe-inline'`, // TODO -> Remove this, limitation of angular at the moment
+  //           `'self'`,
+  //           'fonts.googleapis.com',
+  //           'cdnjs.cloudflare.com',
+  //         ],
+  //         'style-src-elem': [
+  //           `'unsafe-inline'`, // TODO -> Remove this, limitation of angular at the moment
+  //           `'self'`,
+  //           'fonts.googleapis.com',
+  //           'cdnjs.cloudflare.com',
+  //         ],
+  //         'font-src': ['fonts.gstatic.com'],
+  //         'upgrade-insecure-requests': [],
+  //       },
+  //     },
+  //   })(req, res, next);
+  // });
 
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
   server.engine(
