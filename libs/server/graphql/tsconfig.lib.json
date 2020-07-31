@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/libs/server/graphql",
-    "tsBuildInfoFile": "../../../dist/buildcache/server-graphql.tsbuildinfo",
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts"],

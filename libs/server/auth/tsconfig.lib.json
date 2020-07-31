@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/libs/server/auth",
-    "tsBuildInfoFile": "../../../dist/buildcache/server-auth.tsbuildinfo",
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "**/__tests__/*.ts"],
