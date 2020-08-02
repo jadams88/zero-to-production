@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/libs/server/utils",
-    "tsBuildInfoFile": "../../../dist/buildcache/server-utils.tsbuildinfo",
     "types": []
   },
   "exclude": ["**/*.spec.ts"],

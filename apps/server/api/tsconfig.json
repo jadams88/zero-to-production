@@ -1,37 +1,20 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "../../../tsconfig.server.json",
   "compilerOptions": {
-    "strictPropertyInitialization": false,
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "../../../dist/buildcache/server-api.tsbuildinfo",
     "types": ["node", "jest"]
   },
   "include": [],
   "references": [
-    {
-      "path": "../../../libs/data/tsconfig.lib.json"
-    },
-    {
-      "path": "../../../libs/server/auth/tsconfig.lib.json"
-    },
-    {
-      "path": "../../../libs/server/middleware/tsconfig.lib.json"
-    },
-    {
-      "path": "../../../libs/server/graphql/tsconfig.lib.json"
-    },
-    {
-      "path": "../../../libs/server/utils/tsconfig.lib.json"
-    },
-    {
-      "path": "../../../libs/server/core-data/tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+    { "path": "../../../libs/data/tsconfig.lib.json" },
+    { "path": "../../../libs/server/auth/tsconfig.lib.json" },
+    { "path": "../../../libs/server/middleware/tsconfig.lib.json" },
+    { "path": "../../../libs/server/graphql/tsconfig.lib.json" },
+    { "path": "../../../libs/server/utils/tsconfig.lib.json" },
+    { "path": "../../../libs/server/core-data/tsconfig.lib.json" },
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.spec.json" }
   ],
   "files": []
 }

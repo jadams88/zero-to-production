@@ -1,9 +1,7 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "../../../tsconfig.server.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "composite": true,
+    "tsBuildInfoFile": "../../../dist/buildcache/core-data.tsbuildinfo",
     "rootDir": "./src",
     "types": ["node", "jest"]
   },
