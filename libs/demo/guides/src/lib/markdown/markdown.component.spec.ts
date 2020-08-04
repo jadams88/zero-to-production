@@ -2,7 +2,17 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MarkdownComponent } from './markdown.component';
-import { MarkdownService, MarkedPipe } from '@ztp/demo/utils';
+import { MarkdownService } from '@ztp/demo/utils';
+
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'marked' })
+class MockPipe implements PipeTransform {
+  transform(value: number): number {
+    //Do stuff here, if you want
+    return value;
+  }
+}
 
 describe('MarkdownComponent', () => {
   let component: MarkdownComponent;
@@ -11,7 +21,7 @@ describe('MarkdownComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
-      declarations: [MarkdownComponent, MarkedPipe],
+      declarations: [MarkdownComponent, MockPipe],
       providers: [
         {
           provide: MarkdownService,
