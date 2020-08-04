@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { print } from 'graphql';
+import { Observable } from '@apollo/client/utilities';
 import {
-  Operation,
-  NextLink,
-  FetchResult,
   ApolloLink,
-  Observable,
-} from '@apollo/client/core';
+  FetchResult,
+  NextLink,
+  Operation,
+} from '@apollo/client/link/core';
 
 // https://www.apollographql.com/blog/creating-a-data-component-with-apollo-link-f0719d8193ee
 // https://www.apollographql.com/blog/apollo-link-the-modular-graphql-network-stack-3b6d5fcf9244

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DocumentNode } from 'graphql';
-import { MutationUpdaterFn } from '@apollo/client/core';
+import type { DocumentNode } from 'graphql';
+import type { MutationUpdaterFn } from '@apollo/client/core';
 
 @Injectable({
   providedIn: 'root',

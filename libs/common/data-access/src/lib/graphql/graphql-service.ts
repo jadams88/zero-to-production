@@ -1,18 +1,19 @@
 import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
+import { ApolloClient } from '@apollo/client/core';
 import {
   InMemoryCache,
   NormalizedCacheObject,
-  ApolloLink,
-  concat,
-  ApolloClient,
+  TypePolicies,
+} from '@apollo/client/cache';
+import { ApolloLink, concat, FetchResult } from '@apollo/client/link/core';
+import type {
   QueryOptions,
   WatchQueryOptions,
   MutationOptions,
-  FetchResult,
-  TypePolicies,
 } from '@apollo/client/core';
+
 import { AngularLink } from './angular-link';
 
 export const GRAPHQL_URL = new InjectionToken<string>('GraphQLUrl');
