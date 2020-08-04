@@ -564,37 +564,4 @@ describe('Router - Auth', () => {
       MockRefreshModel.reset();
     });
   });
-
-  describe('/available', () => {
-    it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockAuthUserModel.userToRespondWith = null;
-
-      const response = await superagent.get(
-        agentRequest('/available?username=username')
-      );
-
-      expect(response.body).toBeDefined();
-      expect(response.body.isAvailable).toBe(true);
-
-      MockAuthUserModel.reset();
-    });
-
-    it('isAvailable should be false if a user with that username is found', async () => {
-      const takenUsername = 'takenUsername';
-      const takenUser = {
-        username: takenUsername,
-      } as AuthUser;
-
-      MockAuthUserModel.userToRespondWith = takenUser;
-
-      const response = await superagent.get(
-        agentRequest(`/available?username=${takenUsername}`)
-      );
-
-      expect(response.body).toBeDefined();
-      expect(response.body.isAvailable).toBe(false);
-
-      MockAuthUserModel.reset();
-    });
-  });
 });
