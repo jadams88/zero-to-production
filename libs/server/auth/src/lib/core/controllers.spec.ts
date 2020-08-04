@@ -56,10 +56,6 @@ export function mockRevokeController() {
   return setupRevokeRefreshTokenController(mockRevokeConfig());
 }
 
-export function mockUserAvailableController() {
-  return setupUserAvailableController(mockLoginConfig());
-}
-
 const userToRegister = ({
   username: 'uniqueUsername',
   firstName: 'test',
@@ -563,37 +559,6 @@ describe('Auth - Controllers', () => {
 
       MockAuthUserModel.reset();
       MockRefreshModel.reset();
-    });
-  });
-
-  describe('userAvailable', () => {
-    it('isAvailable should be true if a user with that username can not be found', async () => {
-      MockAuthUserModel.userToRespondWith = null;
-
-      const { isAvailable } = await mockUserAvailableController()(
-        'mockUsername'
-      );
-
-      expect(isAvailable).toBe(true);
-
-      MockAuthUserModel.reset();
-    });
-
-    it('isAvailable should be false if a user with that username is found', async () => {
-      const takenUsername = 'takenUsername';
-      const user = {
-        username: takenUsername,
-      } as AuthUser;
-
-      MockAuthUserModel.userToRespondWith = user;
-
-      const { isAvailable } = await mockUserAvailableController()(
-        takenUsername
-      );
-
-      expect(isAvailable).toBe(false);
-
-      MockAuthUserModel.reset();
     });
   });
 });
