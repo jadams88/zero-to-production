@@ -1,7 +1,6 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import * as fromAuth from './auth.actions';
 import { IUser } from '@ztp/data';
-import { secondsToExpiresAtMillis } from '../utils';
 
 export const authStateKey = 'authStateKey';
 
@@ -23,7 +22,7 @@ const authReducer = createReducer(
     return {
       ...state,
       isAuthenticated: true,
-      expiresAt: secondsToExpiresAtMillis(expiresIn), // expiresIn will be in seconds
+      expiresAt: new Date().valueOf() + expiresIn * 1000, // expiresIn will be in seconds -> convert to millis
     };
   }),
   on(fromAuth.registerSuccess, (state) => {
@@ -42,7 +41,7 @@ const authReducer = createReducer(
     return { ...state, user: null };
   }),
   on(fromAuth.logout, (state) => {
-    return { ...state, isAuthenticated: false };
+    return { ...state, isAuthenticated: false, user: null };
   })
 );
 

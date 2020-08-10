@@ -5,7 +5,6 @@ import {
   HttpClientTestingModule,
 } from '@angular/common/http/testing';
 import { AuthInterceptor } from './auth-interceptor';
-import { Type } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 describe('AuthInterceptor', () => {
@@ -31,9 +30,7 @@ describe('AuthInterceptor', () => {
     });
 
     httpClient = TestBed.inject<HttpClient>(HttpClient);
-    httpTestingController = TestBed.inject(
-      HttpTestingController as Type<HttpTestingController>
-    );
+    httpTestingController = TestBed.inject(HttpTestingController);
     authService = TestBed.inject<AuthService>(AuthService);
   });
 
@@ -41,9 +38,7 @@ describe('AuthInterceptor', () => {
     const token = 'TOKEN';
 
     Object.defineProperty(authService, 'authToken', {
-      get: () => {
-        return token;
-      },
+      get: () => token,
     });
 
     const someData = { data: 'someData ' };
@@ -74,9 +69,7 @@ describe('AuthInterceptor', () => {
 
   it('should not have an Authorization header if their is no auth token', () => {
     Object.defineProperty(authService, 'authToken', {
-      get: () => {
-        return null;
-      },
+      get: () => null,
     });
 
     const someData = { data: 'someData ' };

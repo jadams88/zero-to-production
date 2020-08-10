@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Actions } from '@ngrx/effects';
 import { GraphQLError } from 'graphql';
 import { cold, hot, Scheduler } from 'jest-marbles';
@@ -20,6 +20,7 @@ describe('AuthEffects', () => {
     'register',
     'setSession',
     'removeSession',
+    'revokeRefreshToken',
   ]);
 
   beforeEach(() => {
@@ -47,7 +48,7 @@ describe('AuthEffects', () => {
       actions$ = hot('-a---', { a: action });
       // Example graphql response below
       const response = cold('-a|', {
-        a: { data: { login: { token, expiresIn } } },
+        a: { data: { authorize: { token, expiresIn } } },
       });
       const expected = cold('--b', { b: completion });
       authService.login = jest.fn(() => response);
@@ -192,6 +193,10 @@ describe('AuthEffects', () => {
 
   describe('logout$', () => {
     it('should dispatch a LogoutRedirect action', () => {
+      const spy = jest
+        .spyOn(authService, 'revokeRefreshToken')
+        .mockReturnValueOnce(of({ success: true }));
+
       const action = AuthActions.logout();
       const completion = AuthActions.logoutRedirect();
 
@@ -199,9 +204,15 @@ describe('AuthEffects', () => {
       const expected = cold('-b', { b: completion });
 
       expect(effects.logout$).toBeObservable(expected);
+
+      spy.mockClear();
     });
 
-    it('should call the AuthService.removeSession with the returned token', (done) => {
+    it('should call the AuthService.removeSession', (done) => {
+      const spy2 = jest
+        .spyOn(authService, 'revokeRefreshToken')
+        .mockReturnValueOnce(of({ success: true }));
+
       const spy = jest.spyOn(authService, 'removeSession');
       spy.mockReset();
       const action = AuthActions.logout();
@@ -216,6 +227,29 @@ describe('AuthEffects', () => {
       Scheduler.get().flush();
 
       spy.mockReset();
+      spy2.mockReset();
+    });
+
+    it('should call the AuthService.revokeRefreshToken', (done) => {
+      const spy2 = jest
+        .spyOn(authService, 'revokeRefreshToken')
+        .mockReturnValueOnce(of({ success: true }));
+
+      const spy = jest.spyOn(authService, 'removeSession');
+      spy.mockReset();
+      const action = AuthActions.logout();
+
+      actions$ = hot('-a---', { a: action });
+
+      effects.logout$.subscribe((act) => {
+        expect(spy2).toHaveBeenCalled();
+        done();
+      });
+
+      Scheduler.get().flush();
+
+      spy.mockReset();
+      spy2.mockReset();
     });
   });
 });

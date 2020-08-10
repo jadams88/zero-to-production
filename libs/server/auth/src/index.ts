@@ -1,9 +1,5 @@
 export type {
   AuthModuleConfig,
-  BasicAuthModule,
-  AuthWithValidation,
-  BasicAuthAndRefresh,
-  CompleteAuth,
   AuthEnv,
   AuthUserModel,
   AuthUser,

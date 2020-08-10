@@ -10,7 +10,6 @@ import {
   audience,
   issuer,
   MockVerifyModel,
-  mockLoginConfig,
   mockVerificationConfig,
   mockRegistrationConfig,
   mockAuthorizeConfig,
@@ -21,15 +20,14 @@ import {
   newId,
 } from '../__tests__';
 import { signRefreshToken } from '../core/tokens';
-import type { AuthUser, CompleteAuth, Refresh, Verify } from '../types';
+import type { AuthUser, Refresh, Verify, AuthModuleConfig } from '../types';
 
 const URL = 'http://localhost';
 const PORT = 9999;
 
 const agentRequest = request(URL, PORT);
 
-const config: CompleteAuth<AuthUser, Verify, Refresh> = {
-  login: mockLoginConfig(),
+const config: AuthModuleConfig<AuthUser, Refresh, Verify> = {
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),
   authorize: mockAuthorizeConfig(),
@@ -85,62 +83,6 @@ describe('Router - Auth', () => {
 
       expect(response.body.password).not.toBeDefined();
       expect(response.body.hashedPassword).not.toBeDefined();
-    });
-  });
-
-  describe('/login', () => {
-    it('should return an access token if correct credentials are provided', async () => {
-      const userWithId = {
-        ...user,
-        id: newId(),
-        active: true,
-      };
-
-      // Set the hashed password to be correct
-      userWithId.hashedPassword = await hash((user as any).password, 10);
-
-      MockAuthUserModel.userToRespondWith = userWithId;
-
-      const response = await superagent
-        .post(agentRequest('/login'))
-        .send(userWithId);
-
-      expect(response.body).toBeDefined();
-      expect(response.body.token).toBeString();
-
-      MockAuthUserModel.reset();
-    });
-
-    it('should throw unauthorized error if the user is not found', async () => {
-      const userWithId = {
-        ...user,
-        id: newId(),
-        active: true,
-      };
-
-      MockAuthUserModel.userToRespondWith = null;
-
-      await expect(
-        superagent.post(agentRequest('/login')).send({ ...userWithId })
-      ).rejects.toThrowError('Unauthorized');
-
-      MockAuthUserModel.reset();
-    });
-
-    it('should throw an unauthorized error if the user is not active', async () => {
-      const userWithId = {
-        ...user,
-        id: newId(),
-        active: false,
-      };
-
-      MockAuthUserModel.userToRespondWith = userWithId;
-
-      await expect(
-        superagent.post(agentRequest('/login')).send({ ...userWithId })
-      ).rejects.toThrowError('Unauthorized');
-
-      MockAuthUserModel.reset();
     });
   });
 
@@ -277,7 +219,7 @@ describe('Router - Auth', () => {
   });
 
   describe('/authorize', () => {
-    it('should return an accessToken and refreshToken if the credentials correct', async () => {
+    it('should return an accessToken if the credentials correct', async () => {
       const hashedPassword = await hash((user as any).password, 10);
 
       const userWithPassword = {
@@ -300,7 +242,7 @@ describe('Router - Auth', () => {
 
       expect(response.body).toBeDefined();
       expect(response.body.token).toBeString();
-      expect(response.body.refreshToken).toBeString();
+      expect(response.body.expiresIn).toBeNumber();
 
       MockAuthUserModel.reset();
       MockRefreshModel.reset();
@@ -393,12 +335,47 @@ describe('Router - Auth', () => {
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
-        username: userWithId.username,
         refreshToken: refreshTokenString,
       };
       const response = await superagent
         .post(agentRequest('/authorize/refresh'))
         .send(requestBody);
+
+      expect(response.body).toBeDefined();
+      expect(response.body.token).toBeString();
+
+      MockAuthUserModel.reset();
+      MockRefreshModel.reset();
+    });
+
+    it('should return a new access token when the a valid refresh token is provided as cookie', async () => {
+      const userWithId = {
+        ...user,
+        id: newId(),
+        active: true,
+      };
+
+      const refreshTokenString = signRefreshToken({
+        privateKey,
+        audience,
+        issuer,
+      })(userWithId);
+
+      const refreshToken = {
+        user: {
+          id: userWithId.id,
+          username: userWithId.username,
+          active: true,
+        } as AuthUser,
+        token: refreshTokenString,
+      };
+
+      MockRefreshModel.tokenToRespondWith = refreshToken;
+
+      const response = await superagent
+        .post(agentRequest('/authorize/refresh'))
+        .set('Cookie', [`refresh_token=${refreshTokenString}`])
+        .send();
 
       expect(response.body).toBeDefined();
       expect(response.body.token).toBeString();
@@ -432,45 +409,7 @@ describe('Router - Auth', () => {
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const requestBody = {
-        username: userWithId.username,
         refreshToken: 'incorrect token',
-      };
-
-      await expect(
-        superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
-      ).rejects.toThrowError('Unauthorized');
-
-      MockAuthUserModel.reset();
-      MockRefreshModel.reset();
-    });
-
-    it('should throw a unauthorized errors if invalid username provided', async () => {
-      const userWithId = {
-        ...user,
-        id: newId(),
-        active: true,
-      };
-
-      const refreshTokenString = signRefreshToken({
-        privateKey,
-        audience,
-        issuer,
-      })(userWithId);
-
-      const refreshToken = {
-        user: {
-          id: userWithId.id,
-          username: userWithId.username,
-          active: true,
-        } as AuthUser,
-        token: refreshTokenString,
-      };
-
-      MockRefreshModel.tokenToRespondWith = refreshToken;
-
-      const requestBody = {
-        username: 'wrong user',
-        refreshToken: refreshTokenString,
       };
 
       await expect(

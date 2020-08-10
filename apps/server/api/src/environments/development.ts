@@ -22,6 +22,7 @@ export const devConfig: DevServerConfig = {
 };
 
 export const devAuthConfig: AuthEnv = {
+  production: false,
   jwksRoute: true,
   authServerHost,
   accessToken: {

@@ -5,14 +5,17 @@ import { ApolloServer } from 'apollo-server-koa';
 import superagent from 'superagent';
 import { createAuthSchema } from './schema';
 import {
-  mockLoginConfig,
   mockRegistrationConfig,
   mockVerificationConfig,
   MockVerifyModel,
   MockAuthUserModel,
   setupTestServer,
+  mockAuthorizeConfig,
+  mockRefreshTokenConfig,
+  mockRevokeConfig,
+  cookiesMock,
 } from '../__tests__';
-import { AuthUser, AuthWithValidation, Verify } from '../types';
+import { AuthUser, Verify, AuthModuleConfig, Refresh } from '../types';
 import { Server } from 'http';
 import { graphQLVerifyUrl } from './utils';
 
@@ -21,14 +24,16 @@ const PORT = 9998;
 
 export const runQuery = (sc: GraphQLSchema) => {
   return async (query: string, variables: { [prop: string]: any }) => {
-    return graphql(sc, query, null, {}, variables);
+    return graphql(sc, query, null, { cookies: cookiesMock }, variables);
   };
 };
 
-const config: AuthWithValidation<AuthUser, Verify> = {
-  login: mockLoginConfig(),
+const config: AuthModuleConfig<AuthUser, Refresh, Verify> = {
+  authorize: mockAuthorizeConfig(),
   verify: mockVerificationConfig(),
   register: mockRegistrationConfig(),
+  refresh: mockRefreshTokenConfig(),
+  revoke: mockRevokeConfig(),
   authServerHost: 'http://some-url.com',
 };
 
@@ -123,7 +128,7 @@ describe(`GraphQL - Auth Queries`, () => {
     });
   });
 
-  describe('login(username: String!, password: String!): AuthPayload!', () => {
+  describe('authorize(username: String!, password: String!): AuthPayload!', () => {
     it('should return an access token if correct credentials are provided', async () => {
       const userWithId = {
         ...user,
@@ -136,10 +141,10 @@ describe(`GraphQL - Auth Queries`, () => {
 
       MockAuthUserModel.userToRespondWith = userWithId;
 
-      const queryName = `login`;
+      const queryName = `authorize`;
       const result = await runQuery(schema)(
         `
-        mutation Login($username: String!, $password: String!) {
+        mutation Authorize($username: String!, $password: String!) {
           ${queryName}(username: $username, password: $password) {
             token
           }
@@ -164,10 +169,10 @@ describe(`GraphQL - Auth Queries`, () => {
     it('should throw unauthorized error if the user is not found', async () => {
       MockAuthUserModel.userToRespondWith = null;
 
-      const queryName = `login`;
+      const queryName = `authorize`;
       const result = await runQuery(schema)(
         `
-        mutation Login($username: String!, $password: String!) {
+        mutation Authorize($username: String!, $password: String!) {
           ${queryName}(username: $username, password: $password) {
             token
           }
@@ -198,10 +203,10 @@ describe(`GraphQL - Auth Queries`, () => {
 
       MockAuthUserModel.userToRespondWith = userWithId;
 
-      const queryName = `login`;
+      const queryName = `authorize`;
       const result = await runQuery(schema)(
         `
-        mutation Login($username: String!, $password: String!) {
+        mutation Authorize($username: String!, $password: String!) {
           ${queryName}(username: $username, password: $password) {
             token
           }
@@ -232,10 +237,10 @@ describe(`GraphQL - Auth Queries`, () => {
 
       MockAuthUserModel.userToRespondWith = userWithId;
 
-      const queryName = `login`;
+      const queryName = `authorize`;
       const result = await runQuery(schema)(
         `
-        mutation Login($username: String!, $password: String!) {
+        mutation Authorize($username: String!, $password: String!) {
           ${queryName}(username: $username, password: $password) {
             token
           }
@@ -243,7 +248,7 @@ describe(`GraphQL - Auth Queries`, () => {
         `,
         {
           username: user.username,
-          password: (user as any).password,
+          password: 'wrong$password',
         }
       );
 

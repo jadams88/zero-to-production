@@ -6,7 +6,7 @@ import { AuthEffects } from './+state/auth.effects';
 import * as fromAuth from './+state/auth.reducer';
 import { AUTH_SERVER_URL } from './services/auth.service';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
-import { ErrorInterceptor } from './interceptors/error-interceptor';
+import { SilentRefreshInterceptor } from './interceptors/silent-refresh-interceptor';
 
 @NgModule({
   imports: [
@@ -26,7 +26,11 @@ export class CommonAuthDataAccessModule {
       providers: [
         { provide: AUTH_SERVER_URL, useValue: authServerUrl },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: SilentRefreshInterceptor,
+          multi: true,
+        },
       ],
     };
   }

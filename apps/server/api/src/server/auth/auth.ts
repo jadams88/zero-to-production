@@ -14,7 +14,7 @@ import { VerificationToken, RefreshToken } from './models';
 import { configureSendgrid } from '@ztp/server/utils';
 
 // Basic AuthModule (no email verification)
-const authModuleConfig = generateAuthModuleConfig(authConfig, User);
+// const authModuleConfig = generateAuthModuleConfig(authConfig, User);
 
 // ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
 // const verifyUrl = restVerifyUrl(authConfig.authServerHost);
@@ -26,13 +26,13 @@ const authModuleConfig = generateAuthModuleConfig(authConfig, User);
 //   createEmailMessage(verifyUrl)
 // );
 
-// const authModuleConfig = generateAuthModuleConfig(
-//   authConfig,
-//   User,
-//   VerificationToken,
-//   verifyEmail,
-//   RefreshToken
-// );
+const authModuleConfig = generateAuthModuleConfig(
+  authConfig,
+  User,
+  RefreshToken,
+  VerificationToken
+  // verifyEmail,
+);
 
 /**
  * Applies all required auth routes

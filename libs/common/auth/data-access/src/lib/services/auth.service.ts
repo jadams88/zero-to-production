@@ -1,6 +1,4 @@
 import { Injectable, InjectionToken, Inject, PLATFORM_ID } from '@angular/core';
-import { gql } from '@apollo/client/core';
-import { GraphQLService } from '@ztp/common/data-access';
 import { IUser } from '@ztp/data';
 import {
   ILoginCredentials,
@@ -8,38 +6,23 @@ import {
   IRegistrationDetails,
   IJWTPayload,
 } from '../auth.interface';
-import { secondsToExpiresAtMillis } from '../utils';
 import { AuthFacade } from '../+state/auth.facade';
 import { isPlatformBrowser } from '@angular/common';
-
-function jwtDecode<T>(token: string | null | undefined): T | any {
-  if (token) {
-    try {
-      // second index is the body
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join('')
-      );
-
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      // ignore
-    }
-  } else {
-    return null;
-  }
-}
+import { jwtDecode } from './jwt-decode';
+import { HttpClient } from '@angular/common/http';
 
 export const AUTH_SERVER_URL = new InjectionToken<string>(
   'forRoot() Auth Server Url'
 );
 
+type GQLSuccess<T> = { data: T; errors: [] };
+type GQLError = { data: null; errors: any[] };
+type GQLResponse<T> = GQLSuccess<T> | GQLError;
+
+/**
+ * For the auth service, we do not use the GraphQL Service (and consequently ApolloClient)
+ * This removes the cache as well as a different auth url can be used thant the 'api' url
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly storageKey = 'access_token';
@@ -47,45 +30,58 @@ export class AuthService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private graphQl: GraphQLService,
+    @Inject(AUTH_SERVER_URL) private serverUrl: string,
+    private http: HttpClient,
     private facade: AuthFacade
   ) {}
 
-  // Login function that returns a user and JWT
+  // Login function that returns a JWT
   // This is a graphql login function
   login(credentials: ILoginCredentials) {
-    const mutation = gql`
+    const query = `
       mutation LoginUser($username: String!, $password: String!) {
-        login(username: $username, password: $password) {
+        authorize(username: $username, password: $password) {
           token
           expiresIn
         }
       }
     `;
-    return this.graphQl.mutate<{ login: ILoginResponse }>({
-      mutation,
+
+    const data = {
+      query,
+      operationName: 'LoginUser',
       variables: credentials,
-    });
+    };
+
+    return this.http.post<GQLResponse<{ authorize: ILoginResponse }>>(
+      `${this.serverUrl}/graphql`,
+      data
+    );
   }
 
-  register(details: IRegistrationDetails) {
-    const mutation = gql`
+  register(input: IRegistrationDetails) {
+    const query = `
       mutation Register($input: RegisterInput!) {
         register(input: $input) {
           id
         }
       }
     `;
-    return this.graphQl.mutate<{ register: IUser }>({
-      mutation,
-      variables: {
-        input: details,
-      },
-    });
+
+    const data = {
+      query,
+      operationName: 'Register',
+      variables: { input },
+    };
+
+    return this.http.post<GQLResponse<{ register: IUser }>>(
+      `${this.serverUrl}/graphql`,
+      data
+    );
   }
 
   loadUser(id: string) {
-    const query = gql`
+    const query = `
       query AuthUser($id: ID!) {
         User(id: $id) {
           id
@@ -97,7 +93,30 @@ export class AuthService {
       }
     `;
 
-    return this.graphQl.query<{ User: IUser }>({ query, variables: { id } });
+    const data = {
+      query,
+      operationName: 'AuthUser',
+      variables: { id },
+    };
+
+    return this.http.post<GQLResponse<{ User: IUser }>>(
+      `${this.serverUrl}/graphql`,
+      data
+    );
+  }
+
+  refreshAccessToken() {
+    return this.http.post<{ token: string; expiresIn: number }>(
+      `${this.serverUrl}/authorize/refresh`,
+      {}
+    );
+  }
+
+  revokeRefreshToken() {
+    return this.http.post<{ success: boolean }>(
+      `${this.serverUrl}/authorize/revoke`,
+      {}
+    );
   }
 
   get authToken(): string | null | undefined {
@@ -108,7 +127,7 @@ export class AuthService {
 
   setSession({ token, expiresIn }: ILoginResponse): void {
     if (isPlatformBrowser(this.platformId)) {
-      const expiresAt = secondsToExpiresAtMillis(expiresIn);
+      const expiresAt = new Date().valueOf() + expiresIn * 1000;
       localStorage.setItem(this.storageKey, token);
       localStorage.setItem(this.sessionKey, expiresAt.toString());
     }

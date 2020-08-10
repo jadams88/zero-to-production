@@ -1,46 +1,21 @@
 import { createHash } from 'crypto';
-import { createPublicPemFromPrivate } from './utils';
+import { createPublicPemFromPrivate, noOpEmailVerification } from './utils';
 import {
   AuthEnv,
   VerifyEmail,
-  BasicRegistrationController,
-  RegistrationWithVerificationController,
-  VerifyController,
-  RefreshController,
-  RevokeController,
-  AuthorizeController,
   AuthUserModel,
   AuthUser,
   Verify,
   Refresh,
-  BasicAuthModule,
   VerifyModel,
   RefreshModel,
-  AuthWithValidation,
-  BasicAuthAndRefresh,
-  CompleteAuth,
-  LoginController,
   AuthGuard,
   ActiveUserGuard,
   VerifyToken,
   VerifyJWKS,
+  AuthModuleConfig,
 } from '../types';
 
-export function generateAuthModuleConfig<U extends AuthUser>(
-  config: AuthEnv,
-  User: AuthUserModel<U>
-): BasicAuthModule<U>;
-export function generateAuthModuleConfig<U extends AuthUser, V extends Verify>(
-  config: AuthEnv,
-  User: AuthUserModel<U>,
-  Verify: VerifyModel<V>,
-  emailClient: VerifyEmail
-): AuthWithValidation<U, V>;
-export function generateAuthModuleConfig<U extends AuthUser, R extends Refresh>(
-  config: AuthEnv,
-  User: AuthUserModel<U>,
-  Refresh: RefreshModel<R>
-): BasicAuthAndRefresh<U, R>;
 export function generateAuthModuleConfig<
   U extends AuthUser,
   V extends Verify,
@@ -48,21 +23,10 @@ export function generateAuthModuleConfig<
 >(
   config: AuthEnv,
   User: AuthUserModel<U>,
+  Refresh: RefreshModel<R>,
   Verify: VerifyModel<V>,
-  emailClient: VerifyEmail,
-  Refresh: RefreshModel<R>
-): CompleteAuth<U, V, R>;
-export function generateAuthModuleConfig<
-  U extends AuthUser,
-  V extends Verify,
-  R extends Refresh
->(
-  config: AuthEnv,
-  User: AuthUserModel<U>,
-  VerifyM?: VerifyModel<V>,
-  emailClient?: VerifyEmail,
-  RefreshM?: RefreshModel<R>
-): any {
+  emailClient: VerifyEmail = noOpEmailVerification
+): AuthModuleConfig<U, R, V> {
   const { publicKey, privateKey } = config.accessToken;
   const pubKey = publicKey ? publicKey : createPublicPemFromPrivate(privateKey);
 
@@ -81,116 +45,35 @@ export function generateAuthModuleConfig<
       }
     : undefined;
 
-  const login: LoginController<U> = {
-    User,
-    ...config.accessToken,
-    keyId,
-  };
-  const baseRegister: BasicRegistrationController<U> = {
-    User,
-  };
-
-  const baseConfig: BasicAuthModule<U> = {
+  return {
     authServerHost: config.authServerHost,
-    login,
     jwks,
-    register: baseRegister,
+    register: {
+      User,
+      Verify,
+      verifyEmail: emailClient,
+    },
+    verify: {
+      User,
+      Verify,
+    },
+    authorize: {
+      User,
+      Refresh,
+      ...config.accessToken,
+      keyId,
+      production: config.production,
+    },
+    refresh: {
+      Refresh,
+      ...config.accessToken,
+      ...config.refreshToken,
+      keyId,
+    },
+    revoke: {
+      Refresh,
+    },
   };
-
-  if (
-    VerifyM === undefined &&
-    emailClient === undefined &&
-    RefreshM === undefined
-  ) {
-    return baseConfig;
-    //
-  } else if (VerifyM && emailClient && RefreshM === undefined) {
-    const register: RegistrationWithVerificationController<U, V> = {
-      User,
-      Verify: VerifyM,
-      verifyEmail: emailClient,
-    };
-
-    const verify: VerifyController<U, V> = {
-      User,
-      Verify: VerifyM,
-    };
-
-    return { ...baseConfig, register, verify } as AuthWithValidation<U, V>;
-    //
-  } else if (
-    VerifyM === undefined &&
-    emailClient === undefined &&
-    RefreshM &&
-    config.refreshToken
-  ) {
-    const authorize: AuthorizeController<U, R> = {
-      User,
-      Refresh: RefreshM,
-      ...config.accessToken,
-      ...config.refreshToken,
-      keyId,
-    };
-    const refresh: RefreshController<R> = {
-      Refresh: RefreshM,
-      ...config.accessToken,
-      ...config.refreshToken,
-      keyId,
-    };
-
-    const revoke: RevokeController<R> = {
-      Refresh: RefreshM,
-    };
-
-    return { ...baseConfig, authorize, refresh, revoke } as BasicAuthAndRefresh<
-      U,
-      R
-    >;
-
-    //
-  } else if (VerifyM && RefreshM && emailClient && config.refreshToken) {
-    const register: RegistrationWithVerificationController<U, V> = {
-      User,
-      Verify: VerifyM,
-      verifyEmail: emailClient,
-    };
-
-    const verify: VerifyController<U, V> = {
-      User,
-      Verify: VerifyM,
-    };
-
-    const authorize: AuthorizeController<U, R> = {
-      User,
-      Refresh: RefreshM,
-      ...config.accessToken,
-      ...config.refreshToken,
-      keyId,
-    };
-
-    const refresh: RefreshController<R> = {
-      Refresh: RefreshM,
-      ...config.accessToken,
-      ...config.refreshToken,
-      keyId,
-    };
-
-    const revoke: RevokeController<R> = {
-      Refresh: RefreshM,
-    };
-
-    return {
-      ...baseConfig,
-      register,
-      verify,
-      authorize,
-      refresh,
-      revoke,
-    } as CompleteAuth<U, V, R>;
-  }
-
-  // default return
-  return baseConfig;
 }
 
 export function generateAuthGuardConfig<U extends AuthUser>(

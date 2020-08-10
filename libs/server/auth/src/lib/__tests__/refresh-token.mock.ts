@@ -25,6 +25,27 @@ export class MockRefreshModel extends BaseMockModel<Refresh> {
     }
   }
 
+  static async removeByToken(token: string) {
+    if (this._model && this._model._details.token === token) {
+      this._model = null;
+      return null;
+    } else {
+      return this._model;
+    }
+  }
+
+  static async removeUserTokens(id: string) {
+    if (this._model && this._model._details) {
+      if (this._model._details.user.id === id) {
+        return { ok: 1, n: 1 };
+      } else {
+        return { ok: 1, n: 0 };
+      }
+    } else {
+      return { ok: 1, n: 0 };
+    }
+  }
+
   async remove() {
     this._details = undefined as any;
     MockRefreshModel.tokenToRespondWith = null;

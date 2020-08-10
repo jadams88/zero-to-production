@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { GraphQLError } from 'graphql';
 import { sign } from 'jsonwebtoken';
-import { GraphQLStub } from '@ztp/tests/client';
+import { GraphQLStub, HttpStub } from '@ztp/tests/client';
 import { AuthService, AUTH_SERVER_URL } from './auth.service';
 import {
   ILoginCredentials,
@@ -11,14 +11,14 @@ import {
 import { IUser } from '@ztp/data';
 import { AuthFacade } from '../+state/auth.facade';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { GraphQLService } from '@ztp/common/data-access';
+import { HttpClient } from '@angular/common/http';
 
 describe('AuthService', () => {
   const storageKey = 'access_token';
   const sessionKey = 'expires_at';
 
   let authService: AuthService;
-  let gqlService: GraphQLStub;
+  let http: HttpStub;
   let authFacade: AuthFacade;
 
   const facadeStub = { setAuthenticated: jest.fn() };
@@ -28,13 +28,13 @@ describe('AuthService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         AuthService,
-        { provide: GraphQLService, useClass: GraphQLStub },
         { provide: AuthFacade, useValue: facadeStub },
         { provide: AUTH_SERVER_URL, useValue: 'test-url' },
+        { provide: HttpClient, useClass: HttpStub },
       ],
     });
     authService = TestBed.inject<AuthService>(AuthService);
-    gqlService = (TestBed.inject(GraphQLService) as unknown) as GraphQLStub;
+    http = (TestBed.inject(HttpClient) as unknown) as HttpStub;
     authFacade = TestBed.inject<AuthFacade>(AuthFacade);
   });
 
@@ -45,7 +45,7 @@ describe('AuthService', () => {
   describe('login', () => {
     // GraphQL login response check
     it('should return a LoginResponse if called with valid credentials', () => {
-      const spy = jest.spyOn(gqlService, 'mutate');
+      const spy = jest.spyOn(http, 'post');
       const loginCredentials: ILoginCredentials = {
         username: 'admin',
         password: 'secret',
@@ -55,44 +55,50 @@ describe('AuthService', () => {
         expiresIn: 1000,
       };
       // Set the response from the the stub
-      gqlService.setExpectedResponse<{
-        login: ILoginResponse;
-      }>({
-        login: expectedResponse,
+      http.setExpectedResponse<{ data: { login: ILoginResponse } }>({
+        data: { login: expectedResponse },
       });
       authService.login(loginCredentials).subscribe((response) => {
         expect(response.errors).toBeUndefined();
         expect((response.data as any).login).toBeDefined();
         expect((response.data as any).login).toEqual(expectedResponse);
-        expect(gqlService.mutate).toHaveBeenCalled();
+        expect(http.post).toHaveBeenCalled();
         expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
       }, console.error);
+
+      spy.mockClear();
     });
     it('should return an error if credentials are incorrect', () => {
-      const spy = jest.spyOn(gqlService, 'mutate');
+      const spy = jest.spyOn(http, 'post');
       const loginCredentials: ILoginCredentials = {
         username: 'unauthorized',
         password: 'noi dea',
       };
-      const graphErrors = [
+      const graphQLErrors = [
         { name: 'Unauthorized Error', message: 'Unauthorized' },
       ] as GraphQLError[];
       // Set the response from the the stub
-      gqlService.setErrorResponse(graphErrors);
+
+      http.setExpectedResponse<{ errors: GraphQLError[] }>({
+        errors: graphQLErrors,
+      });
+
       authService.login(loginCredentials).subscribe((response) => {
         expect(response.data).toEqual(null);
         expect(response.errors).toBeDefined();
         expect((response.errors as any[][0]).message).toEqual('Unauthorized');
-        expect(gqlService.mutate).toHaveBeenCalled();
+        expect(http.post).toHaveBeenCalled();
         expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
       }, console.error);
+
+      spy.mockClear();
     });
   });
 
   describe('register', () => {
     // GraphQL login response check
     it('should return a User if registration is successfully', () => {
-      const spy = jest.spyOn(gqlService, 'mutate');
+      const spy = jest.spyOn(http, 'post');
       const newUser: IRegistrationDetails = {
         username: 'test user',
         givenName: 'test',
@@ -110,22 +116,22 @@ describe('AuthService', () => {
       };
 
       // Set the response from the the stub
-      gqlService.setExpectedResponse<{
-        user: IUser;
-      }>({
-        user: expectedResponse,
+      http.setExpectedResponse<{ data: { user: IUser } }>({
+        data: { user: expectedResponse },
       });
 
       authService.register(newUser).subscribe((response) => {
         expect(response.errors).toBeUndefined();
         expect((response.data as any).login).toBeDefined();
         expect((response.data as any).login).toEqual(expectedResponse);
-        expect(gqlService.mutate).toHaveBeenCalled();
+        expect(http.post).toHaveBeenCalled();
         expect(spy.mock.calls[0][1]).toEqual(newUser);
       }, console.error);
+
+      spy.mockClear();
     });
     it('should return an error if registration is invalid', () => {
-      const spy = jest.spyOn(gqlService, 'mutate');
+      const spy = jest.spyOn(http, 'post');
 
       const newUser = ({
         username: 'test user',
@@ -135,21 +141,25 @@ describe('AuthService', () => {
         dateOfBirth: '2019-01-01',
       } as any) as IRegistrationDetails;
 
-      const graphErrors = [
+      const graphQLErrors = [
         { name: 'Bad request', message: 'No password provided' },
       ] as GraphQLError[];
 
-      // Set the response from the the stub
-      gqlService.setErrorResponse(graphErrors);
+      http.setExpectedResponse<{ errors: GraphQLError[] }>({
+        errors: graphQLErrors,
+      });
+
       authService.register(newUser).subscribe((response) => {
         expect(response.data).toEqual(null);
         expect(response.errors).toBeDefined();
         expect((response.errors as any[][0]).message).toEqual(
           'No password provided'
         );
-        expect(gqlService.mutate).toHaveBeenCalled();
+        expect(http.post).toHaveBeenCalled();
         expect(spy.mock.calls[0][1]).toEqual(newUser);
       }, console.error);
+
+      spy.mockClear();
     });
   });
 

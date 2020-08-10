@@ -23,7 +23,7 @@ export class AuthEffects {
               errors
                 ? AuthActions.loginFailure({ error: errors[0].message })
                 : AuthActions.loginSuccess(
-                    (data as { login: ILoginResponse }).login
+                    (data as { authorize: ILoginResponse }).authorize
                   )
             ),
             catchError((error: HttpErrorResponse) =>
@@ -77,8 +77,13 @@ export class AuthEffects {
   logout$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.logout),
-      tap(() => this.authService.removeSession()),
-      map(() => AuthActions.logoutRedirect())
+      switchMap(() =>
+        this.authService.revokeRefreshToken().pipe(
+          tap(() => this.authService.removeSession()),
+          map(() => AuthActions.logoutRedirect()),
+          catchError((e) => of(e))
+        )
+      )
     )
   );
 

@@ -20,6 +20,13 @@ export interface IRefreshTokenDocument extends IRefreshToken, Document {
 
 export interface IRefreshTokenModel extends Model<IRefreshTokenDocument> {
   findByToken(token: string): Promise<IRefreshTokenDocument | null>;
+  removeByToken(token: string): Promise<IRefreshTokenDocument | null>;
+  removeUserTokens(
+    id: string
+  ): Promise<{
+    ok?: number | undefined;
+    n?: number | undefined;
+  }>;
 }
 
 /**
@@ -47,6 +54,19 @@ export const refreshTokenSchema = new Schema(refreshSchemaDef, {
 export class RefreshTokenClass extends Model {
   static findByToken(token: string): Promise<IRefreshTokenDocument | null> {
     return this.findOne({ token }).populate('user').exec();
+  }
+
+  static removeByToken(token: string): Promise<IRefreshTokenDocument | null> {
+    return this.findOneAndDelete({ token }).exec();
+  }
+
+  static removeUserTokens(
+    id: string
+  ): Promise<{
+    ok?: number | undefined;
+    n?: number | undefined;
+  }> {
+    return this.deleteMany({ user: id }).exec();
   }
 }
 

@@ -45,7 +45,7 @@ export const APP_ERRORS = {
     StoreRouterConnectingModule.forRoot(),
     CommonDataAccessModule.forRoot(environment),
     CommonAuthDataAccessModule.forRoot({
-      authServerUrl: environment.serverUrl,
+      authServerUrl: environment.authServer,
     }),
     SharedUsersDataAccessModule.forRoot(),
     CommonDynamicFormModule.forRoot({

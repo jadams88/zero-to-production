@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
+import Cookies from 'cookies';
 
 export const setupTestServer = () => {
   const app = new Koa();
@@ -22,3 +23,8 @@ export const request = (URL: string, PORT: number) => (path: string) =>
   `${URL}:${PORT}${path}`;
 
 export const newId = () => (Math.random() * 100).toString();
+
+export const cookiesMock = {
+  set(key: string, value?: string, opts?: any) {},
+  get(key: string) {},
+} as Cookies;
