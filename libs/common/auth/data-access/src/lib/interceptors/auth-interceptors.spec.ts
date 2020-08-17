@@ -5,15 +5,16 @@ import {
   HttpClientTestingModule,
 } from '@angular/common/http/testing';
 import { AuthInterceptor } from './auth-interceptor';
-import { AuthService } from '../services/auth.service';
+import { AuthFacade } from '../+state/auth.facade';
+import { of } from 'rxjs';
 
 describe('AuthInterceptor', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
-  let authService: AuthService;
+  let auth: AuthFacade;
 
   const authSpy = {
-    authToken: jest.fn(),
+    accessToken$: of(jest.fn()),
   };
 
   beforeEach(() => {
@@ -25,21 +26,19 @@ describe('AuthInterceptor', () => {
           useClass: AuthInterceptor,
           multi: true,
         },
-        { provide: AuthService, useValue: authSpy },
+        { provide: AuthFacade, useValue: authSpy },
       ],
     });
 
     httpClient = TestBed.inject<HttpClient>(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
-    authService = TestBed.inject<AuthService>(AuthService);
+    auth = TestBed.inject(AuthFacade);
   });
 
   it('should add a Bearer token to the Authorization header of all outgoing request', () => {
     const token = 'TOKEN';
 
-    Object.defineProperty(authService, 'authToken', {
-      get: () => token,
-    });
+    auth.accessToken$ = of(token);
 
     const someData = { data: 'someData ' };
 
@@ -68,9 +67,7 @@ describe('AuthInterceptor', () => {
   });
 
   it('should not have an Authorization header if their is no auth token', () => {
-    Object.defineProperty(authService, 'authToken', {
-      get: () => null,
-    });
+    auth.accessToken$ = of(null);
 
     const someData = { data: 'someData ' };
 

@@ -1,4 +1,5 @@
-import { Injectable, InjectionToken, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { IUser } from '@ztp/data';
 import {
   ILoginCredentials,
@@ -7,13 +8,8 @@ import {
   IJWTPayload,
 } from '../auth.interface';
 import { AuthFacade } from '../+state/auth.facade';
-import { isPlatformBrowser } from '@angular/common';
 import { jwtDecode } from './jwt-decode';
-import { HttpClient } from '@angular/common/http';
-
-export const AUTH_SERVER_URL = new InjectionToken<string>(
-  'forRoot() Auth Server Url'
-);
+import { AUTH_SERVER_URL } from '../tokens/tokens';
 
 type GQLSuccess<T> = { data: T; errors: [] };
 type GQLError = { data: null; errors: any[] };
@@ -29,7 +25,6 @@ export class AuthService {
   readonly sessionKey = 'expires_at';
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(AUTH_SERVER_URL) private serverUrl: string,
     private http: HttpClient,
     private facade: AuthFacade
@@ -39,7 +34,7 @@ export class AuthService {
   // This is a graphql login function
   login(credentials: ILoginCredentials) {
     const query = `
-      mutation LoginUser($username: String!, $password: String!) {
+      mutation Authorize($username: String!, $password: String!) {
         authorize(username: $username, password: $password) {
           token
           expiresIn
@@ -49,13 +44,17 @@ export class AuthService {
 
     const data = {
       query,
-      operationName: 'LoginUser',
+      operationName: 'Authorize',
       variables: credentials,
     };
 
     return this.http.post<GQLResponse<{ authorize: ILoginResponse }>>(
       `${this.serverUrl}/graphql`,
-      data
+      data,
+      {
+        headers: this.headers,
+        reportProgress: false,
+      }
     );
   }
 
@@ -76,7 +75,11 @@ export class AuthService {
 
     return this.http.post<GQLResponse<{ register: IUser }>>(
       `${this.serverUrl}/graphql`,
-      data
+      data,
+      {
+        headers: this.headers,
+        reportProgress: false,
+      }
     );
   }
 
@@ -101,77 +104,53 @@ export class AuthService {
 
     return this.http.post<GQLResponse<{ User: IUser }>>(
       `${this.serverUrl}/graphql`,
-      data
+      data,
+      {
+        headers: this.headers,
+        reportProgress: false,
+      }
     );
   }
 
   refreshAccessToken() {
     return this.http.post<{ token: string; expiresIn: number }>(
       `${this.serverUrl}/authorize/refresh`,
-      {}
+      {},
+      {
+        headers: this.headers,
+        reportProgress: false,
+      }
     );
   }
 
   revokeRefreshToken() {
     return this.http.post<{ success: boolean }>(
       `${this.serverUrl}/authorize/revoke`,
-      {}
+      {},
+      {
+        headers: this.headers,
+        reportProgress: false,
+      }
     );
   }
 
-  get authToken(): string | null | undefined {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.storageKey);
-    }
+  public isLoggedIn() {
+    this.facade.isLoggedIn();
   }
 
-  setSession({ token, expiresIn }: ILoginResponse): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const expiresAt = new Date().valueOf() + expiresIn * 1000;
-      localStorage.setItem(this.storageKey, token);
-      localStorage.setItem(this.sessionKey, expiresAt.toString());
-    }
-  }
-
-  removeSession(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.storageKey);
-      localStorage.removeItem(this.sessionKey);
-    }
-  }
-
-  /**
-   *
-   * NOTE: Side Effect. Each time the isLoggedIn methods is called, it will synchronously update the redux store
-   *
-   * @memberof AuthService
-   */
-  public isLoggedIn(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const expiration = this.expiration;
-      const auth = expiration ? this.isAuthenticated(expiration) : false;
-
-      if (auth) {
-        this.facade.setAuthenticated(true, expiration);
-      } else {
-        this.removeSession();
-        this.facade.setAuthenticated(false, null);
-      }
-    }
-  }
-
-  private get expiration(): number | null {
-    const expiration: string | null = localStorage.getItem(this.sessionKey);
-    return expiration ? Number(expiration) : null;
-  }
-
-  private isAuthenticated(expiration: number): boolean {
+  isAuthenticated(expiration: number): boolean {
     return new Date().valueOf() < expiration;
   }
 
-  get authUserId(): string | null {
-    const token = this.authToken;
+  decodeToken(token: string | null) {
     return token !== null ? jwtDecode<IJWTPayload>(token).sub : null;
+  }
+
+  private get headers() {
+    return {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
   }
 }
 

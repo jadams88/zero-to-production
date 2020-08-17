@@ -4,7 +4,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { AuthEffects } from './+state/auth.effects';
 import * as fromAuth from './+state/auth.reducer';
-import { AUTH_SERVER_URL } from './services/auth.service';
+import { AUTH_SERVER_URL } from './tokens/tokens';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { SilentRefreshInterceptor } from './interceptors/silent-refresh-interceptor';
 

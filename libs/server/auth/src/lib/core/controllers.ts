@@ -234,6 +234,8 @@ export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
   };
 }
 
+// TODO -> SHOULD THIS RETURN 401 or not?
+
 // a controller that receives a refresh token and returns an access token.
 export function setupRefreshAccessTokenController<R extends Refresh>(
   config: RefreshController<R>

@@ -4,7 +4,6 @@ import { tap } from 'rxjs/operators';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { NotificationService } from '@ztp/common/utils/notifications';
 import { AuthActions } from '@ztp/common/auth/data-access';
-import { GraphQLService } from '@ztp/common/data-access';
 
 @Injectable({
   providedIn: 'root',
@@ -32,10 +31,6 @@ export class AppEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.logoutRedirect),
-        tap((action) => {
-          this.graphQL.getClient().clearStore();
-          this.graphQL.getClient().cache.reset();
-        }),
         tap((action) => this.router.navigate(['examples', 'todos', 'login']))
       ),
     { dispatch: false }
@@ -66,7 +61,6 @@ export class AppEffects {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private graphQL: GraphQLService,
     private ns: NotificationService
   ) {}
 }
