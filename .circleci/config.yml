@@ -78,26 +78,20 @@ jobs:
       - checkout
       - <<: *deps-restore
       - run:
-          name: Testing Affected Packages
-          command: npx nx affected --target=test --base=<< parameters.base >> --head=<< parameters.head >>
-      - run:
           name: Linting Affected Packages
           command: npx nx affected --target=lint --base=<< parameters.base >> --head=<< parameters.head >>
       - run:
           name: Building Affected Applications
           command: npx nx affected --target=build --base=<< parameters.base >> --head=<< parameters.head >> --parallel=false --configuration=ci
+      - run:
+          name: Testing Affected Packages
+          command: npx nx affected --target=test --base=<< parameters.base >> --head=<< parameters.head >>
 
   build-and-test-latest:
     <<: *setup
     steps:
       - checkout
       - <<: *deps-restore
-      - run:
-          name: Testing Affected Packages
-          command: |-
-            TAG=$(git tag --sort=-committerdate --list 'v[0-9]*' | head -1);
-            COMMIT=$(git rev-parse ${TAG});
-            npx nx affected --target=test --base=${COMMIT} --head=origin/master
       - run:
           name: Linting Affected Packages
           command: |-
@@ -110,6 +104,12 @@ jobs:
             TAG=$(git tag --sort=-committerdate --list 'v[0-9]*' | head -1);
             COMMIT=$(git rev-parse ${TAG});
             npx nx affected --target=build --base=${COMMIT} --head=origin/master --parallel=false --configuration=ci
+      - run:
+          name: Testing Affected Packages
+          command: |-
+            TAG=$(git tag --sort=-committerdate --list 'v[0-9]*' | head -1);
+            COMMIT=$(git rev-parse ${TAG});
+            npx nx affected --target=test --base=${COMMIT} --head=origin/master
 
   # Run semantic release to create a new semver release and publish to github
   release:
