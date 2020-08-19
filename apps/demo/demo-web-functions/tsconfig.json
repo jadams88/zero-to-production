@@ -9,12 +9,6 @@
     "module": "commonjs",
     "types": ["node", "jest"]
   },
-  "include": [],
-  "exclude": ["**/*.spec.ts"],
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+  "include": ["**/*.ts", "**/*.d.ts"],
+  "exclude": ["**/*.spec.ts"]
 }
