@@ -13,7 +13,7 @@ import {
   createEmailMessage,
   restVerifyUrl,
 } from '@ztp/server/auth';
-import { config, authConfig } from '../../environments/environment';
+import { authConfig } from '../../environments/environment';
 import { configureSendgrid } from '@ztp/server/utils';
 
 // const verifyUrl = restVerifyUrl(authConfig.authServerHost);
@@ -31,19 +31,15 @@ import { configureSendgrid } from '@ztp/server/utils';
 export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
   const User = getUserModel(conn);
 
-  // Basic AuthModule (no email verification)
-  const authModuleConfig = generateAuthModuleConfig(authConfig, User);
-
-  // ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
-  // const VerificationToken = getVerificationTokenModel(conn);
-  // const RefreshToken = getRefreshTokenModel(conn);
-  // const authModuleConfig = generateAuthModuleConfig(
-  //   authConfig,
-  //   User,
-  //   VerificationToken,
-  //   verifyEmail,
-  //   RefreshToken
-  // );
+  const VerificationToken = getVerificationTokenModel(conn);
+  const RefreshToken = getRefreshTokenModel(conn);
+  const authModuleConfig = generateAuthModuleConfig(
+    authConfig,
+    User,
+    RefreshToken,
+    VerificationToken
+    // verifyEmail,
+  );
 
   app.use(applyAuthRoutes(authModuleConfig));
 }
@@ -54,19 +50,16 @@ export function applyLambdaAuthRoutes(app: Koa, conn: Connection) {
 export function authSchema(conn: Connection) {
   const User = getUserModel(conn);
 
-  // Basic AuthModule (no email verification)
-  const authModuleConfig = generateAuthModuleConfig(authConfig, User);
+  const VerificationToken = getVerificationTokenModel(conn);
+  const RefreshToken = getRefreshTokenModel(conn);
 
-  // ZTP_AFTER_CLONE -> uncomment the below for a full Auth Module. See the Auth Lib docs
-  // const VerificationToken = getVerificationTokenModel(conn);
-  // const RefreshToken = getRefreshTokenModel(conn);
-  // const authModuleConfig = generateAuthModuleConfig(
-  //   authConfig,
-  //   User,
-  //   VerificationToken,
-  //   verifyEmail,
-  //   RefreshToken
-  // );
+  const authModuleConfig = generateAuthModuleConfig(
+    authConfig,
+    User,
+    RefreshToken,
+    VerificationToken
+    // verifyEmail,
+  );
 
   return createAuthSchema(authModuleConfig);
 }
