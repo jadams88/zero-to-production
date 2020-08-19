@@ -68,18 +68,16 @@ spec:
                 secretKeyRef:
                   name: auth
                   key: sendGridApiKey
-            #  Optional -> generated at start up if not exist
-            #  For an always live server this is not an issue
-            # - name: ACCESS_TOKEN_PUBLIC_KEY
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: auth
-            #       key: access.publicKey
-            # - name: REFRESH_TOKEN_PUBLIC_KEY
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: auth
-            #       key: refresh.publicKey
+            - name: ACCESS_TOKEN_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth
+                  key: access.publicKey
+            - name: REFRESH_TOKEN_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth
+                  key: refresh.publicKey
           readinessProbe:
             # The URL and port must match the exposed port/url on the API container
             httpGet:

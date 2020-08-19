@@ -4,6 +4,10 @@ import Cookies from 'cookies';
 
 export const setupTestServer = () => {
   const app = new Koa();
+  app.use((ctx, next) => {
+    ctx.cookies.secure = true;
+    return next();
+  });
   app.use(bodyParser());
   app.use(async (ctx, next) => {
     try {

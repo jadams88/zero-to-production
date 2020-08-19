@@ -20,7 +20,6 @@ export const prodConfig: ProductionServerConfig = {
 };
 
 export const prodAuthConfig: AuthEnv = {
-  production: true,
   jwksRoute: true,
   authServerHost,
   accessToken: {

@@ -58,7 +58,6 @@ export const testConfig: TestServerConfig = {
 };
 
 export const testAuthConfig: AuthEnv = {
-  production: false,
   jwksRoute: true,
   authServerHost,
   accessToken: {

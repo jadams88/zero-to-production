@@ -39,7 +39,6 @@ export function mockVerificationConfig(): VerifyController<AuthUser, Verify> {
 
 export function mockAuthorizeConfig(): AuthorizeController<AuthUser, Refresh> {
   return {
-    production: false,
     User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     privateKey,
     expireTime: 100000,

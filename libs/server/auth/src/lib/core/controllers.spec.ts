@@ -270,8 +270,9 @@ describe('Auth - Controllers', () => {
       const cookieSetOptions = {
         maxAge: 31536000000,
         httpOnly: true,
-        secure: false, // can not set secure cookie over http, hence the test config sets production to false
+        secure: true,
         sameSite: 'strict',
+        path: '/authorize/refresh',
       };
 
       const cookieSpy = jest.spyOn(cookiesMock, 'set');

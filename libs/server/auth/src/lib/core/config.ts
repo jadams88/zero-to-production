@@ -62,7 +62,6 @@ export function generateAuthModuleConfig<
       Refresh: RefreshM,
       ...config.accessToken,
       keyId,
-      production: config.production,
     },
     refresh: {
       Refresh: RefreshM,

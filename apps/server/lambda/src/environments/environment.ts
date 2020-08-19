@@ -27,7 +27,6 @@ export const config: ServerConfig = {
 };
 
 export const authConfig: AuthEnv = {
-  production: false,
   jwksRoute: false,
   authServerHost,
   accessToken: {

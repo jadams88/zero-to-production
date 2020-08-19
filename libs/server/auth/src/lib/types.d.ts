@@ -113,7 +113,6 @@ export interface VerifyController<U extends AuthUser, V extends Verify> {
 
 export interface AuthorizeController<U extends AuthUser, R extends Refresh>
   extends SignAccessToken {
-  production: boolean;
   User: AuthUserModel<U>;
   Refresh: RefreshModel<R>;
 }
@@ -178,7 +177,6 @@ export interface AuthGuard<U extends AuthUser> {
 // -------------------------------------
 
 export interface AuthEnv {
-  production: boolean;
   authServerHost: string;
   jwksRoute?: boolean;
   accessToken: {

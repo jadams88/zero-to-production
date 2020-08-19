@@ -21,29 +21,6 @@ import type {
 import Cookies from 'cookies';
 import { setRefreshTokenCookie } from './cookies';
 
-// export function setupRegisterController<U extends AuthUser, V extends Verify>(
-//   config: RegisterController<U, V>
-// ): (user: AuthUser) => Promise<AuthUser> {
-//   // The 'registration' controller may either include email verification or not so
-//   // the Verify model may be undefined. Additionally a password validator may be passed in,
-//   // defaults to one in the utils
-//   const {
-//     User,
-//     Verify: VerifyToken,
-//     verifyEmail,
-//     validatePassword = isPasswordAllowed,
-//   } = config;
-
-//   const basicReg = simpleRegistration(User, validatePassword, Verify);
-
-//   if (!VerifyToken) {
-//     return basicReg;
-//   } else {
-//     const sendEmailVerification = verifyUser(VerifyToken, verifyEmail);
-//     return (user: AuthUser) => basicReg(user).then(sendEmailVerification);
-//   }
-// }
-
 export function setupRegisterController<U extends AuthUser, V extends VerifyM>({
   User,
   Verify,
@@ -84,23 +61,6 @@ export function setupRegisterController<U extends AuthUser, V extends VerifyM>({
     return stripPasswordFields<AuthUser>(savedUser);
   };
 }
-
-// export function verifyUser<V extends Verify>(
-//   VerificationToken: VerifyModel<V>,
-//   verifyEmail: VerifyEmail
-// ) {
-//   return (user: AuthUser) => {
-//     const verificationToken = new VerificationToken({
-//       userId: user.id,
-//       token: randomBytes(16).toString('hex'),
-//     });
-
-//     return Promise.all([
-//       verificationToken.save(),
-//       verifyEmail(user.email, verificationToken.token),
-//     ]).then(() => user);
-//   };
-// }
 
 /**
  *
@@ -148,54 +108,12 @@ export function setupVerifyController({
   };
 }
 
-/**
- *  A function that handles logging a user in
- *
- * @export
- * @param {{
- *   AuthUserModel: IAuthUserModel;
- *   secret: string;
- *   expireTime: number;
- * }} {
- *   AuthUserModel,
- *   secret,
- *   expireTime
- * }
- */
-// export function setupLoginController<U extends AuthUser>(
-//   config: LoginController<U>
-// ) {
-//   const { User } = config;
-//   const accessToken = signAccessToken(config);
-
-//   return async (username: string, password: string) => {
-//     if (!username || !password)
-//       throw unauthorized('Username and password must be provided');
-
-//     const user = await User.findByUsername(username);
-
-//     if (!user || !user.active) throw unauthorized(null, 'Bearer');
-
-//     const valid = await compare(password, user.hashedPassword as string);
-
-//     if (!valid) throw unauthorized(null, 'Bearer');
-
-//     const token = accessToken(user);
-
-//     return {
-//       token,
-//       expiresIn: config.expireTime,
-//     };
-//   };
-// }
-
 export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
   config: AuthorizeController<U, R>
 ) {
   const { User, Refresh: Token } = config;
   const createAccessToken = signAccessToken(config);
   const createRefreshToken = signRefreshToken(config);
-  const setRefreshToken = setRefreshTokenCookie(config.production);
 
   return async (username: string, password: string, cookies: Cookies) => {
     if (!username || !password)
@@ -225,7 +143,7 @@ export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
     await token.save();
 
     // Set the refresh token on the header
-    setRefreshToken(cookies, refreshToken);
+    setRefreshTokenCookie(cookies, refreshToken);
 
     return {
       token: accessToken,

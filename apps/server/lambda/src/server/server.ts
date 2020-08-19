@@ -28,6 +28,14 @@ export default class LambdaServer {
     applyGraphQLEndpoint(app, conn);
     applyRestEndpoints(app, conn);
 
+    /**
+     * This is a workaround because Koa does not allow you to set the cookie secure flag over http (behind a load balancer)
+     */
+    app.use((ctx, next) => {
+      ctx.cookies.secure = true;
+      return next();
+    });
+
     router.get('/healthz', (ctx) => {
       ctx.status = 200;
     });

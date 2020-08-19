@@ -25,10 +25,6 @@ A list of random issues that are either bugs or features that will cause changes
   Once merged, remove references from the tsconfig.lib.json's
   https://github.com/Microsoft/TypeScript/issues/27098
 
-- RouterLink directive is broken for relative paths with empty strings
-  Can remove the commented out routes in todo feature shell once completed
-  https://github.com/angular/angular/issues/13011
-
 - Nativescript does not currently support the monorepo design
   https://github.com/NativeScript/NativeScript/issues/7537
 
