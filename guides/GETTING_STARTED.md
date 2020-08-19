@@ -98,7 +98,7 @@ Note that before you can run the the API the following must be configured
 
 #### Continuos Integration & Semantic Release
 
-In shot, Circle CI is set up to run two workflows. The first, `build-and-test`, will run on any PR into master and lint, test & build all affected apps/libs by the changes.
+In short, Circle CI is set up to run two workflows. The first, `build-and-test`, will run on any PR into master and lint, test & build all affected apps/libs by the changes.
 
 The second, `release-and-deploy`, runs on any commit to master (i,e, any PR being merged) and will lint, test, & build the effected projects, generate a new semver release based on the commit messages and publish to GitHub. If any of the projects are affected by the changes they will be deployed to the respective service (Firebase Functions, AWS Lambda). Any release will also trigger a Kubernetes rolling update of the API server. See the [kubernetes guide] for further info.
 
