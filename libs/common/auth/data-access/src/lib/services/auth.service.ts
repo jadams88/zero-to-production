@@ -11,8 +11,14 @@ import { AuthFacade } from '../+state/auth.facade';
 import { jwtDecode } from './jwt-decode';
 import { AUTH_SERVER_URL } from '../tokens/tokens';
 
-type GQLSuccess<T> = { data: T; errors: [] };
-type GQLError = { data: null; errors: any[] };
+interface GQLSuccess<T> {
+  data: T;
+  errors: [];
+}
+interface GQLError {
+  data: null;
+  errors: any[];
+}
 type GQLResponse<T> = GQLSuccess<T> | GQLError;
 
 /**

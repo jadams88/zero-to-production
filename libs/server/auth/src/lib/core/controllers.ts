@@ -16,7 +16,7 @@ import type {
   RegisterController,
   AuthUser,
   Refresh,
-  Verify,
+  Verify as VerifyM,
 } from '../types';
 import Cookies from 'cookies';
 import { setRefreshTokenCookie } from './cookies';
@@ -44,7 +44,7 @@ import { setRefreshTokenCookie } from './cookies';
 //   }
 // }
 
-export function setupRegisterController<U extends AuthUser, V extends Verify>({
+export function setupRegisterController<U extends AuthUser, V extends VerifyM>({
   User,
   Verify,
   verifyEmail,

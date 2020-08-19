@@ -35,7 +35,7 @@ export class SilentRefreshInterceptor implements HttpInterceptor {
               map(({ token }) =>
                 req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
               ),
-              switchMap((req) => next.handle(req)),
+              switchMap((request) => next.handle(request)),
               catchError((e) => {
                 this.facade.logout();
                 return throwError(response);

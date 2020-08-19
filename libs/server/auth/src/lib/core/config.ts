@@ -23,8 +23,8 @@ export function generateAuthModuleConfig<
 >(
   config: AuthEnv,
   User: AuthUserModel<U>,
-  Refresh: RefreshModel<R>,
-  Verify: VerifyModel<V>,
+  RefreshM: RefreshModel<R>,
+  VerifyM: VerifyModel<V>,
   emailClient: VerifyEmail = noOpEmailVerification
 ): AuthModuleConfig<U, R, V> {
   const { publicKey, privateKey } = config.accessToken;
@@ -50,28 +50,28 @@ export function generateAuthModuleConfig<
     jwks,
     register: {
       User,
-      Verify,
+      Verify: VerifyM,
       verifyEmail: emailClient,
     },
     verify: {
       User,
-      Verify,
+      Verify: VerifyM,
     },
     authorize: {
       User,
-      Refresh,
+      Refresh: RefreshM,
       ...config.accessToken,
       keyId,
       production: config.production,
     },
     refresh: {
-      Refresh,
+      Refresh: RefreshM,
       ...config.accessToken,
       ...config.refreshToken,
       keyId,
     },
     revoke: {
-      Refresh,
+      Refresh: RefreshM,
     },
   };
 }
