@@ -4,7 +4,6 @@ import 'jest-extended';
 import {
   setupRegisterController,
   setupVerifyController,
-  setupLoginController,
   setupAuthorizeController,
   setupRefreshAccessTokenController,
   setupRevokeRefreshTokenController,
@@ -15,7 +14,6 @@ import {
   audience,
   issuer,
   mockVerificationConfig,
-  mockLoginConfig,
   mockAuthorizeConfig,
   mockRefreshTokenConfig,
   mockRevokeConfig,
@@ -23,6 +21,7 @@ import {
   MockVerifyModel,
   privateKey,
   MockRefreshModel,
+  cookiesMock,
 } from '../__tests__/index';
 import { VerifyModel, AuthUser, AuthUserModel, Verify } from '../types';
 
@@ -38,10 +37,6 @@ export function mockRegistrationController(
 
 export function mockVerificationController() {
   return setupVerifyController(mockVerificationConfig());
-}
-
-export function mockLoginController() {
-  return setupLoginController(mockLoginConfig());
 }
 
 export function mockAuthorizeController() {
@@ -241,85 +236,8 @@ describe('Auth - Controllers', () => {
     });
   });
 
-  describe('login', () => {
-    it('should return an access token if correct credentials are provided', async () => {
-      const userWithId = {
-        ...userWithPassword,
-        id: newId(),
-      };
-
-      // Set the hashed password to be correct
-      userWithId.hashedPassword = await hash((userWithId as any).password, 10);
-
-      MockAuthUserModel.userToRespondWith = userWithId;
-
-      const { token } = await mockLoginController()(
-        userWithId.username,
-        (userWithId as any).password
-      );
-
-      expect(token).toBeDefined();
-      expect(token).toBeString();
-
-      MockAuthUserModel.reset();
-    });
-
-    it('should throw unauthorized error if the User is not found', async () => {
-      MockAuthUserModel.userToRespondWith = null;
-
-      await expect(
-        mockLoginController()(
-          userWithPassword.username,
-          (userWithPassword as any).password
-        )
-      ).rejects.toThrowError('Unauthorized');
-
-      MockAuthUserModel.reset();
-    });
-
-    it('should throw unauthorized error if the credentials are incorrect', async () => {
-      const userWithId = {
-        ...userWithPassword,
-        id: newId(),
-      };
-
-      // Set the hashed password to be correct
-      userWithId.hashedPassword = await hash((userWithId as any).password, 10);
-
-      MockAuthUserModel.userToRespondWith = userWithId;
-
-      await expect(
-        mockLoginController()(userWithId.username, 'somWrongPassword')
-      ).rejects.toThrowError('Unauthorized');
-
-      await expect(
-        mockLoginController()('someWrongUsername', (userWithId as any).password)
-      ).rejects.toThrowError('Unauthorized');
-    });
-
-    it('should throw an unauthorized error if the user is not active', async () => {
-      const userWithId = {
-        ...userWithPassword,
-        id: newId(),
-      };
-
-      // Set the hashed password to be correct
-      userWithId.hashedPassword = await hash((userWithId as any).password, 10);
-
-      const inactiveUser = {
-        ...userWithId,
-        active: false,
-      };
-      MockAuthUserModel.userToRespondWith = inactiveUser;
-
-      await expect(
-        mockLoginController()(userWithId.username, (userWithId as any).password)
-      ).rejects.toThrowError('Unauthorized');
-    });
-  });
-
   describe('authorize', () => {
-    it('should return an accessToken and refreshToken if the credentials correct', async () => {
+    it('should return an accessToken if the credentials correct', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),
@@ -330,15 +248,50 @@ describe('Auth - Controllers', () => {
 
       MockAuthUserModel.userToRespondWith = userWithId;
 
-      const { token, refreshToken } = await mockAuthorizeController()(
+      const { token } = await mockAuthorizeController()(
         userWithId.username,
-        (userWithId as any).password
+        (userWithId as any).password,
+        cookiesMock
       );
 
       expect(token).toBeDefined();
       expect(token).toBeString();
-      expect(refreshToken).toBeDefined();
-      expect(refreshToken).toBeString();
+
+      MockAuthUserModel.reset();
+      MockRefreshModel.reset();
+    });
+
+    it('should set the refresh_token cookie if the credentials are correct', async () => {
+      const userWithId = {
+        ...userWithPassword,
+        id: newId(),
+      };
+
+      const cookieSetOptions = {
+        maxAge: 31536000000,
+        httpOnly: true,
+        secure: false, // can not set secure cookie over http, hence the test config sets production to false
+        sameSite: 'strict',
+      };
+
+      const cookieSpy = jest.spyOn(cookiesMock, 'set');
+
+      // Set the hashed password to be correct
+      userWithId.hashedPassword = await hash((userWithId as any).password, 10);
+
+      MockAuthUserModel.userToRespondWith = userWithId;
+      const { token } = await mockAuthorizeController()(
+        userWithId.username,
+        (userWithId as any).password,
+        cookiesMock
+      );
+
+      expect(cookieSpy).toHaveBeenCalled();
+      expect(cookieSpy.mock.calls[0][0]).toBe('refresh_token');
+      expect(typeof cookieSpy.mock.calls[0][1]).toBe('string');
+      expect((cookieSpy.mock.calls[0] as any)[2]).toMatchObject(
+        cookieSetOptions
+      );
 
       MockAuthUserModel.reset();
       MockRefreshModel.reset();
@@ -356,13 +309,18 @@ describe('Auth - Controllers', () => {
       MockAuthUserModel.userToRespondWith = userWithId;
 
       await expect(
-        mockAuthorizeController()(userWithId.username, 'somWrongPassword')
+        mockAuthorizeController()(
+          userWithId.username,
+          'somWrongPassword',
+          cookiesMock
+        )
       ).rejects.toThrowError('Unauthorized');
 
       await expect(
         mockAuthorizeController()(
           'someWrongUsername',
-          (userWithId as any).password
+          (userWithId as any).password,
+          cookiesMock
         )
       ).rejects.toThrowError('Unauthorized');
     });
@@ -385,7 +343,8 @@ describe('Auth - Controllers', () => {
       await expect(
         mockAuthorizeController()(
           inactiveUser.username,
-          (inactiveUser as any).password
+          (inactiveUser as any).password,
+          cookiesMock
         )
       ).rejects.toThrowError('Unauthorized');
 
@@ -419,8 +378,8 @@ describe('Auth - Controllers', () => {
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
       const { token } = await mockRefreshTokenController()(
-        userWithId.username,
-        refreshToken.token
+        refreshToken.token,
+        cookiesMock
       );
 
       expect(token).toBeDefined();
@@ -454,38 +413,7 @@ describe('Auth - Controllers', () => {
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
       await expect(
-        mockRefreshTokenController()(userWithId.username, 'incorrect token')
-      ).rejects.toThrowError('Unauthorized');
-
-      MockAuthUserModel.reset();
-      MockRefreshModel.reset();
-    });
-
-    it('should throw a unauthorized errors if invalid username provided', async () => {
-      const userWithId = {
-        ...userWithPassword,
-        id: newId(),
-      };
-
-      const refreshTokenString = signRefreshToken({
-        privateKey,
-        audience,
-        issuer,
-      })(userWithId);
-
-      const refreshToken = {
-        user: {
-          id: userWithId.id,
-          username: userWithId.username,
-          active: true,
-        } as AuthUser,
-        token: refreshTokenString,
-      };
-
-      MockRefreshModel.tokenToRespondWith = refreshToken;
-
-      await expect(
-        mockRefreshTokenController()('incorrect username', refreshToken.token)
+        mockRefreshTokenController()('incorrect token', cookiesMock)
       ).rejects.toThrowError('Unauthorized');
 
       MockAuthUserModel.reset();
@@ -517,7 +445,7 @@ describe('Auth - Controllers', () => {
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
       await expect(
-        mockRefreshTokenController()(userWithId.username, refreshToken.token)
+        mockRefreshTokenController()(refreshToken.token, cookiesMock)
       ).rejects.toThrowError('Unauthorized');
 
       // check the 'remove' handler has been called
@@ -551,7 +479,10 @@ describe('Auth - Controllers', () => {
 
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
-      const { success } = await mockRevokeController()(refreshToken.token);
+      const { success } = await mockRevokeController()(
+        refreshToken.token,
+        cookiesMock
+      );
 
       expect(success).toBe(true);
       // check if remove was called

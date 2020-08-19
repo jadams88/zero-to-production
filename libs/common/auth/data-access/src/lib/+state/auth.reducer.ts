@@ -1,48 +1,50 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import * as fromAuth from './auth.actions';
 import { IUser } from '@ztp/data';
-import { secondsToExpiresAtMillis } from '../utils';
 
 export const authStateKey = 'authStateKey';
 
 export interface AuthState {
-  isAuthenticated: boolean;
+  accessToken: string | null;
+  authenticated: boolean;
   expiresAt: number | null;
   user: IUser | null;
 }
 
 export const initialState: AuthState = {
-  isAuthenticated: false,
+  accessToken: null,
+  authenticated: false,
   expiresAt: null,
   user: null,
 };
 
 const authReducer = createReducer(
   initialState,
-  on(fromAuth.loginSuccess, (state, { expiresIn }) => {
-    return {
-      ...state,
-      isAuthenticated: true,
-      expiresAt: secondsToExpiresAtMillis(expiresIn), // expiresIn will be in seconds
-    };
-  }),
-  on(fromAuth.registerSuccess, (state) => {
-    return { ...state, isAvailable: null };
-  }),
+  on(
+    fromAuth.loginSuccess,
+    fromAuth.setAuthenticated,
+    (state, { token, expiresIn }) => {
+      return {
+        user: null,
+        accessToken: token,
+        authenticated: true,
+        expiresAt: new Date().valueOf() + expiresIn * 1000, // expiresIn will be in seconds -> convert to millis
+      };
+    }
+  ),
   on(fromAuth.logout, (state) => {
-    return { ...state, isAuthenticated: false };
-  }),
-  on(fromAuth.setAuthenticated, (state, { isAuthenticated, expiresAt }) => {
-    return { ...state, isAuthenticated, expiresAt };
+    return {
+      expiresAt: null,
+      authenticated: false,
+      user: null,
+      accessToken: null,
+    };
   }),
   on(fromAuth.loadAuthUserSuccess, (state, { user }) => {
     return { ...state, user };
   }),
   on(fromAuth.clearAuthUser, (state) => {
     return { ...state, user: null };
-  }),
-  on(fromAuth.logout, (state) => {
-    return { ...state, isAuthenticated: false };
   })
 );
 

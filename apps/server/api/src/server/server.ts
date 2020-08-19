@@ -3,11 +3,11 @@ import Koa from 'koa';
 import Router from '@koa/router';
 import { notImplemented, methodNotAllowed } from '@hapi/boom';
 import { setupGlobalMiddleware } from '@ztp/server/middleware';
-import { apolloServer, applyGraphQLEndpoint } from './graphql';
+import { apolloServer } from './graphql';
 import { applyApiAuthRoutes } from './auth/auth';
 import { config } from '../environments';
 import { connect } from 'mongoose';
-import { applyRestEndpoints } from './rest';
+import { restRouter } from './rest';
 
 /**
  * Crates a new API Server
@@ -43,8 +43,9 @@ export default class ApiServer {
     /**
      * Apply the REST & GraphQL endpoints
      */
-    applyRestEndpoints(app);
-    applyGraphQLEndpoint(app);
+    app.use(restRouter.routes());
+    app.use(apolloServer.getMiddleware());
+    // applyGraphQLEndpoint(app);
 
     /**
      * apply all authorization routes

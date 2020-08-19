@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard, LoggedInGuard } from '@ztp/common/auth/data-access';
+import { AuthGuard } from '@ztp/common/auth/data-access';
 import {
   LoginComponent,
   RegisterComponent,
@@ -66,7 +66,6 @@ export const TODOS_ROUTES: Routes = [
         path: 'login',
         pathMatch: 'full',
         component: LoginComponent,
-        canActivate: [LoggedInGuard],
         data: { animation: 'LoginPage' },
       },
       {

@@ -9,8 +9,10 @@ import {
   SchemaDirectiveVisitor,
   mergeSchemas,
 } from 'apollo-server-koa';
+
 import { ILoaders } from './data-loader';
 import { FormatDateDirective } from './directives';
+import { customError401Plugin } from './404-pluging';
 
 export function createSchema({
   typeDefs,
@@ -49,10 +51,7 @@ export function createApollo({
 }) {
   const schema = mergeSchemas({ schemas });
   return new ApolloServer({
-    formatError: (e) => {
-      console.log(e);
-      return e;
-    },
+    plugins: [customError401Plugin],
     schema,
     // https://www.apollographql.com/docs/apollo-server/data/subscriptions/
     context: async ({ ctx, connection }: { ctx: Context; connection: any }) => {
@@ -73,6 +72,8 @@ export function createApollo({
           loaders: loaders ? loaders() : undefined,
           // Add the JWT as the token property
           token: (ctx.request as any).token,
+          // add the cookie object to access in resolver
+          cookies: ctx.cookies,
         };
       }
     },

@@ -1,5 +1,4 @@
 /* istanbul ignore file */
-import Koa from 'koa';
 import {
   createResolvers,
   createApollo,
@@ -28,7 +27,3 @@ export const apolloServer = createApollo({
   production: config.production,
   loaders,
 });
-// A function that applies the middleware to the app.
-export function applyGraphQLEndpoint(app: Koa) {
-  apolloServer.applyMiddleware({ app });
-}

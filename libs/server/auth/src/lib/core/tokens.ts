@@ -34,6 +34,7 @@ export function signRefreshToken(config: SignRefresh) {
         subject: user.id?.toString(),
         issuer: config.issuer,
         audience: config.audience,
+        expiresIn: '1yr', // Change as required
       }
     );
   };

@@ -5,9 +5,19 @@ export const selectAuthSate = createFeatureSelector<fromAuth.AuthState>(
   fromAuth.authStateKey
 );
 
-export const selectIsAuthenticated = createSelector(
+export const selectAuthenticated = createSelector(
   selectAuthSate,
-  (state) => state.isAuthenticated
+  (state) => state.authenticated
+);
+
+export const selectAccessToken = createSelector(
+  selectAuthSate,
+  (state) => state.accessToken
+);
+
+export const selectExpiresAt = createSelector(
+  selectAuthSate,
+  (state) => state.expiresAt
 );
 
 export const selectAuthUser = createSelector(

@@ -7,14 +7,13 @@ import {
   VerifyModel,
   Refresh,
   RefreshModel,
-  LoginController,
-  RegistrationWithVerificationController,
   VerifyController,
   AuthorizeController,
   RefreshController,
   RevokeController,
   AuthUser,
   AuthUserModel,
+  RegisterController,
 } from '../types';
 
 export const issuer = 'some-issuer';
@@ -23,7 +22,7 @@ export const keyId = 'key-id';
 
 export function mockRegistrationConfig(
   email: jest.Mock<any, any> = jest.fn()
-): RegistrationWithVerificationController<AuthUser, Verify> {
+): RegisterController<AuthUser, Verify> {
   return {
     User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     Verify: (MockVerifyModel as unknown) as VerifyModel<Verify>,
@@ -38,19 +37,9 @@ export function mockVerificationConfig(): VerifyController<AuthUser, Verify> {
   };
 }
 
-export function mockLoginConfig(): LoginController<AuthUser> {
-  return {
-    User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
-    privateKey,
-    expireTime: 100000,
-    issuer,
-    audience,
-    keyId,
-  };
-}
-
 export function mockAuthorizeConfig(): AuthorizeController<AuthUser, Refresh> {
   return {
+    production: false,
     User: (MockAuthUserModel as unknown) as AuthUserModel<AuthUser>,
     privateKey,
     expireTime: 100000,

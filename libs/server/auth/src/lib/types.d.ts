@@ -33,7 +33,15 @@ export interface AuthUser {
 export interface RefreshModel<T extends Refresh> {
   new (token: any): T;
   findByToken(token: string): Promise<T | null>;
+  removeByToken(token: string): Promise<T | null>;
+  removeUserTokens(
+    id: string
+  ): Promise<{
+    ok?: number | undefined;
+    n?: number | undefined;
+  }>;
 }
+
 // Refresh Token
 export interface Refresh {
   id: string;
@@ -64,54 +72,19 @@ export interface Verify {
 export type VerifyEmail = (email: string, token: string) => Promise<any>;
 export type PasswordValidator = (password: string) => boolean;
 
-export type AuthModuleConfig<
+export interface AuthModuleConfig<
   U extends AuthUser,
-  V extends Verify,
-  R extends Refresh
-> =
-  | BasicAuthModule<U>
-  | AuthWithValidation<U, V>
-  | BasicAuthAndRefresh<U, R>
-  | CompleteAuth<U, V, R>;
-
-export interface BasicAuthModule<U extends AuthUser> {
+  R extends Refresh,
+  V extends Verify
+> {
   jwks?: JWKSRoute;
   authServerHost: string;
-  login: LoginController<U>;
-  register: BasicRegistrationController<U>;
-}
-
-export interface AuthWithValidation<U extends AuthUser, V extends Verify>
-  extends BasicAuthModule<U> {
-  register: RegistrationWithVerificationController<U, V>;
+  authorize: AuthorizeController<U, R>;
+  register: RegisterController<U, V>;
   verify: VerifyController<U, V>;
-}
-
-export interface BasicAuthAndRefresh<U extends AuthUser, R extends Refresh>
-  extends BasicAuthModule<U> {
-  authorize: AuthorizeController<U, R>;
   refresh: RefreshController<R>;
   revoke: RevokeController<R>;
 }
-
-export interface CompleteAuth<
-  U extends AuthUser,
-  V extends Verify,
-  R extends Refresh
-> extends AuthWithValidation<U, V> {
-  authorize: AuthorizeController<U, R>;
-  refresh: RefreshController<R>;
-  revoke: RevokeController<R>;
-}
-
-export type WithRefresh<
-  U extends AuthUser,
-  V extends Verify,
-  R extends Refresh
-> = BasicAuthAndRefresh<U, R> | CompleteAuth<U, V, R>;
-export type WithoutRefresh<U extends AuthUser, V extends Verify> =
-  | BasicAuthModule<U>
-  | AuthWithValidation<U, V>;
 
 // -------------------------------------
 // Interfaces for each controller
@@ -121,26 +94,17 @@ export interface JWKSRoute {
   keyId: string;
 }
 
-export interface LoginController<U extends AuthUser> extends SignAccessToken {
-  User: AuthUserModel<U>;
-}
-
 export interface BasicRegistrationController<U extends AuthUser> {
   User: AuthUserModel<U>;
   validatePassword?: PasswordValidator;
 }
 
-export interface RegistrationWithVerificationController<
-  U extends AuthUser,
-  V extends Verify
-> extends BasicRegistrationController<U> {
+export interface RegisterController<U extends AuthUser, V extends Verify> {
+  User: AuthUserModel<U>;
   Verify: VerifyModel<V>;
   verifyEmail: VerifyEmail;
+  validatePassword?: PasswordValidator;
 }
-
-export type RegistrationConfig<U extends AuthUser, V extends Verify> =
-  | BasicRegistrationController<U>
-  | RegistrationWithVerificationController<U, V>;
 
 export interface VerifyController<U extends AuthUser, V extends Verify> {
   User: AuthUserModel<U>;
@@ -148,8 +112,9 @@ export interface VerifyController<U extends AuthUser, V extends Verify> {
 }
 
 export interface AuthorizeController<U extends AuthUser, R extends Refresh>
-  extends LoginController<U>,
-    SignRefresh {
+  extends SignAccessToken {
+  production: boolean;
+  User: AuthUserModel<U>;
   Refresh: RefreshModel<R>;
 }
 
@@ -213,6 +178,7 @@ export interface AuthGuard<U extends AuthUser> {
 // -------------------------------------
 
 export interface AuthEnv {
+  production: boolean;
   authServerHost: string;
   jwksRoute?: boolean;
   accessToken: {

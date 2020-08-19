@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
-import { exhaustMap, map, tap, catchError, switchMap } from 'rxjs/operators';
+import { exhaustMap, map, catchError, switchMap } from 'rxjs/operators';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
 import { IUser } from '@ztp/data';
 import * as AuthActions from './auth.actions';
 import { AuthService } from '../services/auth.service';
 import { ILoginResponse } from '../auth.interface';
+import { AuthFacade } from './auth.facade';
 
 @Injectable()
 export class AuthEffects {
@@ -23,7 +24,7 @@ export class AuthEffects {
               errors
                 ? AuthActions.loginFailure({ error: errors[0].message })
                 : AuthActions.loginSuccess(
-                    (data as { login: ILoginResponse }).login
+                    (data as { authorize: ILoginResponse }).authorize
                   )
             ),
             catchError((error: HttpErrorResponse) =>
@@ -32,15 +33,25 @@ export class AuthEffects {
           )
         )
       ),
+    // Errors are handled and it is safe to disable resubscription
     { useEffectsErrorHandler: false }
+  );
+
+  isLoggedIn$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.isLoggedIn),
+      switchMap(() =>
+        this.authService.refreshAccessToken().pipe(
+          map((res) => AuthActions.setAuthenticated(res)),
+          catchError((e) => of(AuthActions.isLoggedFail()))
+        )
+      )
+    )
   );
 
   loginSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.loginSuccess),
-      tap(({ token, expiresIn }) =>
-        this.authService.setSession({ token, expiresIn })
-      ),
       map(() => AuthActions.loginRedirect())
     )
   );
@@ -74,39 +85,48 @@ export class AuthEffects {
     )
   );
 
-  logout$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.logout),
-      tap(() => this.authService.removeSession()),
-      map(() => AuthActions.logoutRedirect())
-    )
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        switchMap(() =>
+          this.authService.revokeRefreshToken().pipe(
+            map(() => AuthActions.logoutRedirect()),
+            catchError((e) => of(AuthActions.logoutRedirect()))
+          )
+        )
+      ),
+    { useEffectsErrorHandler: false }
   );
 
-  loadAuthUser$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.loadAuthUser),
-      map((action) => this.authService.authUserId),
-      switchMap((id) => {
-        if (!id) {
-          return of(
-            AuthActions.loadAuthUserFail({ error: 'User is not logged in' })
-          );
-        } else {
-          return this.authService.loadUser(id).pipe(
-            map(({ errors, data }) =>
-              errors
-                ? AuthActions.loadAuthUserFail({ error: errors[0].message })
-                : AuthActions.loadAuthUserSuccess({
-                    user: (data as { User: IUser }).User,
-                  })
-            ),
-            catchError((error: HttpErrorResponse) =>
-              of(AuthActions.loadAuthUserFail({ error: error.message }))
-            )
-          );
-        }
-      })
-    )
+  loadAuthUser$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loadAuthUser),
+        switchMap(() => this.facade.accessToken$),
+        map((token) => this.authService.decodeToken(token)),
+        switchMap((id) => {
+          if (!id) {
+            return of(
+              AuthActions.loadAuthUserFail({ error: 'User is not logged in' })
+            );
+          } else {
+            return this.authService.loadUser(id).pipe(
+              map(({ errors, data }) =>
+                errors
+                  ? AuthActions.loadAuthUserFail({ error: errors[0].message })
+                  : AuthActions.loadAuthUserSuccess({
+                      user: (data as { User: IUser }).User,
+                    })
+              ),
+              catchError((error: HttpErrorResponse) =>
+                of(AuthActions.loadAuthUserFail({ error: error.message }))
+              )
+            );
+          }
+        })
+      ),
+    { useEffectsErrorHandler: false }
   );
 
   clearAuthenticatedUser$ = createEffect(() =>
@@ -116,5 +136,9 @@ export class AuthEffects {
     )
   );
 
-  constructor(private actions$: Actions, private authService: AuthService) {}
+  constructor(
+    private actions$: Actions,
+    private authService: AuthService,
+    private facade: AuthFacade
+  ) {}
 }

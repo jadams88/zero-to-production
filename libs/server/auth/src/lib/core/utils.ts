@@ -1,17 +1,7 @@
 import { createPublicKey } from 'crypto';
 // @ts-ignore
 import omit from 'lodash.omit';
-import {
-  VerifyToken,
-  VerifyJWKS,
-  BasicRegistrationController,
-  RegistrationWithVerificationController,
-  WithRefresh,
-  WithoutRefresh,
-  AuthUser,
-  Verify,
-  Refresh,
-} from '../types';
+import { VerifyToken, VerifyJWKS } from '../types';
 
 export function isPasswordAllowed(password: string): boolean {
   return (
@@ -52,23 +42,5 @@ export function isJWKS(
   return (config as VerifyJWKS).authServerHost === undefined;
 }
 
-export function includeRefresh<
-  U extends AuthUser,
-  V extends Verify,
-  R extends Refresh
->(
-  config: WithRefresh<U, V, R> | WithoutRefresh<U, V>
-): config is WithRefresh<U, V, R> {
-  return (config as WithRefresh<U, V, R>).authorize !== undefined;
-}
-
-export function includeEmailVerification<U extends AuthUser, V extends Verify>(
-  config:
-    | BasicRegistrationController<U>
-    | RegistrationWithVerificationController<U, V>
-): config is RegistrationWithVerificationController<U, V> {
-  return (
-    (config as RegistrationWithVerificationController<U, V>).Verify !==
-    undefined
-  );
-}
+export const noOpEmailVerification = (email: string, token: string) =>
+  Promise.resolve(true);

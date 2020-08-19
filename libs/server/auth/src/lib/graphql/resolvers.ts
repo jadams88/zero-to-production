@@ -1,84 +1,56 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { IResolvers } from 'apollo-server-koa';
 import {
-  setupLoginController,
   setupRegisterController,
   setupVerifyController,
-  includeEmailVerification,
+  setupAuthorizeController,
 } from '../core';
 import {
-  LoginController,
-  BasicAuthModule,
   AuthUser,
-  BasicRegistrationController,
   VerifyController,
   Verify,
-  AuthWithValidation,
+  Refresh,
+  AuthorizeController,
+  AuthModuleConfig,
+  RegisterController,
 } from '../types';
-import { IResolvers } from 'apollo-server-koa';
 
 export type TResolver = GraphQLFieldResolver<any, any, any>;
 
-export interface SimpleAuthResolvers extends IResolvers {
-  Mutation: { register: TResolver; login: TResolver };
+export interface AuthResolvers extends IResolvers {
+  Query: {
+    verify: TResolver;
+  };
+  Mutation: {
+    authorize: TResolver;
+    register: TResolver;
+  };
 }
 
-export interface AuthWithVerify extends SimpleAuthResolvers {
-  Query: { verify: TResolver };
-}
+export function getAuthResolvers<
+  U extends AuthUser,
+  V extends Verify,
+  R extends Refresh
+>(config: AuthModuleConfig<U, R, V>): AuthResolvers {
+  const { register, verify, authorize, refresh, revoke } = config;
 
-export function getAuthResolvers<U extends AuthUser>(
-  config: BasicAuthModule<U>
-): SimpleAuthResolvers;
-export function getAuthResolvers<U extends AuthUser, V extends Verify>(
-  config: AuthWithValidation<U, V>
-): AuthWithVerify;
-export function getAuthResolvers<U extends AuthUser, V extends Verify>(
-  config: BasicAuthModule<U> | AuthWithValidation<U, V>
-): SimpleAuthResolvers | AuthWithVerify {
-  const { login, register, verify } = config as AuthWithValidation<U, V>;
-
-  const resolvers: SimpleAuthResolvers = {
+  return {
+    Query: {
+      verify: verifyResolver(verify),
+    },
     Mutation: {
+      authorize: authorizeResolver(authorize),
       register: registerResolver(register),
-      login: loginResolver(login),
     },
   };
-
-  // registration resolver if using email verification
-  if (includeEmailVerification(register)) {
-    // Although the verify resolver is technically a 'mutation' operation,
-    // it is a 'Query' operation so that it can be sent in an email link
-    (resolvers as AuthWithVerify).Query = { verify: verifyResolver(verify) };
-    return resolvers as AuthWithVerify;
-  } else {
-    return resolvers as SimpleAuthResolvers;
-  }
 }
 
-export function registerResolver<U extends AuthUser>(
-  config: BasicRegistrationController<U>
+export function registerResolver<U extends AuthUser, V extends Verify>(
+  config: RegisterController<U, V>
 ): GraphQLFieldResolver<any, { input: AuthUser }, any> {
   const registerController = setupRegisterController(config);
   return function register(root, args, ctx, i) {
     return registerController(args.input);
-  };
-}
-
-/**
- *  A function that handles logging a user in
- *
- * @returns { Object } A User and signed JWT.
- */
-export function loginResolver<U extends AuthUser>(
-  config: LoginController<U>
-): GraphQLFieldResolver<any, { username: string; password: string }, any> {
-  const loginController = setupLoginController(config);
-
-  return function login(root, args, ctx, i): Promise<{ token: string }> {
-    const username: string = args.username;
-    const password: string = args.password;
-
-    return loginController(username, password);
   };
 }
 
@@ -92,5 +64,22 @@ export function verifyResolver<U extends AuthUser, V extends Verify>(
     const token: string = args.token;
 
     return verifyController(email, token);
+  };
+}
+
+export function authorizeResolver<U extends AuthUser, R extends Refresh>(
+  config: AuthorizeController<U, R>
+): GraphQLFieldResolver<
+  any,
+  { email: string; token: string; cookies: any },
+  any
+> {
+  const authorizeController = setupAuthorizeController(config);
+
+  return (root, args, ctx, i) => {
+    const username: string = args.username;
+    const password: string = args.password;
+
+    return authorizeController(username, password, ctx.cookies);
   };
 }
