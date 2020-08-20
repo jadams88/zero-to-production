@@ -7,7 +7,7 @@ import {
   HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap, map, exhaustMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, map } from 'rxjs/operators';
 import { AuthFacade } from '../+state/auth.facade';
 import { AuthService } from '../services/auth.service';
 import { AUTH_SERVER_URL } from '../tokens/tokens';
@@ -31,10 +31,16 @@ export class SilentRefreshInterceptor implements HttpInterceptor {
             return throwError(response);
           } else {
             return this.service.refreshAccessToken().pipe(
-              tap((res) => this.facade.setAuthenticated(res)),
-              map(({ token }) =>
-                req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-              ),
+              map(({ token, expiresIn }) => {
+                if (token && expiresIn) {
+                  this.facade.setAuthenticated({ token, expiresIn });
+                  return req.clone({
+                    setHeaders: { Authorization: `Bearer ${token}` },
+                  });
+                } else {
+                  throw response;
+                }
+              }),
               switchMap((request) => next.handle(request)),
               catchError((e) => {
                 this.facade.logout();

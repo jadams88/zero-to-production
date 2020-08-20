@@ -16,4 +16,5 @@ export {
   passwordValidator,
 } from './lib/validators/auth.validators';
 import * as AuthActions from './lib/+state/auth.actions';
+export { LOGIN_REDIRECT, LOGIN_PAGE, REGISTER_PAGE } from './lib/tokens/tokens';
 export { AuthActions };

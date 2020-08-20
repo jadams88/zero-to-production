@@ -28,14 +28,6 @@ export class AuthFacade {
     this.store.dispatch(AuthActions.register({ details: userDetails }));
   }
 
-  loginRedirect(): void {
-    this.store.dispatch(AuthActions.loginRedirect());
-  }
-
-  registerRedirect(): void {
-    this.store.dispatch(AuthActions.registerRedirect());
-  }
-
   logout(): void {
     this.store.dispatch(AuthActions.logout());
   }

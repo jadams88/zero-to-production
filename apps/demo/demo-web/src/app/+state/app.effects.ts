@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { NotificationService } from '@ztp/common/utils/notifications';
@@ -9,33 +8,6 @@ import { AuthActions } from '@ztp/common/auth/data-access';
   providedIn: 'root',
 })
 export class AppEffects {
-  loginRedirects$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.loginRedirect),
-        tap(() => this.router.navigate(['examples', 'todos', 'home']))
-      ),
-    { dispatch: false }
-  );
-
-  registerRedirect$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.registerRedirect),
-        tap(() => this.router.navigate(['examples', 'todos', 'register']))
-      ),
-    { dispatch: false }
-  );
-
-  logoutRedirect$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.logoutRedirect),
-        tap((action) => this.router.navigate(['examples', 'todos', 'login']))
-      ),
-    { dispatch: false }
-  );
-
   loginFailure$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -58,9 +30,5 @@ export class AppEffects {
     { dispatch: false }
   );
 
-  constructor(
-    private actions$: Actions,
-    private router: Router,
-    private ns: NotificationService
-  ) {}
+  constructor(private actions$: Actions, private ns: NotificationService) {}
 }

@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  Optional,
+  Inject,
+} from '@angular/core';
+import { LOGIN_PAGE } from '@ztp/common/auth/data-access';
 
 @Component({
   selector: 'ztp-ui-register',
@@ -8,4 +15,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 })
 export class UiRegisterComponent {
   @Input() formName: string;
+  constructor(@Optional() @Inject(LOGIN_PAGE) public loginPage: string) {
+    this.loginPage = loginPage ? loginPage : '/login';
+  }
 }

@@ -19,6 +19,9 @@ import {
   CommonAuthDataAccessModule,
   authProviderFactory,
   AuthService,
+  LOGIN_PAGE,
+  REGISTER_PAGE,
+  LOGIN_REDIRECT,
 } from '@ztp/common/auth/data-access';
 import { SharedUsersDataAccessModule } from '@ztp/shared/users/data-access';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
@@ -69,6 +72,9 @@ export const APP_ERRORS = {
     }),
   ],
   providers: [
+    { provide: LOGIN_PAGE, useValue: '/examples/todos/login' },
+    { provide: REGISTER_PAGE, useValue: '/examples/todos/register' },
+    { provide: LOGIN_REDIRECT, useValue: '/examples/todos/home' },
     { provide: ThemeService, useExisting: DemoThemeService },
     { provide: ApiService, useExisting: DemoApiService },
     { provide: GraphQLService, useExisting: DemoGraphQLService },

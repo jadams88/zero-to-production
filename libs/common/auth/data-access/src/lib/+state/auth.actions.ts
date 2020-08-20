@@ -6,9 +6,9 @@ import {
   IRegistrationDetails,
 } from '../auth.interface';
 
-export const loginRedirect = createAction('[Auth] Login Redirect');
+// export const loginRedirect = createAction('[Auth] Login Redirect');
 
-export const registerRedirect = createAction('[Auth] Register Redirect');
+// export const registerRedirect = createAction('[Auth] Register Redirect');
 
 export const login = createAction(
   '[Auth/API] Login',
@@ -52,7 +52,7 @@ export const setAuthenticated = createAction(
 export const logout = createAction('[Auth] Logout');
 export const logoutSuccess = createAction('[Auth] Logout Success');
 
-export const logoutRedirect = createAction('[Auth] Logout Redirect');
+// export const logoutRedirect = createAction('[Auth] Logout Redirect');
 
 export const clearAuthUser = createAction('[Auth] Clear User');
 

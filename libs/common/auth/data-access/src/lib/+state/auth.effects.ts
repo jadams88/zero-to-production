@@ -1,13 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional, Inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
-import { exhaustMap, map, catchError, switchMap } from 'rxjs/operators';
+import { exhaustMap, map, catchError, switchMap, tap } from 'rxjs/operators';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
 import { IUser } from '@ztp/data';
 import * as AuthActions from './auth.actions';
 import { AuthService } from '../services/auth.service';
 import { ILoginResponse } from '../auth.interface';
 import { AuthFacade } from './auth.facade';
+import { Router } from '@angular/router';
+import { LOGIN_PAGE, LOGIN_REDIRECT } from '../tokens/tokens';
 
 @Injectable()
 export class AuthEffects {
@@ -37,22 +39,30 @@ export class AuthEffects {
     { useEffectsErrorHandler: false }
   );
 
+  loginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        tap(() => this.router.navigate([this.loginRedirect]))
+      ),
+    { dispatch: false }
+  );
+
   isLoggedIn$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.isLoggedIn),
       switchMap(() =>
         this.authService.refreshAccessToken().pipe(
-          map((res) => AuthActions.setAuthenticated(res)),
+          map(({ token, expiresIn }) => {
+            if (token && expiresIn) {
+              return AuthActions.setAuthenticated({ token, expiresIn });
+            } else {
+              return AuthActions.isLoggedFail();
+            }
+          }),
           catchError((e) => of(AuthActions.isLoggedFail()))
         )
       )
-    )
-  );
-
-  loginSuccess$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.loginSuccess),
-      map(() => AuthActions.loginRedirect())
     )
   );
 
@@ -78,11 +88,13 @@ export class AuthEffects {
     { useEffectsErrorHandler: false }
   );
 
-  registerSuccess$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.registerSuccess),
-      map(() => AuthActions.logoutRedirect())
-    )
+  registerSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.registerSuccess),
+        tap((action) => this.router.navigate([this.loginPage]))
+      ),
+    { dispatch: false }
   );
 
   logout$ = createEffect(
@@ -90,13 +102,13 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.logout),
         switchMap(() =>
-          this.authService.revokeRefreshToken().pipe(
-            map(() => AuthActions.logoutRedirect()),
-            catchError((e) => of(AuthActions.logoutRedirect()))
-          )
-        )
+          this.authService
+            .revokeRefreshToken()
+            .pipe(catchError((e) => of({ success: false })))
+        ),
+        tap(() => this.router.navigate([this.loginPage]))
       ),
-    { useEffectsErrorHandler: false }
+    { useEffectsErrorHandler: false, dispatch: false }
   );
 
   loadAuthUser$ = createEffect(
@@ -139,6 +151,12 @@ export class AuthEffects {
   constructor(
     private actions$: Actions,
     private authService: AuthService,
-    private facade: AuthFacade
-  ) {}
+    private facade: AuthFacade,
+    private router: Router,
+    @Optional() @Inject(LOGIN_PAGE) private loginPage: string,
+    @Optional() @Inject(LOGIN_REDIRECT) private loginRedirect: string
+  ) {
+    this.loginPage = loginPage ? loginPage : '/login';
+    this.loginRedirect = loginRedirect ? loginRedirect : '/home';
+  }
 }

@@ -384,7 +384,7 @@ describe('Router - Auth', () => {
       MockRefreshModel.reset();
     });
 
-    it('should throw a unauthorized error if invalid token provided', async () => {
+    it('should not return a token if an invalid refresh token is provided', async () => {
       const userWithId = {
         ...user,
         id: newId(),
@@ -408,19 +408,19 @@ describe('Router - Auth', () => {
 
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
-      const requestBody = {
-        refreshToken: 'incorrect token',
-      };
+      const response = await superagent
+        .post(agentRequest('/authorize/refresh'))
+        .set('Cookie', [`refresh_token=incorrect_token`])
+        .send();
 
-      await expect(
-        superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
-      ).rejects.toThrowError('Unauthorized');
+      expect(response.body).toBeDefined();
+      expect(response.body.token).toBeNull();
 
       MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
-    it('should throw a unauthorized errors if the user is not active', async () => {
+    it('should not return a token if the user is not active', async () => {
       const userWithId = {
         ...user,
         id: newId(),
@@ -444,14 +444,16 @@ describe('Router - Auth', () => {
 
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
-      const requestBody = {
-        username: userWithId.username,
-        refreshToken: refreshTokenString,
-      };
+      const response = await superagent
+        .post(agentRequest('/authorize/refresh'))
+        .set('Cookie', [`refresh_token=${refreshTokenString}`])
+        .send();
 
-      await expect(
-        superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
-      ).rejects.toThrowError('Unauthorized');
+      expect(response.body).toBeDefined();
+      expect(response.body.token).toBeNull();
+
+      MockAuthUserModel.reset();
+      MockRefreshModel.reset();
 
       // check the 'remove' handler has been called
       expect(MockRefreshModel.currentSetModel).toBe(null);
@@ -460,6 +462,83 @@ describe('Router - Auth', () => {
       MockRefreshModel.reset();
     });
   });
+
+  //   it('should throw a unauthorized error if invalid token provided', async () => {
+  //     const userWithId = {
+  //       ...user,
+  //       id: newId(),
+  //       active: true,
+  //     };
+
+  //     const refreshTokenString = signRefreshToken({
+  //       privateKey,
+  //       audience,
+  //       issuer,
+  //     })(userWithId);
+
+  //     const refreshToken = {
+  //       user: {
+  //         id: userWithId.id,
+  //         username: userWithId.username,
+  //         active: true,
+  //       } as AuthUser,
+  //       token: refreshTokenString,
+  //     };
+
+  //     MockRefreshModel.tokenToRespondWith = refreshToken;
+
+  //     const requestBody = {
+  //       refreshToken: 'incorrect token',
+  //     };
+
+  //     await expect(
+  //       superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
+  //     ).rejects.toThrowError('Unauthorized');
+
+  //     MockAuthUserModel.reset();
+  //     MockRefreshModel.reset();
+  //   });
+
+  //   it('should throw a unauthorized errors if the user is not active', async () => {
+  //     const userWithId = {
+  //       ...user,
+  //       id: newId(),
+  //       active: false,
+  //     };
+
+  //     const refreshTokenString = signRefreshToken({
+  //       privateKey,
+  //       audience,
+  //       issuer,
+  //     })(userWithId);
+
+  //     const refreshToken = {
+  //       user: {
+  //         id: userWithId.id,
+  //         username: userWithId.username,
+  //         active: false,
+  //       } as AuthUser,
+  //       token: refreshTokenString,
+  //     };
+
+  //     MockRefreshModel.tokenToRespondWith = refreshToken;
+
+  //     const requestBody = {
+  //       username: userWithId.username,
+  //       refreshToken: refreshTokenString,
+  //     };
+
+  //     await expect(
+  //       superagent.post(agentRequest('/authorize/refresh')).send(requestBody)
+  //     ).rejects.toThrowError('Unauthorized');
+
+  //     // check the 'remove' handler has been called
+  //     expect(MockRefreshModel.currentSetModel).toBe(null);
+
+  //     MockAuthUserModel.reset();
+  //     MockRefreshModel.reset();
+  //   });
+  // });
 
   describe('/authorize/revoke', () => {
     it('should revoke the refresh token provided', async () => {

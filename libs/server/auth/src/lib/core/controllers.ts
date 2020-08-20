@@ -152,8 +152,6 @@ export function setupAuthorizeController<U extends AuthUser, R extends Refresh>(
   };
 }
 
-// TODO -> SHOULD THIS RETURN 401 or not?
-
 // a controller that receives a refresh token and returns an access token.
 export function setupRefreshAccessTokenController<R extends Refresh>(
   config: RefreshController<R>
@@ -165,7 +163,9 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
   const createAccessToken = signAccessToken(config);
 
   return async (refreshToken: string, cookies: Cookies) => {
-    if (!refreshToken) throw unauthorized('No token provided');
+    if (!refreshToken) return { expiresIn: null, token: null };
+
+    // throw unauthorized('No token provided');
     // Verify the refresh token. Don't care about decoding it (as we retrieve form DB as well),
     // verify will throw a 401 if incorrect, catch and delete from the db (if exists) before throwing
     try {
@@ -173,7 +173,7 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
     } catch (e) {
       cookies.set('refresh_token');
       await Token.removeByToken(refreshToken);
-      throw e;
+      return { expiresIn: null, token: null };
     }
 
     const savedToken = await Token.findByToken(refreshToken);
@@ -181,14 +181,14 @@ export function setupRefreshAccessTokenController<R extends Refresh>(
     // No token found
     if (savedToken === null) {
       cookies.set('refresh_token');
-      throw unauthorized(null, 'Bearer');
+      return { expiresIn: null, token: null };
     }
 
     // revoke refreshToken if user is inactive
     if (savedToken.user.active !== true) {
       await savedToken.remove();
       cookies.set('refresh_token');
-      throw unauthorized(null, 'Bearer');
+      return { expiresIn: null, token: null };
     }
 
     const accessToken = createAccessToken(savedToken.user);

@@ -119,7 +119,9 @@ export class AuthService {
   }
 
   refreshAccessToken() {
-    return this.http.post<{ token: string; expiresIn: number }>(
+    return this.http.post<
+      { token: string; expiresIn: number } | { token: null; expiresIn: null }
+    >(
       `${this.serverUrl}/authorize/refresh`,
       {},
       {

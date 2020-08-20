@@ -390,7 +390,7 @@ describe('Auth - Controllers', () => {
       MockRefreshModel.reset();
     });
 
-    it('should throw a unauthorized error if invalid token provided', async () => {
+    it('should not return a token if an invalid refresh token is provided', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),
@@ -413,15 +413,18 @@ describe('Auth - Controllers', () => {
 
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
-      await expect(
-        mockRefreshTokenController()('incorrect token', cookiesMock)
-      ).rejects.toThrowError('Unauthorized');
+      const { token } = await mockRefreshTokenController()(
+        'incorrect token',
+        cookiesMock
+      );
+
+      expect(token).toBeNull();
 
       MockAuthUserModel.reset();
       MockRefreshModel.reset();
     });
 
-    it('should throw a unauthorized errors if the user is not active', async () => {
+    it('should not return a token if the user is not active', async () => {
       const userWithId = {
         ...userWithPassword,
         id: newId(),
@@ -445,10 +448,14 @@ describe('Auth - Controllers', () => {
 
       MockRefreshModel.tokenToRespondWith = refreshToken;
 
-      await expect(
-        mockRefreshTokenController()(refreshToken.token, cookiesMock)
-      ).rejects.toThrowError('Unauthorized');
+      // await expect(
+      const { token } = await mockRefreshTokenController()(
+        refreshToken.token,
+        cookiesMock
+      );
+      // ).rejects.toThrowError('Unauthorized');
 
+      expect(token).toBeNull();
       // check the 'remove' handler has been called
       expect(MockRefreshModel.currentSetModel).toBe(null);
 
@@ -456,6 +463,73 @@ describe('Auth - Controllers', () => {
       MockRefreshModel.reset();
     });
   });
+
+  // it('should throw a unauthorized error if invalid token provided', async () => {
+  //   const userWithId = {
+  //     ...userWithPassword,
+  //     id: newId(),
+  //   };
+
+  //   const refreshTokenString = signRefreshToken({
+  //     privateKey,
+  //     audience,
+  //     issuer,
+  //   })(userWithId);
+
+  //   const refreshToken = {
+  //     user: {
+  //       id: userWithId.id,
+  //       username: userWithId.username,
+  //       active: true,
+  //     } as AuthUser,
+  //     token: refreshTokenString,
+  //   };
+
+  //   MockRefreshModel.tokenToRespondWith = refreshToken;
+
+  //   await expect(
+  //     mockRefreshTokenController()('incorrect token', cookiesMock)
+  //   ).rejects.toThrowError('Unauthorized');
+
+  //   MockAuthUserModel.reset();
+  //   MockRefreshModel.reset();
+  // });
+
+  //   it('should throw a unauthorized errors if the user is not active', async () => {
+  //     const userWithId = {
+  //       ...userWithPassword,
+  //       id: newId(),
+  //       active: false,
+  //     };
+
+  //     const refreshTokenString = signRefreshToken({
+  //       privateKey,
+  //       audience,
+  //       issuer,
+  //     })(userWithId);
+
+  //     const refreshToken = {
+  //       user: {
+  //         id: userWithId.id,
+  //         username: userWithId.username,
+  //         active: false,
+  //       } as AuthUser,
+  //       token: refreshTokenString,
+  //     };
+
+  //     MockRefreshModel.tokenToRespondWith = refreshToken;
+
+  //     await expect(
+  //       mockRefreshTokenController()(refreshToken.token, cookiesMock)
+  //     ).rejects.toThrowError('Unauthorized');
+
+  //     // check the 'remove' handler has been called
+  //     expect(MockRefreshModel.currentSetModel).toBe(null);
+
+  //     MockAuthUserModel.reset();
+  //     MockRefreshModel.reset();
+  //   });
+  // });
 
   describe('revokeRefreshToken', () => {
     it('should revoke the refresh token provided', async () => {
