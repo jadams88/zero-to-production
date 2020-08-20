@@ -35,6 +35,13 @@ steps:
       - .
     timeout: 500s
 
+    # Tag with the latest
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - tag
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME:latest
+
   # Tag with the version
   - name: gcr.io/cloud-builders/docker
     args:
