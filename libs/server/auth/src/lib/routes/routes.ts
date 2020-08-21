@@ -90,8 +90,6 @@ export function refreshTokenRoute<R extends Refresh>(
       (ctx.request as any).body.refreshToken ||
       ctx.cookies.get('refresh_token');
 
-    if (!refreshToken) throw Boom.unauthorized('No token provided');
-
     ctx.body = await refreshAccessTokenCtr(refreshToken, ctx.cookies);
   };
 }

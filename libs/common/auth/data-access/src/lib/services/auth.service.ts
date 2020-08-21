@@ -127,6 +127,7 @@ export class AuthService {
       {
         headers: this.headers,
         reportProgress: false,
+        withCredentials: true,
       }
     );
   }

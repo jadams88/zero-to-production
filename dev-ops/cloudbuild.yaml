@@ -54,6 +54,10 @@ steps:
     args:
       - push
       - gcr.io/$PROJECT_ID/$_PROJECT_NAME:$TAG_NAME
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - gcr.io/$PROJECT_ID/$_PROJECT_NAME:latest
 
   # Trigger a rolling update for the cluster
   - name: gcr.io/cloud-builders/kubectl
