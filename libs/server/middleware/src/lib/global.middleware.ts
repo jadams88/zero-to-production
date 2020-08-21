@@ -13,7 +13,11 @@ export function setupGlobalMiddleware(app: Koa) {
   app.use(helmet());
   app.use(compress());
   app.use(bodyParser());
-  app.use(cors());
+  app.use(
+    cors({
+      credentials: true,
+    })
+  );
   app.use(bearerToken());
 
   // Custom error handling
