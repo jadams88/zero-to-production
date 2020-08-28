@@ -7,7 +7,7 @@ import {
 import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { UniversalInterceptor } from '@ztp/common/data-access';
+import { UniversalInterceptor } from '@ztp/common/universal-engine';
 import {
   LOGIN_PAGE,
   REGISTER_PAGE,

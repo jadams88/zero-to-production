@@ -4,8 +4,8 @@ import {
   HttpHandler,
   HttpRequest,
 } from '@angular/common/http';
-import { Request } from 'express';
-import { REQUEST } from '@nguniversal/express-engine/tokens';
+import { Request } from 'koa';
+import { REQUEST } from './tokens';
 
 /**
  * In a Universal app, HTTP URLs must be absolute (for example, https://my-server.com/api/heroes).

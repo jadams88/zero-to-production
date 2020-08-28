@@ -90,24 +90,6 @@
     "common-dynamic-module-loading": {
       "tags": ["scope:shared", "type:util", "platform:web"]
     },
-    "common-utils-notifications": {
-      "tags": ["scope:shared", "type:util", "platform:web"]
-    },
-    "common-utils-overlay": {
-      "tags": ["scope:shared", "type:util", "platform:web"]
-    },
-    "common-utils-service-worker": {
-      "tags": ["scope:shared", "type:util", "platform:web"]
-    },
-    "common-utils-storage": {
-      "tags": ["scope:shared", "type:util", "platform:web"]
-    },
-    "common-utils-theme": {
-      "tags": ["scope:shared", "type:util", "platform:web"]
-    },
-    "common-utils-media-query": {
-      "tags": ["scope:shared", "type:util", "platform:web"]
-    },
     "common-animations": {
       "tags": ["scope:shared", "type:util", "platform:web"]
     },
@@ -140,6 +122,27 @@
     },
     "common-ui-buttons": {
       "tags": ["scope:shared", "type:ui", "platform:web"]
+    },
+    "common-universal-engine": {
+      "tags": ["scope:shared", "type:feature", "platform:web"]
+    },
+    "common-utils-notifications": {
+      "tags": ["scope:shared", "type:util", "platform:web"]
+    },
+    "common-utils-overlay": {
+      "tags": ["scope:shared", "type:util", "platform:web"]
+    },
+    "common-utils-service-worker": {
+      "tags": ["scope:shared", "type:util", "platform:web"]
+    },
+    "common-utils-storage": {
+      "tags": ["scope:shared", "type:util", "platform:web"]
+    },
+    "common-utils-theme": {
+      "tags": ["scope:shared", "type:util", "platform:web"]
+    },
+    "common-utils-media-query": {
+      "tags": ["scope:shared", "type:util", "platform:web"]
     },
     "todos-feature-shell": {
       "tags": ["scope:todos", "type:feature", "platform:web"]

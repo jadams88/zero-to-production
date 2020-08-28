@@ -1929,6 +1929,35 @@
           "style": "scss"
         }
       }
+    },
+    "common-universal-engine": {
+      "root": "libs/common/universal-engine",
+      "sourceRoot": "libs/common/universal-engine/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/common/universal-engine/tsconfig.lib.json",
+              "libs/common/universal-engine/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/common/universal-engine/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/common/universal-engine/jest.config.js",
+            "tsConfig": "libs/common/universal-engine/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
