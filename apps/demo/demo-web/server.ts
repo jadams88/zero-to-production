@@ -1,87 +1,79 @@
 import 'zone.js/dist/zone-node';
-
-import { ngExpressEngine } from '@nguniversal/express-engine';
-import express from 'express';
+import { existsSync } from 'fs';
 import { join } from 'path';
-// import helmet from 'helmet';
+import { ngKoaEngine } from '@ztp/common/universal-engine';
+import Koa from 'koa';
+// @ts-ignore
+import serve from 'koa-static';
+// @ts-ignore
+import helmet from 'koa-helmet';
 
 import { AppServerModule } from './src/main.server';
-import { APP_BASE_HREF } from '@angular/common';
-import { existsSync } from 'fs';
 
-// The Express app is exported so that it can be used by serverless Functions.
+// The Koa app is exported so that it can be used by serverless Functions.
 export function app() {
-  const server = express();
-  // const distFolder = join(process.cwd(), 'dist/apps/demo/demo-web');
-  const distFolder = join(process.cwd(), 'dist/browser');
-  const indexHtml = existsSync(join(distFolder, 'index.original.html'))
+  const server = new Koa();
+  const distFolder = join(process.cwd(), 'dist/apps/demo/demo-web');
+  // const distFolder = join(process.cwd(), 'dist/browser');
+  const indexFilename = existsSync(join(distFolder, 'index.original.html'))
     ? 'index.original.html'
-    : 'index';
+    : 'index.html';
+  const indexPath = join(distFolder, indexFilename);
 
-  // server.use((req, res, next) => {
-  //   return helmet({
-  //     expectCt: { enforce: true },
-  //     hsts: {
-  //       maxAge: 63072000, // two years
-  //       includeSubDomains: true,
-  //       preload: true,
-  //     },
-  //     contentSecurityPolicy: {
-  //       directives: {
-  //         'default-src': ["'self'"],
-  //         'connect-src': [
-  //           'https://zero-to-production.dev',
-  //           'https://*.zero-to-production.dev',
-  //         ],
-  //         'worker-src': [`'self'`],
-  //         'script-src': [`'self'`, 'cdnjs.cloudflare.com'],
-  //         'img-src': [`'self'`, 'ssl.gstatic.com'],
-  //         'style-src': [
-  //           `'unsafe-inline'`, // TODO -> Remove this, limitation of angular at the moment
-  //           `'self'`,
-  //           'fonts.googleapis.com',
-  //           'cdnjs.cloudflare.com',
-  //         ],
-  //         'style-src-elem': [
-  //           `'unsafe-inline'`, // TODO -> Remove this, limitation of angular at the moment
-  //           `'self'`,
-  //           'fonts.googleapis.com',
-  //           'cdnjs.cloudflare.com',
-  //         ],
-  //         'font-src': ['fonts.gstatic.com'],
-  //         'upgrade-insecure-requests': [],
-  //       },
-  //     },
-  //   })(req, res, next);
-  // });
-
-  // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
-  server.engine(
-    'html',
-    ngExpressEngine({
-      bootstrap: AppServerModule,
-    }) as any
+  // TODO -> Remove the 'unsafe-inline', limitation of angular at the moment
+  server.use(
+    helmet({
+      expectCt: { enforce: true },
+      hsts: {
+        maxAge: 63072000, // two years
+        includeSubDomains: true,
+        preload: true,
+      },
+      contentSecurityPolicy: {
+        directives: {
+          'default-src': ["'self'"],
+          'connect-src': [
+            'https://zero-to-production.dev',
+            'https://*.zero-to-production.dev',
+          ],
+          'worker-src': [`'self'`],
+          'script-src': [`'self'`, 'cdnjs.cloudflare.com'],
+          'img-src': [`'self'`, 'ssl.gstatic.com'],
+          'style-src': [
+            `'unsafe-inline'`,
+            `'self'`,
+            'fonts.googleapis.com',
+            'cdnjs.cloudflare.com',
+          ],
+          // 'style-src-elem': [
+          //   `'unsafe-inline'`,
+          //   `'self'`,
+          //   'fonts.googleapis.com',
+          //   'cdnjs.cloudflare.com',
+          // ],
+          'font-src': ['fonts.gstatic.com'],
+        },
+      },
+    })
   );
 
-  server.set('view engine', 'html');
-  server.set('views', distFolder);
+  // Universal Koa engine
+  const render = ngKoaEngine({
+    bootstrap: AppServerModule,
+  });
 
-  // Example Express Rest API endpoints
-  // app.get('/api/**', (req, res) => { });
   // Serve static files from /browser
-  server.get(
-    '*.*',
-    express.static(distFolder, {
-      maxAge: '1y',
+  server.use(
+    serve(distFolder, {
+      // Do not serve the index file because it needs to be rendered by the Universal engine
+      index: false,
+      maxAge: 86400 * 365 * 1000,
     })
   );
 
   // All regular routes use the Universal engine
-  server.get('*', (req, res) => {
-    res.render(indexHtml, {
-      req,
-      providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }],
-    });
+  server.use(async (ctx) => {
+    await render(indexPath, ctx);
   });
 
   return server;
@@ -93,7 +85,7 @@ function run() {
   // Start up the Node server
   const server = app();
   server.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+    console.log(`Node Koa server listening on http://localhost:${port}`);
   });
 }
 
