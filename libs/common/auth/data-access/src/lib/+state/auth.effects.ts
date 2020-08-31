@@ -48,39 +48,6 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  isLoggedIn$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.isLoggedIn),
-      switchMap(({ originalUrl }) =>
-        this.authService.refreshAccessToken().pipe(
-          map(({ token, expiresIn }) => {
-            if (token && expiresIn) {
-              return AuthActions.setAuthenticated({
-                token,
-                expiresIn,
-                navigate: originalUrl,
-              });
-            } else {
-              return AuthActions.isLoggedFail();
-            }
-          }),
-          catchError((e) => of(AuthActions.isLoggedFail()))
-        )
-      )
-    )
-  );
-
-  setAuthenticated$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.setAuthenticated),
-        tap(({ navigate }) => {
-          if (navigate) this.router.navigate([navigate]);
-        })
-      ),
-    { dispatch: false }
-  );
-
   register$ = createEffect(
     () =>
       this.actions$.pipe(

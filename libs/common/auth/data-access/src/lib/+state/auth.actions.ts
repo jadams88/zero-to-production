@@ -11,13 +11,6 @@ export const login = createAction(
   props<ILoginCredentials>()
 );
 
-export const isLoggedIn = createAction(
-  '[Auth/API] Is Logged In',
-  props<{ originalUrl: string }>()
-);
-// no op action
-export const isLoggedFail = createAction('[Auth/API] Is Logged In Fail');
-
 export const loginSuccess = createAction(
   '[Auth/API] Login Success',
   props<ILoginResponse>()
@@ -45,7 +38,7 @@ export const registerFailure = createAction(
 
 export const setAuthenticated = createAction(
   '[Auth] Set Authenticated',
-  props<{ expiresIn: number; token: string; navigate?: string }>()
+  props<{ expiresIn: number; token: string }>()
 );
 
 export const logout = createAction('[Auth] Logout');
