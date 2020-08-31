@@ -13,6 +13,8 @@ import { IUser } from '@ztp/data';
 import { AuthFacade } from './auth.facade';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
+import { Inject } from '@angular/core';
+import { LOGIN_PAGE, LOGIN_REDIRECT } from '../tokens/tokens';
 
 describe('AuthEffects', () => {
   let effects: AuthEffects;
@@ -23,9 +25,9 @@ describe('AuthEffects', () => {
   const authSpy = createSpyObj('AuthService', [
     'login',
     'register',
-    'setSession',
-    'removeSession',
+    'userId',
     'revokeRefreshToken',
+    'loadUser',
   ]);
 
   const authFacadeSpy = {};
@@ -37,6 +39,8 @@ describe('AuthEffects', () => {
         AuthEffects,
         { provide: AuthService, useValue: authSpy },
         { provide: AuthFacade, useValue: authFacadeSpy },
+        { provide: LOGIN_PAGE, useValue: '/test/login' },
+        { provide: LOGIN_REDIRECT, useValue: '/test/home' },
         provideMockActions(() => actions$),
       ],
     });
@@ -47,13 +51,6 @@ describe('AuthEffects', () => {
     authFacade = TestBed.inject(AuthFacade);
     router = TestBed.inject(Router);
   });
-
-  // private actions$: Actions,
-  // private authService: AuthService,
-  // private facade: AuthFacade,
-  // private router: Router,
-  // @Optional() @Inject(LOGIN_PAGE) private loginPage: string,
-  // @Optional() @Inject(LOGIN_REDIRECT) private loginRedirect: string
 
   describe('login$', () => {
     it('should return an LoginSuccess action with token', () => {
@@ -98,39 +95,26 @@ describe('AuthEffects', () => {
     });
   });
 
-  // describe('loginSuccess$', () => {
-  //   it('should dispatch a LoginRedirect action', () => {
-  //     const token = 'JWT.TOKEN';
-  //     const expiresIn = 1234;
-  //     const action = AuthActions.loginSuccess({ token, expiresIn });
-  //     const completion = AuthActions.loginRedirect();
+  describe('loginSuccess$', () => {
+    it('should route to the login redirect url', () => {
+      const spy = jest
+        .spyOn(router, 'navigate')
+        .mockImplementationOnce((url) => Promise.resolve(true));
 
-  //     actions$ = hot('-a---', { a: action });
-  //     const expected = cold('-b', { b: completion });
+      const token = 'JWT.TOKEN';
+      const expiresIn = 1234;
+      const action = AuthActions.loginSuccess({ token, expiresIn });
 
-  //     expect(effects.loginSuccess$).toBeObservable(expected);
-  //   });
+      actions$ = hot('-a---', { a: action });
 
-  //   // it('should invoke the AuthService.setSession with the access token', (done) => {
-  //   //   const spy = jest.spyOn(authService, 'setSession');
-  //   //   spy.mockReset();
-  //   //   const token = 'JWT.TOKEN';
-  //   //   const expiresIn = 1234;
-  //   //   const action = AuthActions.loginSuccess({ token, expiresIn });
+      effects.loginSuccess$.subscribe();
 
-  //   //   actions$ = hot('-a---', { a: action });
+      Scheduler.get().flush();
 
-  //   //   effects.loginSuccess$.subscribe((someAction) => {
-  //   //     expect(spy).toHaveBeenCalled();
-  //   //     expect(spy).toHaveBeenCalledWith({ token, expiresIn });
-  //   //     done();
-  //   //   });
-
-  //   //   Scheduler.get().flush();
-
-  //   //   spy.mockReset();
-  //   // });
-  // });
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith(['/test/home']);
+    });
+  });
 
   describe('register$', () => {
     it('should return an RegisterSuccess action with user information', () => {
@@ -165,22 +149,13 @@ describe('AuthEffects', () => {
     });
 
     it('should return a new RegisterFail if the registration throws', () => {
-      const newUser = ({
+      const newUser = {
         username: 'test user',
         givenName: 'test',
         surname: 'user',
         email: 'test@domain.com',
         dateOfBirth: '2019-01-01',
-        settings: {
-          darkMode: false,
-          colors: {
-            lightAccent: '',
-            lightPrimary: '',
-            darkAccent: '',
-            darkPrimary: '',
-          },
-        },
-      } as any) as IRegistrationDetails;
+      } as IRegistrationDetails;
 
       const action = AuthActions.register({ details: newUser });
 
@@ -197,77 +172,170 @@ describe('AuthEffects', () => {
     });
   });
 
-  // describe('registerSuccess$', () => {
-  //   it('should dispatch a LogoutRedirect action', () => {
-  //     const action = AuthActions.registerSuccess({ user: {} as IUser });
-  //     const completion = AuthActions.logoutRedirect();
+  describe('registerSuccess$', () => {
+    it('should route to the login url', () => {
+      const spy = jest
+        .spyOn(router, 'navigate')
+        .mockImplementationOnce((url) => Promise.resolve(true));
 
-  //     actions$ = hot('-a---', { a: action });
-  //     const expected = cold('-b', { b: completion });
+      const action = AuthActions.registerSuccess({ user: {} as IUser });
 
-  //     expect(effects.registerSuccess$).toBeObservable(expected);
-  //   });
-  // });
+      actions$ = hot('-a---', { a: action });
 
-  // describe('logout$', () => {
-  //   it('should dispatch a LogoutRedirect action', () => {
-  //     const spy = jest
-  //       .spyOn(authService, 'revokeRefreshToken')
-  //       .mockReturnValueOnce(of({ success: true }));
+      effects.registerSuccess$.subscribe();
 
-  //     const action = AuthActions.logout();
-  //     const completion = AuthActions.logoutRedirect();
+      Scheduler.get().flush();
 
-  //     actions$ = hot('-a---', { a: action });
-  //     const expected = cold('-b', { b: completion });
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith(['/test/login']);
 
-  //     expect(effects.logout$).toBeObservable(expected);
+      spy.mockReset();
+      spy.mockClear();
+    });
+  });
 
-  //     spy.mockClear();
-  //   });
+  describe('logout$', () => {
+    it('should navigate to the login page', () => {
+      const navSpy = jest
+        .spyOn(router, 'navigate')
+        .mockImplementationOnce((url) => Promise.resolve(true));
+      const spy = jest
+        .spyOn(authService, 'revokeRefreshToken')
+        .mockReturnValueOnce(of({ success: true }));
 
-  // it('should call the AuthService.removeSession', (done) => {
-  //   const spy2 = jest
-  //     .spyOn(authService, 'revokeRefreshToken')
-  //     .mockReturnValueOnce(of({ success: true }));
+      const action = AuthActions.logout();
 
-  //   const spy = jest.spyOn(authService, 'removeSession');
-  //   spy.mockReset();
-  //   const action = AuthActions.logout();
+      actions$ = hot('-a---', { a: action });
 
-  //   actions$ = hot('-a---', { a: action });
+      effects.logout$.subscribe();
 
-  //   effects.logout$.subscribe((act) => {
-  //     expect(spy).toHaveBeenCalled();
-  //     done();
-  //   });
+      Scheduler.get().flush();
 
-  //   Scheduler.get().flush();
+      expect(navSpy).toHaveBeenCalled();
+      expect(navSpy).toHaveBeenCalledWith(['/test/login']);
 
-  //   spy.mockReset();
-  //   spy2.mockReset();
-  // });
+      spy.mockReset();
+      navSpy.mockClear();
+    });
 
-  // it('should call the AuthService.revokeRefreshToken', (done) => {
-  //   const spy2 = jest
-  //     .spyOn(authService, 'revokeRefreshToken')
-  //     .mockReturnValueOnce(of({ success: true }));
+    it('should revoke the refresh token', () => {
+      const navSpy = jest
+        .spyOn(router, 'navigate')
+        .mockImplementationOnce((url) => Promise.resolve(true));
+      const spy = jest
+        .spyOn(authService, 'revokeRefreshToken')
+        .mockReturnValueOnce(of({ success: true }));
 
-  //   const spy = jest.spyOn(authService, 'removeSession');
-  //   spy.mockReset();
-  //   const action = AuthActions.logout();
+      const action = AuthActions.logout();
 
-  //   actions$ = hot('-a---', { a: action });
+      actions$ = hot('-a---', { a: action });
 
-  //   effects.logout$.subscribe((act) => {
-  //     expect(spy2).toHaveBeenCalled();
-  //     done();
-  //   });
+      effects.logout$.subscribe();
 
-  //   Scheduler.get().flush();
+      Scheduler.get().flush();
 
-  //   spy.mockReset();
-  //   spy2.mockReset();
-  // });
-  // });
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith();
+
+      spy.mockReset();
+      navSpy.mockClear();
+    });
+  });
+
+  describe('loadAuthUser$', () => {
+    it('should load the currently authenticated user', () => {
+      const user = {
+        username: 'test user',
+        givenName: 'test',
+        surname: 'user',
+        email: 'test@domain.com',
+        dateOfBirth: '2019-01-01',
+      } as IUser;
+
+      authFacade.accessToken$ = of('TOKEN');
+      authService.userId = jest.fn(() => '1');
+
+      const action = AuthActions.loadAuthUser();
+      const completion = AuthActions.loadAuthUserSuccess({ user });
+
+      actions$ = hot('-a---', { a: action });
+      // Do not throw error, success with an errors property
+      const expected = cold('--b', { b: completion });
+
+      const response = cold('-a|', { a: { data: { User: user } } });
+      authService.loadUser = jest.fn(() => response);
+
+      expect(effects.loadAuthUser$).toBeObservable(expected);
+    });
+
+    it('should return LoadAuthUserFail if there is no token', () => {
+      authFacade.accessToken$ = of('TOKEN');
+      authService.userId = jest.fn(() => null);
+
+      const action = AuthActions.loadAuthUser();
+      const completion = AuthActions.loadAuthUserFail({
+        error: 'User is not logged in',
+      });
+
+      actions$ = hot('-a---', { a: action });
+      const expected = cold('-b', { b: completion });
+
+      expect(effects.loadAuthUser$).toBeObservable(expected);
+    });
+
+    it('should return LoadAuthUserFail if authService.loadUser returns errors', () => {
+      authFacade.accessToken$ = of('TOKEN');
+      authService.userId = jest.fn(() => '1');
+
+      const action = AuthActions.loadAuthUser();
+      const completion = AuthActions.loadAuthUserFail({
+        error: 'Can not find user',
+      });
+
+      actions$ = hot('-a---', { a: action });
+      const response = cold('-a|', {
+        a: { errors: [{ message: 'Can not find user' }] },
+      });
+
+      authService.loadUser = jest.fn(() => response);
+
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.loadAuthUser$).toBeObservable(expected);
+    });
+
+    it('should return LoadAuthUserFail if authService.loadUser throws', () => {
+      authFacade.accessToken$ = of('TOKEN');
+      authService.userId = jest.fn(() => '1');
+
+      const action = AuthActions.loadAuthUser();
+      const completion = AuthActions.loadAuthUserFail({
+        error: 'Error retrieving user',
+      });
+
+      const error = { message: 'Error retrieving user' };
+
+      actions$ = hot('-a---', { a: action });
+
+      const response = cold('-#', {}, error);
+
+      authService.loadUser = jest.fn(() => response);
+
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.loadAuthUser$).toBeObservable(expected);
+    });
+  });
+
+  describe('clearAuthenticatedUser$', () => {
+    it('should clear the auth auth user', () => {
+      const action = AuthActions.logout();
+      const completion = AuthActions.clearAuthUser();
+
+      actions$ = hot('-a-', { a: action });
+      const expected = cold('-b', { b: completion });
+
+      expect(effects.clearAuthenticatedUser$).toBeObservable(expected);
+    });
+  });
 });

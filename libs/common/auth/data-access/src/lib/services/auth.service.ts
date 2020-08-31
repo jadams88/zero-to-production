@@ -155,7 +155,7 @@ export class AuthService {
     );
   }
 
-  decodeToken(token: string | null) {
+  userId(token: string | null) {
     return token !== null ? jwtDecode<IJWTPayload>(token).sub : null;
   }
 
