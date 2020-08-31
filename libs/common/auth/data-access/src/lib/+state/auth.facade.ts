@@ -8,12 +8,14 @@ import { ILoginCredentials, IRegistrationDetails } from '../auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthFacade {
+  init$: Observable<boolean>;
   accessToken$: Observable<string | null>;
   expiresAt$: Observable<number | null>;
   authenticated$: Observable<boolean>;
   user$: Observable<IUser | null>;
 
   constructor(private store: Store<any>) {
+    this.init$ = this.store.pipe(select(fromAuth.selectInit));
     this.accessToken$ = this.store.pipe(select(fromAuth.selectAccessToken));
     this.expiresAt$ = this.store.pipe(select(fromAuth.selectExpiresAt));
     this.authenticated$ = this.store.pipe(select(fromAuth.selectAuthenticated));
@@ -34,10 +36,6 @@ export class AuthFacade {
 
   loadLoggedInUser(): void {
     this.store.dispatch(AuthActions.loadAuthUser());
-  }
-
-  isLoggedIn(url: string): void {
-    this.store.dispatch(AuthActions.isLoggedIn({ originalUrl: url }));
   }
 
   setAuthenticated(auth: { token: string; expiresIn: number }) {

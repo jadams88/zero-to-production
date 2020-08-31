@@ -17,6 +17,10 @@ export const TODOS_ROUTES: Routes = [
   {
     path: '',
     component: TodoFeatureShellComponent,
+    canActivate: [AuthGuard],
+    data: {
+      animation: 'AppPages',
+    },
     children: [
       {
         path: 'home',
@@ -53,10 +57,6 @@ export const TODOS_ROUTES: Routes = [
         redirectTo: 'home',
       },
     ],
-    canActivate: [AuthGuard],
-    data: {
-      animation: 'AppPages',
-    },
   },
   {
     path: '',

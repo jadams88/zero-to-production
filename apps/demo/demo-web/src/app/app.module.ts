@@ -17,8 +17,6 @@ import {
 } from '@ztp/common/data-access';
 import {
   CommonAuthDataAccessModule,
-  authProviderFactory,
-  AuthService,
   LOGIN_PAGE,
   REGISTER_PAGE,
   LOGIN_REDIRECT,
@@ -85,12 +83,6 @@ export const APP_ERRORS = {
       useFactory: themeProviderFactory,
       multi: true,
       deps: [ThemeService],
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: authProviderFactory,
-      multi: true,
-      deps: [AuthService],
     },
   ],
   bootstrap: [AppComponent],

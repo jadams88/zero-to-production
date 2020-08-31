@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
@@ -10,11 +10,7 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
 import { CommonDataAccessModule } from '@ztp/common/data-access';
-import {
-  CommonAuthDataAccessModule,
-  authProviderFactory,
-  AuthService,
-} from '@ztp/common/auth/data-access';
+import { CommonAuthDataAccessModule } from '@ztp/common/auth/data-access';
 import { SharedUsersDataAccessModule } from '@ztp/shared/users/data-access';
 import { TodosFeatureShellModule } from '@ztp/todos/feature-shell';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
@@ -57,13 +53,5 @@ export const APP_ERRORS = {
     TodosFeatureShellModule,
   ],
   bootstrap: [AppComponent],
-  providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: authProviderFactory,
-      multi: true,
-      deps: [AuthService],
-    },
-  ],
 })
 export class AppModule {}

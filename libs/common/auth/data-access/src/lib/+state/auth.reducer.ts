@@ -5,6 +5,7 @@ import { IUser } from '@ztp/data';
 export const authStateKey = 'authStateKey';
 
 export interface AuthState {
+  init: boolean;
   accessToken: string | null;
   authenticated: boolean;
   expiresAt: number | null;
@@ -12,6 +13,7 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
+  init: false,
   accessToken: null,
   authenticated: false,
   expiresAt: null,
@@ -25,6 +27,7 @@ const authReducer = createReducer(
     fromAuth.setAuthenticated,
     (state, { token, expiresIn }) => {
       return {
+        init: true,
         user: null,
         accessToken: token,
         authenticated: true,
@@ -34,6 +37,7 @@ const authReducer = createReducer(
   ),
   on(fromAuth.logout, (state) => {
     return {
+      init: true,
       expiresAt: null,
       authenticated: false,
       user: null,

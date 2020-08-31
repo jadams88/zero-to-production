@@ -2,7 +2,7 @@ export { CommonAuthDataAccessModule } from './lib/common-auth-data-access.module
 export { AuthEffects } from './lib/+state/auth.effects';
 export { AuthGuard } from './lib/guards/auth.guard';
 export { AuthInterceptor } from './lib/interceptors/auth-interceptor';
-export { AuthService, authProviderFactory } from './lib/services/auth.service';
+export { AuthService } from './lib/services/auth.service';
 export { AuthFacade } from './lib/+state/auth.facade';
 export {
   ILoginCredentials,
