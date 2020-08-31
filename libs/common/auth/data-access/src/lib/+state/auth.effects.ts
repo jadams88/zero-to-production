@@ -98,7 +98,7 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.loadAuthUser),
         switchMap(() => this.facade.accessToken$),
-        map((token) => this.authService.decodeToken(token)),
+        map((token) => this.authService.userId(token)),
         switchMap((id) => {
           if (!id) {
             return of(
