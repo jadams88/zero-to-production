@@ -18,7 +18,7 @@ export const initialState: AuthState = {
   user: null,
 };
 
-const authReducer = createReducer(
+export const authReducer = createReducer(
   initialState,
   on(
     fromAuth.loginSuccess,
@@ -28,7 +28,7 @@ const authReducer = createReducer(
         user: null,
         accessToken: token,
         authenticated: true,
-        expiresAt: new Date().valueOf() + expiresIn * 1000, // expiresIn will be in seconds -> convert to millis
+        expiresAt: Date.now() + expiresIn * 1000, // expiresIn will be in seconds -> convert to millie
       };
     }
   ),

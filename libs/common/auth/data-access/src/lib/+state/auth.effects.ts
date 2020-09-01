@@ -21,7 +21,7 @@ export class AuthEffects {
           // Note that when using GraphQL as a login option,
           // Any errors will not be errors in the HTTP request (will be status 200)
           // But rather an array on the result.errors property
-          this.authService.login(credentials).pipe(
+          this.authService.authorize(credentials).pipe(
             map(({ errors, data }) =>
               errors
                 ? AuthActions.loginFailure({ error: errors[0].message })

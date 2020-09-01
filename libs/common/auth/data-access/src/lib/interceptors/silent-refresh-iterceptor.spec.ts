@@ -1,5 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpClient,
+  HttpRequest,
+} from '@angular/common/http';
 import {
   HttpTestingController,
   HttpClientTestingModule,
@@ -12,14 +16,18 @@ import { of, throwError } from 'rxjs';
 import { AUTH_SERVER_URL } from '../tokens/tokens';
 
 describe('SilentRefreshInterceptor', () => {
+  const AUTH_URL = 'http://auth.com';
+  let interceptor: SilentRefreshInterceptor;
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   let authFacade: AuthFacade;
-  const authFacadeSpy = { logout: jest.fn() };
   let authService: AuthService;
   const authServiceSpy = {
     refreshAccessToken: jest.fn(),
-    setSession: jest.fn(),
+  };
+  const authFacadeSpy = {
+    logout: jest.fn(),
+    setAuthenticated: jest.fn(),
   };
 
   beforeEach(() => {
@@ -33,10 +41,11 @@ describe('SilentRefreshInterceptor', () => {
         },
         { provide: AuthFacade, useValue: authFacadeSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: AUTH_SERVER_URL, useValue: 'http://auth.com' },
+        { provide: AUTH_SERVER_URL, useValue: AUTH_URL },
       ],
     });
 
+    interceptor = TestBed.inject(SilentRefreshInterceptor);
     httpClient = TestBed.inject<HttpClient>(HttpClient);
     httpTestingController = TestBed.inject(
       HttpTestingController as Type<HttpTestingController>
@@ -45,150 +54,193 @@ describe('SilentRefreshInterceptor', () => {
     authService = TestBed.inject(AuthService);
   });
 
-  it('should not log the user out if the response is not a 401 (Unauthorized)', () => {
-    const spy = jest.spyOn(authFacade, 'logout');
+  describe('shouldNotRetryRequest', () => {
+    it('should return true if request is GraphQL authorize', () => {
+      const req = ({
+        url: `${AUTH_URL}/graphql`,
+        body: {
+          operationName: 'Authorize',
+        },
+      } as any) as HttpRequest<any>;
 
-    // Make an HTTP GET request, don't care about the response
-    httpClient.get('/test').subscribe((data) => {});
+      const result = interceptor.shouldNotRetryRequest(req);
+      expect(result).toBe(true);
+    });
 
-    const req = httpTestingController.expectOne('/test');
+    it('should return true if request is to refresh or revoke the access token', () => {
+      const req1 = ({
+        url: `${AUTH_URL}/authorize/refresh`,
+      } as any) as HttpRequest<any>;
+      const req2 = ({
+        url: `${AUTH_URL}/authorize/revoke`,
+      } as any) as HttpRequest<any>;
 
-    // Set the response to be a 401
-    req.flush({}, { status: 200, statusText: 'Ok' });
+      const result = interceptor.shouldNotRetryRequest(req1);
+      const result2 = interceptor.shouldNotRetryRequest(req2);
+      expect(result).toBe(true);
+      expect(result2).toBe(true);
+    });
+    it('should return false for all other request', () => {
+      const req1 = ({
+        url: `${AUTH_URL}/test`,
+      } as any) as HttpRequest<any>;
+      const req2 = ({
+        url: `${AUTH_URL}/another-test`,
+      } as any) as HttpRequest<any>;
 
-    // // Assert the logout wad not called
-    expect(spy).not.toHaveBeenCalled();
-
-    httpTestingController.verify();
-    spy.mockClear();
+      const result = interceptor.shouldNotRetryRequest(req1);
+      const result2 = interceptor.shouldNotRetryRequest(req2);
+      expect(result).toBe(false);
+      expect(result2).toBe(false);
+    });
   });
 
-  // it('should try and refresh access token if the response status 401', () => {
-  //   const spy = jest
-  //     .spyOn(authService, 'refreshAccessToken')
-  //     .mockReturnValueOnce(of({ token: '1234', expiresIn: 123 }));
+  describe('intercept', () => {
+    it('should not log the user out if the response is not a 401 (Unauthorized)', () => {
+      const spy = jest.spyOn(authFacade, 'logout');
 
-  //   // Make an HTTP GET request, don't care about the response
-  //   httpClient.get('/test').subscribe((data) => {
-  //     console.log(data);
-  //   });
+      // Make an HTTP GET request, don't care about the response
+      httpClient.get('/test').subscribe((data) => {});
 
-  //   const req = httpTestingController.expectOne('/test');
+      const req = httpTestingController.expectOne('/test');
 
-  //   // Set the response to be a 401
-  //   req.flush({}, { status: 401, statusText: 'Unauthorized' });
+      // Set the response to be a 401
+      req.flush({}, { status: 200, statusText: 'Ok' });
 
-  //   // two request happen
-  //   // const req2 = httpTestingController.expectOne('/test');
+      // // Assert the logout wad not called
+      expect(spy).not.toHaveBeenCalled();
 
-  //   // Assert the logout wat not called
-  //   expect(spy).toHaveBeenCalled();
+      httpTestingController.verify();
+      spy.mockClear();
+    });
 
-  //   httpTestingController.verify();
-  //   spy.mockClear();
-  // });
+    it('should try and refresh access token if the response status 401', () => {
+      const spy = jest.spyOn(authService, 'refreshAccessToken');
 
-  // // it('should set a new session if access token is refreshed', () => {
-  // //   const TOKEN = '1234';
-  // //   const spy = jest
-  // //     .spyOn(authService, 'refreshAccessToken')
-  // //     .mockReturnValueOnce(of({ token: TOKEN, expiresIn: 123 }));
+      // Make an HTTP GET request, don't care about the response
+      httpClient.get('/test').subscribe((data) => {
+        console.log(data);
+      });
 
-  // //   const spy2 = jest.spyOn(authService, 'setSession');
+      const req = httpTestingController.expectOne('/test');
 
-  // //   // Make an HTTP GET request, don't care about the response
-  // //   httpClient.get('/test').subscribe((data) => {
-  // //     console.log(data);
-  // //   });
+      // Set the response to be a 401
+      req.flush({}, { status: 401, statusText: 'Unauthorized' });
 
-  // //   const req = httpTestingController.expectOne('/test');
+      // Assert the logout wat not called
+      expect(spy).toHaveBeenCalled();
 
-  // //   // Set the response to be a 401
-  // //   req.flush({}, { status: 401, statusText: 'Unauthorized' });
+      httpTestingController.verify();
 
-  // //   // two request happen
-  // //   const req2 = httpTestingController.expectOne('/test');
+      spy.mockClear();
+    });
 
-  // //   // Assert the logout wat not called
-  // //   expect(spy2).toHaveBeenCalled();
-  // //   expect(spy2).toHaveBeenCalledWith({ token: TOKEN, expiresIn: 123 });
+    it('should set the authenticated state if access token is refreshed', () => {
+      authService.refreshAccessToken = jest.fn(() =>
+        of({ token: 'TOKEN', expiresIn: 123 })
+      );
 
-  // //   httpTestingController.verify();
-  // //   spy.mockClear();
-  // //   spy2.mockClear();
-  // // });
+      const spy = jest.spyOn(authFacade, 'setAuthenticated');
 
-  // it('should retry the request if the token is refreshed', () => {
-  //   const TOKEN = '1234';
-  //   const spy = jest
-  //     .spyOn(authService, 'refreshAccessToken')
-  //     .mockReturnValueOnce(of({ token: TOKEN, expiresIn: 123 }));
+      // Make an HTTP GET request, don't care about the response
+      httpClient.get('/test').subscribe((data) => {
+        console.log(data);
+      });
 
-  //   // Make an HTTP GET request, don't care about the response
-  //   httpClient.get('/test').subscribe((data) => {
-  //     console.log(data);
-  //   });
+      const req = httpTestingController.expectOne('/test');
 
-  //   const req = httpTestingController.expectOne('/test');
+      // Set the response to be a 401
+      req.flush({}, { status: 401, statusText: 'Unauthorized' });
 
-  //   // Set the response to be a 401
-  //   req.flush({}, { status: 401, statusText: 'Unauthorized' });
+      // two request happen
+      const req2 = httpTestingController.expectOne('/test');
 
-  //   // two request happen
-  //   const req2 = httpTestingController.expectOne('/test');
+      // Assert the logout wat not called
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith({ token: 'TOKEN', expiresIn: 123 });
 
-  //   expect(req2.request.headers.get('Authorization')).toBeTruthy();
-  //   expect(req2.request.headers.get('Authorization')).toEqual(
-  //     `Bearer ${TOKEN}`
-  //   );
+      httpTestingController.verify();
 
-  //   httpTestingController.verify();
-  //   spy.mockClear();
-  // });
+      spy.mockClear();
+    });
 
-  // it('should call facade.logout() if the refresh token fails', () => {
-  //   const spy = jest
-  //     .spyOn(authService, 'refreshAccessToken')
-  //     .mockReturnValueOnce(throwError('Could not refresh access token'));
+    it('should retry the request if the token is refreshed', () => {
+      const TOKEN = '1234';
 
-  //   const spy2 = jest.spyOn(authFacade, 'logout');
+      authService.refreshAccessToken = jest.fn(() =>
+        of({ token: TOKEN, expiresIn: 123 })
+      );
 
-  //   // Make an HTTP GET request, don't care about the response
-  //   httpClient.get('/test').subscribe((data) => {
-  //     console.log(data);
-  //   });
+      // Make an HTTP GET request, don't care about the response
+      httpClient.get('/test').subscribe((data) => {
+        console.log(data);
+      });
 
-  //   const req = httpTestingController.expectOne('/test');
+      const req = httpTestingController.expectOne('/test');
 
-  //   // Set the response to be a 401
-  //   req.flush({}, { status: 401, statusText: 'Unauthorized' });
+      // Set the response to be a 401
+      req.flush({}, { status: 401, statusText: 'Unauthorized' });
 
-  //   expect(spy2).toHaveBeenCalled();
+      // two request happen
+      const req2 = httpTestingController.expectOne('/test');
 
-  //   httpTestingController.verify();
+      expect(req2.request.headers.get('Authorization')).toBeTruthy();
+      expect(req2.request.headers.get('Authorization')).toEqual(
+        `Bearer ${TOKEN}`
+      );
 
-  //   spy.mockClear();
-  //   spy2.mockClear();
-  // });
+      httpTestingController.verify();
+    });
 
-  // it('should not try and refresh the access token if 401 status is received on login attempt', () => {
-  //   const spy = jest.spyOn(authService, 'refreshAccessToken');
+    it('should call facade.logout() if the refresh token fails', () => {
+      authService.refreshAccessToken = jest.fn(() =>
+        of({ token: null, expiresIn: null })
+      );
 
-  //   const body = { operationName: 'LoginUser' };
-  //   // Make an HTTP GET request, don't care about the response
-  //   httpClient.post('/graphql', body).subscribe((data) => {
-  //     console.log(data);
-  //   });
+      const spy2 = jest.spyOn(authFacade, 'logout');
+      const spy = jest.spyOn(authFacade, 'setAuthenticated');
 
-  //   const req = httpTestingController.expectOne('/graphql');
+      spy.mockClear();
+      expect(spy).not.toHaveBeenCalled();
 
-  //   // Set the response to be a 401
-  //   req.flush({}, { status: 401, statusText: 'Unauthorized' });
+      // Make an HTTP GET request, don't care about the response
+      httpClient.get('/test').subscribe((data) => {
+        console.log(data);
+      });
 
-  //   expect(spy).not.toHaveBeenCalled();
+      const req = httpTestingController.expectOne('/test');
 
-  //   httpTestingController.verify();
+      // Set the response to be a 401
+      req.flush({}, { status: 401, statusText: 'Unauthorized' });
 
-  //   spy.mockClear();
-  // });
+      expect(spy).not.toHaveBeenCalled();
+      expect(spy2).toHaveBeenCalled();
+
+      httpTestingController.verify();
+
+      spy.mockClear();
+      spy2.mockClear();
+    });
+
+    it('should not try and refresh the access token if 401 status is received on login attempt', () => {
+      const spy = jest.spyOn(authService, 'refreshAccessToken');
+
+      const body = { operationName: 'Authorize' };
+      // Make an HTTP GET request, don't care about the response
+      httpClient.post(`${AUTH_URL}/graphql`, body).subscribe((data) => {
+        console.log(data);
+      });
+
+      const req = httpTestingController.expectOne(`${AUTH_URL}/graphql`);
+
+      // Set the response to be a 401
+      req.flush({}, { status: 401, statusText: 'Unauthorized' });
+
+      expect(spy).not.toHaveBeenCalled();
+
+      httpTestingController.verify();
+
+      spy.mockClear();
+    });
+  });
 });

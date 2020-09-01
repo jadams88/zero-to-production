@@ -18,7 +18,6 @@ describe('AuthGuard', () => {
   const authFacadeSpy = {
     logout: jest.fn(),
     authenticated$: jest.fn(),
-    init$: jest.fn(),
   };
 
   const authServiceSpy = {
