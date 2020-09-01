@@ -5,8 +5,6 @@ export const selectAuthSate = createFeatureSelector<fromAuth.AuthState>(
   fromAuth.authStateKey
 );
 
-export const selectInit = createSelector(selectAuthSate, (state) => state.init);
-
 export const selectAuthenticated = createSelector(
   selectAuthSate,
   (state) => state.authenticated
