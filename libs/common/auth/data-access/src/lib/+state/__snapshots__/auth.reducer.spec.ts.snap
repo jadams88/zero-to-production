@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthReducer ClearAuthUser should remove the authenticated user 1`] = `
+Object {
+  "accessToken": "JWT",
+  "authenticated": true,
+  "expiresAt": 1234,
+  "user": null,
+}
+`;
+
+exports[`AuthReducer LoadAuthUserSuccess should set the authenticated user 1`] = `
+Object {
+  "accessToken": "JWT",
+  "authenticated": true,
+  "expiresAt": 1234,
+  "user": Object {
+    "id": "123",
+    "username": "some user",
+  },
+}
+`;
+
+exports[`AuthReducer LoginSuccess should set the authenticated state 1`] = `
+Object {
+  "accessToken": "SOME_JWT",
+  "authenticated": true,
+  "expiresAt": 1581322834000,
+  "user": null,
+}
+`;
+
+exports[`AuthReducer SetAuthenticated should set the authenticated state 1`] = `
+Object {
+  "accessToken": "SOME_JWT",
+  "authenticated": true,
+  "expiresAt": 1581322834000,
+  "user": null,
+}
+`;
+
+exports[`AuthReducer undefined action should return the default state 1`] = `
+Object {
+  "accessToken": null,
+  "authenticated": false,
+  "expiresAt": null,
+  "user": null,
+}
+`;

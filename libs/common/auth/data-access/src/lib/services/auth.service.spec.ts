@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { GraphQLError } from 'graphql';
-import { sign } from 'jsonwebtoken';
-import { GraphQLStub, HttpStub } from '@ztp/tests/client';
+import { HttpStub } from '@ztp/tests/client';
 import { AuthService } from './auth.service';
 import {
   ILoginCredentials,
@@ -13,10 +12,10 @@ import { AuthFacade } from '../+state/auth.facade';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClient } from '@angular/common/http';
 import { AUTH_SERVER_URL } from '../tokens/tokens';
+import { of } from 'rxjs';
 
 describe('AuthService', () => {
-  const storageKey = 'access_token';
-  const sessionKey = 'expires_at';
+  const AUTH_SERVER = 'https://auth.com';
 
   let authService: AuthService;
   let http: HttpStub;
@@ -30,7 +29,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: AuthFacade, useValue: facadeStub },
-        { provide: AUTH_SERVER_URL, useValue: 'test-url' },
+        { provide: AUTH_SERVER_URL, useValue: AUTH_SERVER },
         { provide: HttpClient, useClass: HttpStub },
       ],
     });
@@ -43,33 +42,38 @@ describe('AuthService', () => {
     expect(authService).toBeTruthy();
   });
 
-  describe('login', () => {
+  describe('authorize', () => {
     // GraphQL login response check
-    it('should return a LoginResponse if called with valid credentials', () => {
+    it('should return a LoginResponse if called with valid credentials', (done) => {
       const spy = jest.spyOn(http, 'post');
-      const loginCredentials: ILoginCredentials = {
-        username: 'admin',
-        password: 'secret',
-      };
       const expectedResponse: ILoginResponse = {
         token: 'JWT',
         expiresIn: 1000,
       };
+
+      const credentials: ILoginCredentials = {
+        username: 'admin',
+        password: 'secret',
+      };
+
       // Set the response from the the stub
-      http.setExpectedResponse<{ data: { login: ILoginResponse } }>({
-        data: { login: expectedResponse },
+      http.setExpectedResponse<{ data: { authorize: ILoginResponse } }>({
+        data: { authorize: expectedResponse },
       });
-      authService.login(loginCredentials).subscribe((response) => {
-        expect(response.errors).toBeUndefined();
-        expect((response.data as any).login).toBeDefined();
-        expect((response.data as any).login).toEqual(expectedResponse);
+      authService.authorize(credentials).subscribe((response) => {
+        const { body } = response as any;
+        expect(body.errors).toBeUndefined();
+        expect((body.data as any).authorize).toBeDefined();
+        expect((body.data as any).authorize).toEqual(expectedResponse);
         expect(http.post).toHaveBeenCalled();
-        expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
+        expect(spy.mock.calls[0][1].operationName).toEqual('Authorize');
+        expect(spy.mock.calls[0][1].variables).toEqual(credentials);
+        done();
       }, console.error);
 
       spy.mockClear();
     });
-    it('should return an error if credentials are incorrect', () => {
+    it('should return an error if credentials are incorrect', (done) => {
       const spy = jest.spyOn(http, 'post');
       const loginCredentials: ILoginCredentials = {
         username: 'unauthorized',
@@ -80,16 +84,18 @@ describe('AuthService', () => {
       ] as GraphQLError[];
       // Set the response from the the stub
 
-      http.setExpectedResponse<{ errors: GraphQLError[] }>({
+      http.setExpectedResponse<{ errors: GraphQLError[]; data: null }>({
         errors: graphQLErrors,
+        data: null,
       });
 
-      authService.login(loginCredentials).subscribe((response) => {
-        expect(response.data).toEqual(null);
-        expect(response.errors).toBeDefined();
-        expect((response.errors as any[][0]).message).toEqual('Unauthorized');
+      authService.authorize(loginCredentials).subscribe((response) => {
+        const { body } = response as any;
+        expect(body.data).toEqual(null);
+        expect(body.errors).toBeDefined();
+        expect(body.errors[0].message).toEqual('Unauthorized');
         expect(http.post).toHaveBeenCalled();
-        expect(spy.mock.calls[0][1]).toEqual(loginCredentials);
+        done();
       }, console.error);
 
       spy.mockClear();
@@ -98,7 +104,7 @@ describe('AuthService', () => {
 
   describe('register', () => {
     // GraphQL login response check
-    it('should return a User if registration is successfully', () => {
+    it('should return a User if registration is successfully', (done) => {
       const spy = jest.spyOn(http, 'post');
       const newUser: IRegistrationDetails = {
         username: 'test user',
@@ -122,16 +128,19 @@ describe('AuthService', () => {
       });
 
       authService.register(newUser).subscribe((response) => {
-        expect(response.errors).toBeUndefined();
-        expect((response.data as any).login).toBeDefined();
-        expect((response.data as any).login).toEqual(expectedResponse);
+        const { body } = response as any;
+        expect(body.errors).toBeUndefined();
+        expect(body.data.user).toBeDefined();
+        expect(body.data.user).toEqual(expectedResponse);
         expect(http.post).toHaveBeenCalled();
-        expect(spy.mock.calls[0][1]).toEqual(newUser);
+        expect(spy.mock.calls[0][1].operationName).toEqual('Register');
+        expect(spy.mock.calls[0][1].variables).toEqual({ input: newUser });
+        done();
       }, console.error);
 
       spy.mockClear();
     });
-    it('should return an error if registration is invalid', () => {
+    it('should return an error if registration is invalid', (done) => {
       const spy = jest.spyOn(http, 'post');
 
       const newUser = ({
@@ -146,157 +155,182 @@ describe('AuthService', () => {
         { name: 'Bad request', message: 'No password provided' },
       ] as GraphQLError[];
 
-      http.setExpectedResponse<{ errors: GraphQLError[] }>({
+      http.setExpectedResponse<{ errors: GraphQLError[]; data: null }>({
         errors: graphQLErrors,
+        data: null,
       });
 
       authService.register(newUser).subscribe((response) => {
-        expect(response.data).toEqual(null);
-        expect(response.errors).toBeDefined();
-        expect((response.errors as any[][0]).message).toEqual(
-          'No password provided'
-        );
+        const { body } = response as any;
+        expect(body.data).toEqual(null);
+        expect(body.errors).toBeDefined();
+        expect(body.errors[0].message).toEqual('No password provided');
         expect(http.post).toHaveBeenCalled();
-        expect(spy.mock.calls[0][1]).toEqual(newUser);
+        done();
       }, console.error);
 
       spy.mockClear();
     });
   });
 
-  // describe('setSession', () => {
-  //   it('should set access token and expiresAt in local storage', () => {
-  //     localStorage.removeItem(storageKey);
-  //     localStorage.removeItem(sessionKey);
+  describe('loadUser', () => {
+    // GraphQL login response check
+    it('should load a user by id', (done) => {
+      const id = '1';
+      const spy = jest.spyOn(http, 'post');
+      const user: IUser = {
+        id,
+        username: 'test user',
+        givenName: 'test',
+        surname: 'user',
+        email: 'test@domain.com',
+        dateOfBirth: '2019-01-01',
+        active: true,
+        isVerified: true,
+      };
+      http.setExpectedResponse<{ data: { User: IUser } }>({
+        data: { User: user },
+      });
 
-  //     const currentToken = localStorage.getItem(storageKey);
-  //     const currentSession = localStorage.getItem(sessionKey);
+      authService.loadUser(id).subscribe((response) => {
+        const { body } = response as any;
+        expect(body.errors).toBeUndefined();
+        expect(body.data.User).toBeDefined();
+        expect(body.data.User).toEqual(user);
+        expect(http.post).toHaveBeenCalled();
+        expect(spy.mock.calls[0][1].operationName).toEqual('AuthUser');
+        expect(spy.mock.calls[0][1].variables).toEqual({ id });
+        done();
+      }, console.error);
 
-  //     expect(currentToken).toBe(null);
-  //     expect(currentSession).toBe(null);
+      spy.mockClear();
+    });
+    it('should return an error if it can not load the user', (done) => {
+      const spy = jest.spyOn(http, 'post');
+      const id = '1';
 
-  //     const token = 'SOME_TOKEN';
-  //     const expiresIn = 1234;
+      const graphQLErrors = [
+        { name: 'Bad request', message: 'no user found' },
+      ] as GraphQLError[];
 
-  //     authService.setSession({ token, expiresIn });
+      http.setExpectedResponse<{ errors: GraphQLError[]; data: null }>({
+        errors: graphQLErrors,
+        data: null,
+      });
 
-  //     const newToken = localStorage.getItem(storageKey);
-  //     const newSession = localStorage.getItem(sessionKey);
+      authService.loadUser(id).subscribe((response) => {
+        const { body } = response as any;
+        expect(body.data).toEqual(null);
+        expect(body.errors).toBeDefined();
+        expect(body.errors[0].message).toEqual('no user found');
+        expect(http.post).toHaveBeenCalled();
+        done();
+      }, console.error);
 
-  //     expect(newToken).toBe(token);
-  //     expect(newSession).not.toBe(null);
-  //   });
-  // });
+      spy.mockClear();
+    });
+  });
 
-  // describe('removeSession', () => {
-  //   it('should remove the access token and expiresAa in local storage', () => {
-  //     const token = 'SOME_TOKEN';
-  //     const expiresIn = 1234;
+  describe('refreshAccessToken', () => {
+    // GraphQL login response check
+    it('it should try and refresh the access token', (done) => {
+      const spy = jest.spyOn(http, 'post');
 
-  //     localStorage.setItem(storageKey, token);
-  //     localStorage.setItem(sessionKey, expiresIn.toString());
+      http.setExpectedResponse<{ token: string; expiresIn: number }>({
+        token: 'TOKEN',
+        expiresIn: 123,
+      });
 
-  //     const currentToken = localStorage.getItem(storageKey);
-  //     const currentSession = localStorage.getItem(sessionKey);
+      authService.refreshAccessToken().subscribe((response) => {
+        expect(http.post).toHaveBeenCalled();
+        expect(spy.mock.calls[0][0]).toEqual(
+          `${AUTH_SERVER}/authorize/refresh`
+        );
+        expect(spy.mock.calls[0][1]).toEqual({});
+        done();
+      }, console.error);
 
-  //     expect(currentToken).toBe(token);
-  //     expect(currentSession).toBe(expiresIn.toString());
+      spy.mockClear();
+    });
+  });
 
-  //     authService.removeSession();
+  describe('refreshAccessToken', () => {
+    // GraphQL login response check
+    it('it should revoke the refresh token (cookie)', (done) => {
+      const spy = jest.spyOn(http, 'post');
 
-  //     const newToken = localStorage.getItem(storageKey);
-  //     const newSession = localStorage.getItem(sessionKey);
+      http.setExpectedResponse<{ success: boolean }>({
+        success: true,
+      });
 
-  //     expect(newToken).toBe(null);
-  //     expect(newSession).toBe(null);
-  //   });
-  // });
+      authService.revokeRefreshToken().subscribe((response) => {
+        expect(http.post).toHaveBeenCalled();
+        expect(spy.mock.calls[0][0]).toEqual(`${AUTH_SERVER}/authorize/revoke`);
+        expect(spy.mock.calls[0][1]).toEqual({});
+        done();
+      }, console.error);
 
-  // describe('authToken', () => {
-  //   it('should return the access token if present', () => {
-  //     const JWT = 'SOME_TOKEN';
-  //     localStorage.setItem(storageKey, JWT);
-  //     const token = authService.authToken;
+      spy.mockClear();
+    });
+  });
 
-  //     expect(token).toBeDefined();
-  //     expect(token).toEqual(JWT);
-  //   });
+  describe('initLogin', () => {
+    // GraphQL login response check
+    it('it should try and refresh the access token', (done) => {
+      const spy = jest.spyOn(http, 'post');
 
-  //   it('should return null if no token present', () => {
-  //     localStorage.removeItem(storageKey);
-  //     const token = authService.authToken;
+      http.setExpectedResponse<{ token: string; expiresIn: number }>({
+        token: 'TOKEN',
+        expiresIn: 123,
+      });
 
-  //     expect(token).toEqual(null);
-  //   });
-  // });
+      authService.initLogin().subscribe((response) => {
+        expect(http.post).toHaveBeenCalled();
+        expect(spy.mock.calls[0][0]).toEqual(
+          `${AUTH_SERVER}/authorize/refresh`
+        );
+        expect(spy.mock.calls[0][1]).toEqual({});
+        done();
+      }, console.error);
 
-  // describe('authUserId', () => {
-  //   it('should return the user id of the authenticated user', () => {
-  //     const subject = '123';
-  //     const JWT = sign({}, 'secret', {
-  //       subject,
-  //       expiresIn: 1000,
-  //     });
+      spy.mockClear();
+    });
+    it('it should set authenticated if refresh was successful', (done) => {
+      const spy = jest.spyOn(authFacade, 'setAuthenticated');
+      authService.refreshAccessToken = jest.fn(() =>
+        of({
+          token: 'TOKEN',
+          expiresIn: 123,
+        })
+      );
 
-  //     localStorage.setItem(storageKey, JWT);
-  //     const userId = authService.authUserId;
+      authService.initLogin().subscribe((response) => {
+        expect(spy).toHaveBeenCalled();
+        expect(spy.mock.calls[0][0]).toEqual({
+          token: 'TOKEN',
+          expiresIn: 123,
+        });
+        done();
+      }, console.error);
 
-  //     expect(userId).toEqual(subject);
-  //   });
+      spy.mockClear();
+    });
 
-  //   it('should return null if no token present', () => {
-  //     localStorage.removeItem(storageKey);
-  //     const userId = authService.authUserId;
+    it('it should not set authenticated if refresh was unsuccessful', (done) => {
+      const spy = jest.spyOn(authFacade, 'setAuthenticated');
+      authService.refreshAccessToken = jest.fn(() =>
+        of({
+          token: null,
+          expiresIn: null,
+        })
+      );
 
-  //     expect(userId).toEqual(null);
-  //   });
-  // });
+      authService.initLogin().subscribe((response) => {
+        expect(spy).not.toHaveBeenCalled();
+        done();
+      }, console.error);
 
-  // describe('isLoggedIn', () => {
-  //   it('should update the auth state with authenticated details if the session is valid', () => {
-  //     localStorage.removeItem(sessionKey);
-  //     const setAuthSpy = jest.spyOn(authFacade, 'setAuthenticated');
-  //     const removeSessionSpy = jest.spyOn(authService, 'removeSession');
-  //     jest.clearAllMocks();
-
-  //     const futureTime = new Date().valueOf() + 1000;
-  //     localStorage.setItem(sessionKey, futureTime.toString());
-
-  //     authService.isLoggedIn();
-
-  //     expect(setAuthSpy).toHaveBeenCalled();
-  //     expect(setAuthSpy).toHaveBeenCalledWith(true, futureTime);
-  //     expect(removeSessionSpy).not.toHaveBeenCalled();
-  //   });
-
-  //   it('should update the auth state with un-authenticated details if there is no session', () => {
-  //     localStorage.removeItem(sessionKey);
-
-  //     const setAuthSpy = jest.spyOn(authFacade, 'setAuthenticated');
-  //     const removeSessionSpy = jest.spyOn(authService, 'removeSession');
-  //     jest.clearAllMocks();
-
-  //     authService.isLoggedIn();
-
-  //     expect(setAuthSpy).toHaveBeenCalled();
-  //     expect(setAuthSpy).toHaveBeenCalledWith(false, null);
-  //     expect(removeSessionSpy).toHaveBeenCalled();
-  //   });
-
-  //   it('should update the auth state with un-authenticated details if the session is expired', () => {
-  //     localStorage.removeItem(sessionKey);
-  //     const pastTime = new Date().valueOf() - 1000;
-  //     localStorage.setItem(sessionKey, pastTime.toString());
-
-  //     const setAuthSpy = jest.spyOn(authFacade, 'setAuthenticated');
-  //     const removeSessionSpy = jest.spyOn(authService, 'removeSession');
-  //     jest.clearAllMocks();
-
-  //     authService.isLoggedIn();
-
-  //     expect(setAuthSpy).toHaveBeenCalled();
-  //     expect(setAuthSpy).toHaveBeenCalledWith(false, null);
-  //     expect(removeSessionSpy).toHaveBeenCalled();
-  //   });
-  // });
+      spy.mockClear();
+    });
+  });
 });

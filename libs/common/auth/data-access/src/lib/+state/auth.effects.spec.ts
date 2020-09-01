@@ -66,7 +66,7 @@ describe('AuthEffects', () => {
         a: { data: { authorize: { token, expiresIn } } },
       });
       const expected = cold('--b', { b: completion });
-      authService.login = jest.fn(() => response);
+      authService.authorize = jest.fn(() => response);
 
       expect(effects.login$).toBeObservable(expected);
     });
@@ -89,7 +89,7 @@ describe('AuthEffects', () => {
       // Do not throw error, success with an errors property
       const response = cold('-a|', { a: { errors: [error] } });
       const expected = cold('--b', { b: completion });
-      authService.login = jest.fn(() => response);
+      authService.authorize = jest.fn(() => response);
 
       expect(effects.login$).toBeObservable(expected);
     });

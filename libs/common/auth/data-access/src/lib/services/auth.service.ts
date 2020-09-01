@@ -39,7 +39,7 @@ export class AuthService {
 
   // Login function that returns a JWT
   // This is a graphql login function
-  login(credentials: ILoginCredentials) {
+  authorize(credentials: ILoginCredentials) {
     const query = `
       mutation Authorize($username: String!, $password: String!) {
         authorize(username: $username, password: $password) {
