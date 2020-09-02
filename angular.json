@@ -1319,12 +1319,12 @@
               "apps/demo/demo-web/src/styles.scss",
               {
                 "input": "styles/theme-default.scss",
-                "lazy": true,
+                "inject": false,
                 "bundleName": "theme-default"
               },
               {
                 "input": "styles/theme-default-dark.scss",
-                "lazy": true,
+                "inject": false,
                 "bundleName": "theme-default-dark"
               }
             ],

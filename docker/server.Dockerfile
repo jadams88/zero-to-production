@@ -85,7 +85,7 @@ RUN mkdir dist
 
 
 # Copy all files required to build the projects
-COPY --chown=node:node angular.json tsconfig.base.json tsconfig.server.json ./
+COPY --chown=node:node angular.json tsconfig.json tsconfig.server.json ./
 
 # Copy all src files
 COPY --chown=node:node apps/$PROJECT_DIRECTORY/ ./apps/$PROJECT_DIRECTORY

@@ -6,4 +6,4 @@ import { https } from 'firebase-functions';
 // @ts-ignore
 import { app } from './server/main';
 
-export const universal = https.onRequest(app());
+export const universal = https.onRequest(app().callback());

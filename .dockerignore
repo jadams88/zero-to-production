@@ -6,7 +6,7 @@
 !angular.json
 !package.json
 !package-lock.json
-!tsconfig.base.json
+!tsconfig.json
 !tsconfig.server.json
 !docker/nginx.conf
 !apps/
