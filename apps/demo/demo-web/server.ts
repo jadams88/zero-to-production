@@ -5,22 +5,20 @@ import { ngKoaEngine } from '@ztp/common/universal-engine';
 import Koa from 'koa';
 // @ts-ignore
 import serve from 'koa-static';
-// @ts-ignore
-import helmet from 'koa-helmet';
+import { helmet } from '@ztp/server/middleware';
 
 import { AppServerModule } from './src/main.server';
 
 // The Koa app is exported so that it can be used by serverless Functions.
 export function app() {
   const server = new Koa();
-  const distFolder = join(process.cwd(), 'dist/apps/demo/demo-web');
-  // const distFolder = join(process.cwd(), 'dist/browser');
+  const distFolder = join(process.cwd(), 'dist/browser');
   const indexFilename = existsSync(join(distFolder, 'index.original.html'))
     ? 'index.original.html'
     : 'index.html';
   const indexPath = join(distFolder, indexFilename);
 
-  // TODO -> Remove the 'unsafe-inline', limitation of angular at the moment
+  // TODO -> Remove the 'unsafe-inline', limitation of Angular at the moment
   server.use(
     helmet({
       expectCt: { enforce: true },
@@ -45,12 +43,6 @@ export function app() {
             'fonts.googleapis.com',
             'cdnjs.cloudflare.com',
           ],
-          // 'style-src-elem': [
-          //   `'unsafe-inline'`,
-          //   `'self'`,
-          //   'fonts.googleapis.com',
-          //   'cdnjs.cloudflare.com',
-          // ],
           'font-src': ['fonts.gstatic.com'],
         },
       },

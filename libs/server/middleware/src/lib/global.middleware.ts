@@ -1,10 +1,11 @@
 import Koa from 'koa';
 // @ts-ignore
-import helmet from 'koa-helmet';
+// import helmet from 'koa-helmet';
 // @ts-ignore
 import compress from 'koa-compress';
 import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
+import { helmet } from './helmet';
 import { bearerToken } from './bearer-token';
 import { errorHandler } from './err-handler';
 
@@ -20,11 +21,14 @@ export function setupGlobalMiddleware(app: Koa) {
 
   app.use(
     helmet({
+      contentSecurityPolicy: false,
       expectCt: { enforce: true },
       hsts: {
         maxAge: 63072000, // two years
         preload: true,
       },
+      xssFilter: false,
+      noSniff: false,
     })
   );
   app.use(compress());
