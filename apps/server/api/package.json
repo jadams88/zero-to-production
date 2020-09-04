@@ -8,32 +8,32 @@
   "dependencies": {
     "@hapi/boom": "^9.1.0",
     "@koa/cors": "^3.1.0",
-    "@koa/router": "^9.3.1",
-    "@sendgrid/mail": "^7.2.2",
+    "@koa/router": "^9.4.0",
+    "@sendgrid/mail": "^7.2.4",
     "apollo-server-koa": "^2.16.0",
     "bcryptjs": "^2.4.3",
     "dataloader": "^2.0.0",
     "date-fns": "^2.15.0",
     "graphql": "^15.3.0",
-    "graphql-scalars": "^1.2.2",
+    "graphql-scalars": "^1.2.6",
+    "helmet": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
-    "jwks-rsa": "^1.8.1",
+    "jwks-rsa": "^1.9.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-compress": "^5.0.1",
-    "koa-helmet": "^5.2.0",
     "lodash.keyby": "^4.6.0",
     "lodash.merge": "^4.6.2",
     "lodash.omit": "^4.5.0",
-    "mongoose": "^5.9.25",
+    "mongoose": "^5.10.0",
     "pem-jwk": "^2.0.0",
-    "ramda": "^0.27.0"
+    "ramda": "^0.27.1"
   },
   "devDependencies": {
-    "@angular/cli": "^10.0.4",
-    "@angular-devkit/architect": "^0.1000.4",
+    "@angular/cli": "^10.0.8",
+    "@angular-devkit/architect": "^0.1001.0",
     "@uqt/ng-node": "^1.0.2",
-    "typescript": "^3.9.7",
-    "@types/mongoose": "^5.7.32"
+    "typescript": "~4.0.2",
+    "@types/mongoose": "^5.7.36"
   }
 }

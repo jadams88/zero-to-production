@@ -30,7 +30,7 @@
     "lint-staged": "lint-staged",
     "bundle:analyze": "webpack-bundle-analyzer",
     "build:scripts": "tsc -p tools/scripts/tsconfig.json",
-    "validate-packages": "node ./tools/scripts/bin/validate-packages.js",
+    "validate-packages": "node ./tools/scripts/bin/validate-packages.js && git add \\*/package.json",
     "semantic-release": "semantic-release",
     "nx": "nx"
   },
@@ -42,8 +42,7 @@
   },
   "lint-staged": {
     "package.json": [
-      "npm run validate-packages",
-      "npm run format:fix"
+      "npm run validate-packages"
     ],
     "*": [
       "npm run format:fix"
