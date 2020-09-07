@@ -1,44 +1,60 @@
-<p>
-  A monorepo has many benefits, one if which is code sharing of libraries. The
-  Todo Application below is it's own standalone application of which almost all
-  of its code base is comprised of imported libraries that together makes up the
-  application (Auth, Dashboard, Todos etc). As the application itself is just
-  another library, it can be imported into other applications.
-</p>
-<p>
-  For further information about monorepo design principles have a look at the
-  information and tools from the team at
-  <a target="_blank" rel="noreferrer noopener" href="https://nrwl.io/">Nrwl</a>
-  provide.
-</p>
+<layout-center-page class="container">
+  <section>
+    <aside>
+      <h3 class="todos-title">Todo App (with Auth)</h3>
+      <p>
+        We have all seen a Todo App before but this demonstrates how a well
+        structured monorepo can make your code highly reusable.
+      </p>
 
-<h4>API Server</h4>
-<p>
-  The app below is a complete working web app communicating with a live GraphQL
-  API as provided in this monorepo (<em>apps/server/*</em>). The API is
-  configured to run in either Docker & Kubernetes or as a serverless cloud
-  function. The servers found in
-  <em>apps/server/api</em> & <em>apps/server/lambda</em> are currently hosted
-  and Google Cloud Kubernetes & AWS Lambda respectively and can be toggled
-  below.
-</p>
+      <p>
+        A monorepo has many benefits, one if which is code sharing of libraries.
+        The Todo Application below is it's own standalone application of which
+        almost all of its code base is comprised of imported libraries that
+        together makes up the application (Auth, Dashboard, Todos etc). As the
+        application itself is just another library, it can be imported into
+        other applications.
+      </p>
+      <p>
+        For further information about monorepo design principles have a look at
+        the information and tools from the team at
+        <a target="_blank" rel="noreferrer noopener" href="https://nrwl.io/"
+          >Nrwl</a
+        >
+        provide.
+      </p>
 
-<ztp-select-api></ztp-select-api>
+      <h4>API Server</h4>
+      <p>
+        The app below is a complete working web app communicating with a live
+        GraphQL API as provided in this monorepo (<em>apps/server/*</em>). The
+        API is configured to run in either Docker & Kubernetes or as a
+        serverless cloud function. The servers found in
+        <em>apps/server/api</em> & <em>apps/server/lambda</em> are currently
+        hosted and Google Cloud Kubernetes & AWS Lambda respectively and can be
+        toggled below.
+      </p>
 
-<h4>NOTE</h4>
-<p>
-  You will have to register before you can log in. For privacy reasons the API
-  has been configured to accept dummy data (so not to collect any sensitive
-  information). The email address you provide does <b>NOT</b> have to be unique
-  and will note be 'verified' so go ahead and put <b>test@email.com</b> or
-  similar as it only needs to satisfy the email validation. Your username is the
-  only thing required to be unique for registration to be successful.
-</p>
-<p>
-  The Database will be wiped regularly so don't be surprised if you come back
-  next week and its all gone.
-</p>
+      <ztp-select-api></ztp-select-api>
 
-<section class="app">
-  <router-outlet></router-outlet>
-</section>
+      <h4>NOTE</h4>
+      <p>
+        You will have to register before you can log in. For privacy reasons the
+        API has been configured to accept dummy data (so not to collect any
+        sensitive information). The email address you provide does
+        <b>NOT</b> have to be unique and will note be 'verified' so go ahead and
+        put <b>test@email.com</b> or similar as it only needs to satisfy the
+        email validation. Your username is the only thing required to be unique
+        for registration to be successful.
+      </p>
+      <p>
+        The Database will be wiped regularly so don't be surprised if you come
+        back next week and its all gone.
+      </p>
+    </aside>
+
+    <article class="app">
+      <router-outlet></router-outlet>
+    </article>
+  </section>
+</layout-center-page>

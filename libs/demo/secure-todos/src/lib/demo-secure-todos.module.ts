@@ -8,6 +8,7 @@ import { DemoApiStatusComponent } from './status/status.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TodosFeatureShellModule } from '@ztp/todos/feature-shell';
+import { CommonUiLayoutsModule } from '@ztp/common/ui/layouts';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { TodosFeatureShellModule } from '@ztp/todos/feature-shell';
     MatFormFieldModule,
     DemoSecureTodosRoutingModule,
     TodosFeatureShellModule,
+    CommonUiLayoutsModule,
   ],
   declarations: [
     ExampleTodosComponent,

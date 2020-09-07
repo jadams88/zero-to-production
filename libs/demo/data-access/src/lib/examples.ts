@@ -42,14 +42,6 @@ export const examples: IExample[] = [
     libPath: 'libs/common/dynamic-module-loading',
   },
   {
-    url: 'todos',
-    title: 'Todo App (with Auth)',
-    summary: 'A demo of the versatility of a well structured Monorepo.',
-    description:
-      'We have all seen a Todo App before but this demonstrates how a well structured monorepo ' +
-      'can make your code highly reusable.',
-  },
-  {
     url: 'start-your-own',
     title: 'Start Your Own Monorepo',
     summary:

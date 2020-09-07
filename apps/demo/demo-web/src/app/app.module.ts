@@ -72,9 +72,9 @@ export const APP_ERRORS = {
     }),
   ],
   providers: [
-    { provide: LOGIN_PAGE, useValue: '/examples/todos/login' },
-    { provide: REGISTER_PAGE, useValue: '/examples/todos/register' },
-    { provide: LOGIN_REDIRECT, useValue: '/examples/todos/home' },
+    { provide: LOGIN_PAGE, useValue: '/app/login' },
+    { provide: REGISTER_PAGE, useValue: '/app/register' },
+    { provide: LOGIN_REDIRECT, useValue: '/app/home' },
     { provide: ThemeService, useExisting: DemoThemeService },
     { provide: ApiService, useExisting: DemoApiService },
     { provide: GraphQLService, useExisting: DemoGraphQLService },

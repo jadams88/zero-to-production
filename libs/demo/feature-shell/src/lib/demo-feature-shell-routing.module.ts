@@ -14,16 +14,21 @@ export const Demo_ROUTES: Routes = [
         component: DemoHomeComponent,
       },
       {
-        path: 'examples',
-        loadChildren: () =>
-          import('@ztp/demo/examples').then((m) => m.DemoExamplesModule),
-        data: { preload: true }, // Preload this route
-      },
-      {
         path: 'guides',
         loadChildren: () =>
           import('@ztp/demo/guides').then((m) => m.DemoGuidesModule),
         data: { preload: true }, // Preload this route
+      },
+      {
+        path: 'app',
+        loadChildren: () =>
+          import('@ztp/demo/secure-todos').then((m) => m.DemoSecureTodosModule),
+        data: { preload: true }, // Preload this route
+      },
+      {
+        path: 'examples',
+        loadChildren: () =>
+          import('@ztp/demo/examples').then((m) => m.DemoExamplesModule),
       },
       {
         path: '**',

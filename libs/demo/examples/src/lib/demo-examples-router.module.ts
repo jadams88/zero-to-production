@@ -31,11 +31,6 @@ const ROUTES: Routes = [
           ),
       },
       {
-        path: 'todos',
-        loadChildren: () =>
-          import('@ztp/demo/secure-todos').then((m) => m.DemoSecureTodosModule),
-      },
-      {
         path: 'start-your-own',
         loadChildren: () =>
           import('@ztp/demo/start-your-own').then(
