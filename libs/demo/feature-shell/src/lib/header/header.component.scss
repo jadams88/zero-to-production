@@ -1,25 +1,37 @@
 $darkColor: rgba(white, 0.74);
 
 :host {
-  .nav-button {
-    margin-right: 0.1;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    color: rgba(black, 0.84);
-    text-decoration: none;
+  nav {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0.25rem 0;
 
-    @media screen and (min-width: 600px) {
-      margin-right: 0.5rem;
-    }
+    .nav-button {
+      margin-right: 0.1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      color: rgba(black, 0.84);
+      text-decoration: none;
 
-    &:focus,
-    &:hover,
-    &.active {
-      background-color: rgba(0, 0, 0, 0.1);
-    }
+      @media screen and (min-width: 599px) {
+        margin-right: 0.5rem;
+      }
 
-    &:last-child {
-      margin-right: 0;
+      &:focus,
+      &:hover,
+      &.active {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
 
@@ -45,9 +57,13 @@ $darkColor: rgba(white, 0.74);
       font-size: 1em;
       margin: 0 0.5em;
 
-      @media screen and (min-width: 600px) {
+      @media screen and (min-width: 599px) {
         display: inline;
       }
+    }
+
+    @media screen and (max-width: 600px) {
+      display: none;
     }
   }
 

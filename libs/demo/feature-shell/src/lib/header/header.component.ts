@@ -10,6 +10,7 @@ export class DemoHeaderComponent {
   navRoutes = [
     { label: 'Home', link: '/home', aria: 'home' },
     { label: 'Guides', link: '/guides', aria: 'guides' },
+    { label: 'Todo App', link: '/app', aria: 'todo-app' },
     { label: 'Examples', link: '/examples', aria: 'examples' },
   ];
 }
