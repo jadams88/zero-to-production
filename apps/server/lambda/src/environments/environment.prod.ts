@@ -17,6 +17,7 @@ export const config: ServerConfig = {
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
+    autoCreate: false,
     bufferCommands: false, // Disable mongoose buffering
     bufferMaxEntries: 0, // and MongoDB driver buffering
   },
