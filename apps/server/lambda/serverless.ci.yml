@@ -1,5 +1,7 @@
 service: zero-to-production
 
+enableLocalInstallationFallback: true
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -22,6 +24,7 @@ functions:
     # For production, path is relative to project directory
     handler: dist/main.handler
     environment:
+      NODE_ENV: production
       AUDIENCE: ${env:AUDIENCE}
       ISSUER: ${env:ISSUER}
       ACCESS_TOKEN_EXPIRE_TIME: ${env:ACCESS_TOKEN_EXPIRE_TIME}

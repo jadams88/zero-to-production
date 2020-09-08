@@ -1,5 +1,11 @@
 service: zero-to-production
 
+enableLocalInstallationFallback: true
+
+custom:
+  serverless-offline:
+    allowCache: true
+
 provider:
   name: aws
   runtime: nodejs12.x

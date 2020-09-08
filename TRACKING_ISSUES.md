@@ -43,3 +43,9 @@ A list of random issues that are either bugs or features that will cause changes
   If different queries queried todos.
   When Apollo Client v3 (apollo-angular 2) is released, use the cache.evict /.release /.gc etc
   https://github.com/apollographql/apollo-feature-requests/issues/5
+
+* serverless-offline v6.7 introduced the noCaching option, however this causes a whole bunch of issues,
+  specifically with ApolloServer (duplicate types, importing from multiple realms etc )
+  https://github.com/dherault/serverless-offline/issues/931
+  https://github.com/dherault/serverless-offline/issues/1075
+  https://github.com/dherault/serverless-offline/issues/1080
