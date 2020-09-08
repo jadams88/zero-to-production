@@ -46,10 +46,8 @@ todoSchema.post('findOneAndRemove', async (doc: ITodoDocument) => {
   );
 });
 
-export async function createTodoModel(con: Connection): Promise<ITodoModel> {
-  const m = con.model<ITodoDocument, ITodoModel>(todoDbKey, todoSchema);
-  await m.createCollection();
-  return m;
+export function createTodoModel(con: Connection) {
+  con.model<ITodoDocument, ITodoModel>(todoDbKey, todoSchema);
 }
 
 export function getTodoModel(con: Connection): ITodoModel {

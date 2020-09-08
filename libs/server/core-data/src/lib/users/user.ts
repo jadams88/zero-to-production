@@ -78,10 +78,8 @@ export class UserClass extends Model {
 
 userSchema.loadClass(UserClass);
 
-export async function createUserModel(con: Connection): Promise<IUserModel> {
-  const m = con.model<IUserDocument, IUserModel>(userDbKey, userSchema);
-  await m.createCollection();
-  return m;
+export function createUserModel(con: Connection) {
+  con.model<IUserDocument, IUserModel>(userDbKey, userSchema);
 }
 
 export function getUserModel(con: Connection): IUserModel {

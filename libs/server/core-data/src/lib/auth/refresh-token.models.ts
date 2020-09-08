@@ -72,15 +72,11 @@ export class RefreshTokenClass extends Model {
 
 refreshTokenSchema.loadClass(RefreshTokenClass);
 
-export async function createRefreshTokenModel(
-  con: Connection
-): Promise<IRefreshTokenModel> {
-  const m = con.model<IRefreshTokenDocument, IRefreshTokenModel>(
+export function createRefreshTokenModel(con: Connection) {
+  con.model<IRefreshTokenDocument, IRefreshTokenModel>(
     refreshTokenDbKey,
     refreshTokenSchema
   );
-  await m.createCollection();
-  return m;
 }
 
 export function getRefreshTokenModel(con: Connection): IRefreshTokenModel {

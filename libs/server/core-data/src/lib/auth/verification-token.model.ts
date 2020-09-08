@@ -52,15 +52,11 @@ export class VerificationTokenClass extends Model {
 
 verificationTokenSchema.loadClass(VerificationTokenClass);
 
-export async function createVerificationTokenModel(
-  con: Connection
-): Promise<IVerificationTokenModel> {
-  const m = con.model<IVerificationTokenDocument, IVerificationTokenModel>(
+export function createVerificationTokenModel(con: Connection) {
+  con.model<IVerificationTokenDocument, IVerificationTokenModel>(
     verificationTokenDbKey,
     verificationTokenSchema
   );
-  await m.createCollection();
-  return m;
 }
 
 export function getVerificationTokenModel(

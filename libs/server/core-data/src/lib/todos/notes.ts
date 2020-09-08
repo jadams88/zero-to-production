@@ -13,7 +13,7 @@ export const todoSchemaDefinition: TSchemaDefinition<ITodoNote> = {
   body: String,
   createdOn: {
     type: Date,
-    default: new Date(),
+    default: Date.now(),
   },
 };
 
@@ -21,15 +21,8 @@ export const todoNoteSchema = new Schema<ITodoNote>(todoSchemaDefinition, {
   ...defaultSchemaOptions,
 });
 
-export async function createTodoNoteModel(
-  con: Connection
-): Promise<ITodoNoteModel> {
-  const m = con.model<ITodoNoteDocument, ITodoNoteModel>(
-    todoNoteDbKey,
-    todoNoteSchema
-  );
-  m.createCollection();
-  return m;
+export function createTodoNoteModel(con: Connection) {
+  con.model<ITodoNoteDocument, ITodoNoteModel>(todoNoteDbKey, todoNoteSchema);
 }
 
 export function getTodoNoteModel(con: Connection): ITodoNoteModel {
