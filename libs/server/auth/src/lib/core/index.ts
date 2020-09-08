@@ -1,4 +1,9 @@
-export { signAccessToken, signRefreshToken, verifyToken } from './tokens';
+export {
+  signAccessToken,
+  signRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+} from './tokens';
 
 export {
   setupAuthorizeController,

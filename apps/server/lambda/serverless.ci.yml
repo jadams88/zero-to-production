@@ -26,12 +26,14 @@ functions:
     environment:
       NODE_ENV: production
       AUDIENCE: ${env:AUDIENCE}
+      AUTH_SERVER_URL: ${env:AUTH_SERVER_URL}
       ISSUER: ${env:ISSUER}
       ACCESS_TOKEN_EXPIRE_TIME: ${env:ACCESS_TOKEN_EXPIRE_TIME}
       SENDGRID_API_KEY: ${env:SENDGRID_API_KEY}
       DB_CONNECTION_STRING: ${env:DB_CONNECTION_STRING}
       ACCESS_TOKEN_PRIVATE_KEY: ${env:ACCESS_TOKEN_PRIVATE_KEY}
       ACCESS_TOKEN_PUBLIC_KEY: ${env:ACCESS_TOKEN_PUBLIC_KEY}
+      REFRESH_TOKEN_SECRET: ${env:REFRESH_TOKEN_SECRET}
     events:
       - http:
           path: / # this matches the base path

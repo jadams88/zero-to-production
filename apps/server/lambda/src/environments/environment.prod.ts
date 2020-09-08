@@ -38,9 +38,8 @@ export const authConfig: AuthEnv = {
     audience,
   },
   refreshToken: {
-    privateKey: getEnvVariableOrWarn('REFRESH_TOKEN_PRIVATE_KEY'),
+    secret: getEnvVariableOrWarn('REFRESH_TOKEN_SECRET'),
     issuer: getEnvVariableOrWarn('ISSUER'),
-    publicKey: getEnvVariableOrWarn('REFRESH_TOKEN_PUBLIC_KEY'),
     audience,
   },
 };

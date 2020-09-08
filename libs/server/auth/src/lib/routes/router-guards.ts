@@ -3,7 +3,7 @@ import {
   isJWKS,
   isActiveUser,
   retrievePublicKeyFromJWKS,
-  verifyToken,
+  verifyAccessToken,
 } from '../core';
 import {
   AuthGuard,
@@ -45,7 +45,7 @@ export function authenticate(config: VerifyToken) {
      * the encoded token is set at ctx.request.token if the verification
      * passes, replace the encoded token with the decoded token note that the verify function operates synchronously
      */
-    ctx.user = verifyToken(ctx.request.token, config);
+    ctx.user = verifyAccessToken(ctx.request.token, config);
     return next();
   };
 }
@@ -61,7 +61,7 @@ export function authenticateJWKS(config: VerifyJWKS) {
   return async (ctx: ParameterizedContext, next: () => Promise<any>) => {
     const publicKey = await getPublicKey((ctx.request as any).token);
 
-    ctx.user = verifyToken((ctx.request as any).token, {
+    ctx.user = verifyAccessToken((ctx.request as any).token, {
       ...config,
       publicKey,
     });

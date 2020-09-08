@@ -4,7 +4,7 @@ import {
   verifyUserRole,
   retrievePublicKeyFromJWKS,
   isJWKS,
-  verifyToken,
+  verifyAccessToken,
 } from '../core';
 import {
   VerifyJWKS,
@@ -48,7 +48,7 @@ export function createGraphQLGuards<U extends AuthUser>({
  */
 export function authenticated(config: VerifyToken) {
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {
-    ctx.user = verifyToken(ctx.token, config);
+    ctx.user = verifyAccessToken(ctx.token, config);
     return await next(root, args, ctx, info);
   };
 }
@@ -61,7 +61,7 @@ export function authenticatedJWKS(config: VerifyJWKS) {
 
   return (next: TResolver): TResolver => async (root, args, ctx, info) => {
     const publicKey = await getPublicKey(ctx.token);
-    ctx.user = verifyToken(ctx.token, { ...config, publicKey });
+    ctx.user = verifyAccessToken(ctx.token, { ...config, publicKey });
 
     return await next(root, args, ctx, info);
   };

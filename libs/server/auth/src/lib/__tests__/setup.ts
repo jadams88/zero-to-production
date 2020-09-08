@@ -19,6 +19,7 @@ import {
 export const issuer = 'some-issuer';
 export const audience = 'say-hello!!!';
 export const keyId = 'key-id';
+export const refreshSecret = 'super-secret';
 
 export function mockRegistrationConfig(
   email: jest.Mock<any, any> = jest.fn()
@@ -48,7 +49,7 @@ export function mockAuthorizeConfig(): AuthorizeController<AuthUser, Refresh> {
       privateKey,
     },
     refresh: {
-      privateKey,
+      secret: refreshSecret,
       issuer,
       audience,
     },
@@ -66,7 +67,7 @@ export function mockRefreshTokenConfig(): RefreshController<Refresh> {
       issuer,
     },
     refresh: {
-      publicKey,
+      secret: refreshSecret,
       audience,
       issuer,
     },

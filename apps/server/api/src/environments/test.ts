@@ -68,8 +68,7 @@ export const testAuthConfig: AuthEnv = {
     audience,
   },
   refreshToken: {
-    privateKey,
-    publicKey,
+    secret: 'test_refresh_token_secret',
     issuer: 'ISSUER',
     audience,
   },

@@ -113,14 +113,14 @@ export interface VerifyController<U extends AuthUser, V extends Verify> {
 
 export interface AuthorizeController<U extends AuthUser, R extends Refresh> {
   access: SignAccessToken;
-  refresh: SignRefresh;
+  refresh: RefreshToken;
   User: AuthUserModel<U>;
   Refresh: RefreshModel<R>;
 }
 
 export interface RefreshController<R extends Refresh> {
   access: SignAccessToken;
-  refresh: VerifyRefresh;
+  refresh: RefreshToken;
   Refresh: RefreshModel<R>;
 }
 
@@ -153,16 +153,10 @@ export interface VerifyJWKS {
   allowHttp?: boolean;
 }
 
-export interface SignRefresh {
+export interface RefreshToken {
   audience: string;
   issuer: string;
-  privateKey: string;
-}
-
-export interface VerifyRefresh {
-  audience: string;
-  issuer: string;
-  publicKey: string;
+  secret: string;
 }
 
 export interface ActiveUserGuard<U extends AuthUser> {
@@ -189,10 +183,9 @@ export interface AuthEnv {
     audience: string;
   };
   refreshToken: {
-    privateKey: string;
-    publicKey: string;
     issuer: string;
     audience: string;
+    secret: string;
   };
 }
 

@@ -22,6 +22,7 @@ import {
   privateKey,
   MockRefreshModel,
   cookiesMock,
+  refreshSecret,
 } from '../__tests__/index';
 import { VerifyModel, AuthUser, AuthUserModel, Verify } from '../types';
 
@@ -361,7 +362,7 @@ describe('Auth - Controllers', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -396,7 +397,7 @@ describe('Auth - Controllers', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -431,7 +432,7 @@ describe('Auth - Controllers', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -472,7 +473,7 @@ describe('revokeRefreshToken', () => {
     };
 
     const refreshTokenString = signRefreshToken({
-      privateKey,
+      secret: refreshSecret,
       audience,
       issuer,
     })(userWithId);

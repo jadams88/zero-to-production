@@ -32,8 +32,7 @@ export const devAuthConfig: AuthEnv = {
     audience,
   },
   refreshToken: {
-    privateKey: getEnvVariableOrWarn('REFRESH_TOKEN_PRIVATE_KEY'),
-    publicKey: getEnvVariableOrWarn('REFRESH_TOKEN_PUBLIC_KEY'),
+    secret: getEnvVariableOrWarn('REFRESH_TOKEN_SECRET'),
     issuer: getEnvVariableOrWarn('ISSUER'),
     audience,
   },

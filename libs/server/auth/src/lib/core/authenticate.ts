@@ -1,8 +1,8 @@
 import { decode } from 'jsonwebtoken';
 import { unauthorized } from '@hapi/boom';
 import { koaJwtSecret } from 'jwks-rsa';
-import { VerifyJWKS, AuthUserModel, AuthUser, VerifyRefresh } from '../types';
-import { verifyToken } from './tokens';
+import { VerifyJWKS, AuthUserModel, AuthUser, RefreshToken } from '../types';
+import { verifyRefreshToken } from './tokens';
 
 export function isActiveUser<U extends AuthUser>(User: AuthUserModel<U>) {
   return async (id: string | undefined) => {
@@ -24,8 +24,8 @@ export function verifyUserRole(requiredRole: string) {
   };
 }
 
-export const verifyRefresh = (config: VerifyRefresh) => (token: string) =>
-  verifyToken(token, config);
+export const verifyRefresh = (config: RefreshToken) => (token: string) =>
+  verifyRefreshToken(token, config);
 
 export function retrievePublicKeyFromJWKS({
   authServerHost,

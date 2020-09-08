@@ -6,7 +6,6 @@ import { applyAuthRoutes } from './routes';
 import {
   MockAuthUserModel,
   MockRefreshModel,
-  privateKey,
   audience,
   issuer,
   MockVerifyModel,
@@ -18,6 +17,7 @@ import {
   request,
   setupTestServer,
   newId,
+  refreshSecret,
 } from '../__tests__';
 import { signRefreshToken } from '../core/tokens';
 import type { AuthUser, Refresh, Verify, AuthModuleConfig } from '../types';
@@ -318,7 +318,7 @@ describe('Router - Auth', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -356,7 +356,7 @@ describe('Router - Auth', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -392,7 +392,7 @@ describe('Router - Auth', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -428,7 +428,7 @@ describe('Router - Auth', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
@@ -471,7 +471,7 @@ describe('Router - Auth', () => {
       };
 
       const refreshTokenString = signRefreshToken({
-        privateKey,
+        secret: refreshSecret,
         audience,
         issuer,
       })(userWithId);
