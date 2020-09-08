@@ -5,7 +5,7 @@ const options: SetOption = {
   httpOnly: true,
   secure: true,
   sameSite: 'strict',
-  path: '/authorize/refresh',
+  path: '/authorize', // set to only the /authorize path so it is sent on both /refresh & /revoke
 };
 
 export function setRefreshTokenCookie(cookies: Cookies, refreshToken?: string) {
