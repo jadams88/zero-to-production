@@ -1953,7 +1953,6 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/common/universal-engine/jest.config.js",
-            "tsConfig": "libs/common/universal-engine/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
